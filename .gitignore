@@ -1,0 +1,19 @@
+# =====Folders=====
+.idea/
+.venv/
+__pycache__/
+.vscode/
+logs/
+dist/
+.pytest_cache/
+
+# =====Files=====
+*.iml
+*.sqlite
+*.db
+*.yaml
+*.old
+*.json
+*.ini
+
+# =====Project=====

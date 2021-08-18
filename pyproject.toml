@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "simyan"
+version = "1.0.0"
+description = ""
+license = "MIT"
+authors = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
+maintainers = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
+readme = "README.md"
+homepage = "https://github.com/Buried-In-Code/Simyan"
+repository = "https://github.com/Buried-In-Code/Simyan"
+documentation = "https://github.com/Buried-In-Code/Simyan"
+packages = [
+	{ include = "Simyan" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+marshmallow = "^3.13.0"
+requests = "^2.26.0"
+ratelimit = "^2.2.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+requests-mock = "^1.9.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.urls]
+"Issue Tracker" = "https://github.com/Buried-In-Code/Simyan/issues"
+
