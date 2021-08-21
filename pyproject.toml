@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "simyan"
-version = "1.0.0"
+version = "0.1.0"
 description = ""
 license = "MIT"
 authors = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
