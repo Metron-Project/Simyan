@@ -17,6 +17,45 @@ A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvin
 - [requests: 2.26.0](https://pypi.org/project/requests)
 - [ratelimit: 2.2.1](https://pypi.org/project/ratelimit)
 
+## Installation
+
+### PyPI
+```bash
+$ pip install Simyan
+```
+
+## Example Usage
+```python
+from Simyan import api
+# Your config/secrets
+from config import comicvine_api_key
+
+session = api(comicvine_api_key)
+
+# Search for Publisher
+publisher_results = session.publisher_list({'name': 'DC Comics'})
+for publisher in publisher_results:
+    print(f"{publisher.id} | {publisher.name} - {publisher.site_url}")
+
+# Get details for a Volume
+blackest_night = session.volume(26266)
+print(blackest_night.summary)
+```
+
+*There is a cache option to limit required calls to API*
+```python
+from Simyan import api, SqliteCache
+# Your config/secrets
+from config import comicvine_api_key
+
+session = api(comicvine_api_key, cache=SqliteCache())
+
+# Get details for an Issue
+result = session.issue(189810)
+print(f"{result.volume.name} #{result.issue_number}")
+print(result.description)
+```
+
 ## Socials
 
 Big thanks to [Mokkari](https://github.com/bpepple/mokkari) for the inspiration and template for this project.
