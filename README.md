@@ -7,7 +7,7 @@
 
 [![Code Analysis](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code-Analysis?label=Code-Analysis&logo=github&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-analysis.yml)
 
-*TODO*
+A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvine.gamespot.com/api/) API.
 
 ## Built Using
 
