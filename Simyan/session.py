@@ -3,6 +3,7 @@ import re
 from collections import OrderedDict
 from typing import Any, Dict, List, Optional, Union
 from urllib.parse import urlencode
+from json import JSONDecodeError
 
 from marshmallow import ValidationError
 from ratelimit import limits, sleep_and_retry
@@ -57,7 +58,10 @@ class Session:
         except ConnectionError as e:
             raise APIError(f"Connection error: {repr(e)}")
 
-        data = response.json()
+        try:
+            data = response.json()
+        except JSONDecodeError as e:
+            raise APIError(f"Invalid request: {repr(e)}")
 
         if 'error' in data and data['error'] != 'OK':
             raise APIError(data['error'])
@@ -78,7 +82,13 @@ class Session:
     def publisher_list(self, params: Dict[str, Union[str, int]] = None) -> PublisherList:
         if params is None:
             params = {}
-        return PublisherList(self.call(["publishers"], params=params))
+        response = self.call(["publishers"], params=params)
+        results = response['results']
+        while response['number_of_total_results'] > response['offset'] + response['number_of_page_results']:
+            params['offset'] = response['offset'] + response['number_of_page_results']
+            response = self.call(["publishers"], params=params)
+            results.extend(response['results'])
+        return PublisherList(results)
 
     def volume(self, _id: int) -> Volume:
         try:
@@ -89,7 +99,13 @@ class Session:
     def volume_list(self, params: Dict[str, Union[str, int]] = None) -> VolumeList:
         if params is None:
             params = {}
-        return VolumeList(self.call(["volumes"], params=params))
+        response = self.call(["volumes"], params=params)
+        results = response['results']
+        while response['number_of_total_results'] > response['offset'] + response['number_of_page_results']:
+            params['offset'] = response['offset'] + response['number_of_page_results']
+            response = self.call(["volumes"], params=params)
+            results.extend(response['results'])
+        return VolumeList(results)
 
     def issue(self, _id: int) -> Issue:
         try:
@@ -100,4 +116,10 @@ class Session:
     def issue_list(self, params: Dict[str, Union[str, int]] = None) -> IssueList:
         if params is None:
             params = {}
-        return IssueList(self.call(["issues"], params=params))
+        response = self.call(["issues"], params=params)
+        results = response['results']
+        while response['number_of_total_results'] > response['offset'] + response['number_of_page_results']:
+            params['offset'] = response['offset'] + response['number_of_page_results']
+            response = self.call(["issues"], params=params)
+            results.extend(response['results'])
+        return IssueList(results)

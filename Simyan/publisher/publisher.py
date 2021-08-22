@@ -42,7 +42,7 @@ class PublisherList:
         self.publishers = []
 
         schema = PublisherSchema()
-        for pub_dict in response["results"]:
+        for pub_dict in response:
             try:
                 result = schema.load(pub_dict)
             except ValidationError as error:

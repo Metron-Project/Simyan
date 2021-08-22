@@ -46,7 +46,7 @@ class VolumeList:
         self.volumes = []
 
         schema = VolumeSchema()
-        for vol_dict in response["results"]:
+        for vol_dict in response:
             try:
                 result = schema.load(vol_dict)
             except ValidationError as error:

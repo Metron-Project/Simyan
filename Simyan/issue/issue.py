@@ -55,7 +55,7 @@ class IssueList:
         self.issues = []
 
         schema = IssueSchema()
-        for iss_dict in response["results"]:
+        for iss_dict in response:
             try:
                 result = schema.load(iss_dict)
             except ValidationError as error:
