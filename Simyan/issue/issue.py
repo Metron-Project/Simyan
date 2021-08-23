@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, post_load, INCLUDE, ValidationError
 
-from Simyan import APIError, character, concept, image, location, item, people, arc, team
+from Simyan import APIError, character, concept, image, location, item, people, team
+from Simyan.story_arc.story_arc_entry import StoryArcEntrySchema
 from Simyan.volume.volume_entry import VolumeEntrySchema
 
 
@@ -37,7 +38,7 @@ class IssueSchema(Schema):
     person_credits = fields.Nested(people.PeopleEntrySchema, many=True)
     site_url = fields.Url(data_key='site_detail_url')
     store_date = fields.Date(format="%Y-%m-%d")
-    story_arc_credits = fields.Nested(arc.ArcEntrySchema, many=True)
+    story_arc_credits = fields.Nested(StoryArcEntrySchema, many=True)
     team_credits = fields.Nested(team.TeamEntrySchema, many=True)
     team_disbanded_in = fields.Nested(team.TeamEntrySchema, many=True)
     volume = fields.Nested(VolumeEntrySchema)
@@ -55,7 +56,7 @@ class IssueList:
         self.issues = []
 
         schema = IssueSchema()
-        for iss_dict in response["results"]:
+        for iss_dict in response:
             try:
                 result = schema.load(iss_dict)
             except ValidationError as error:

@@ -5,7 +5,7 @@ from typing import Dict, Any, Optional
 
 
 class SqliteCache:
-    def __init__(self, name: str = 'simyan_cache.sqlite', expiry: int = 14):
+    def __init__(self, name: str = 'Simyan-Cache.sqlite', expiry: int = 14):
         self.expiry = expiry
         self.con = sqlite3.connect(name)
         self.cur = self.con.cursor()

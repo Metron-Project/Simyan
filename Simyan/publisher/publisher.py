@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, post_load, INCLUDE, ValidationError
 
-from Simyan import APIError, character, image, arc, team
+from Simyan import APIError, character, image, team
+from Simyan.story_arc.story_arc_entry import StoryArcEntrySchema
 from Simyan.volume.volume_entry import VolumeEntrySchema
 
 
@@ -25,7 +26,7 @@ class PublisherSchema(Schema):
     location_state = fields.Str(allow_none=True)
     name = fields.Str()
     site_url = fields.Url(data_key='site_detail_url')
-    story_arcs = fields.Nested(arc.ArcEntrySchema, many=True)
+    story_arcs = fields.Nested(StoryArcEntrySchema, many=True)
     teams = fields.Nested(team.TeamEntrySchema, many=True)
     volumes = fields.Nested(VolumeEntrySchema, many=True)
 
@@ -42,7 +43,7 @@ class PublisherList:
         self.publishers = []
 
         schema = PublisherSchema()
-        for pub_dict in response["results"]:
+        for pub_dict in response:
             try:
                 result = schema.load(pub_dict)
             except ValidationError as error:
