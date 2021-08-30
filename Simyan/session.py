@@ -92,14 +92,7 @@ class Session:
             raise APIError(error.messages)
 
     def publisher_list(self, params: Dict[str, Union[str, int]] = None) -> PublisherList:
-        if params is None:
-            params = {}
-        response = self.call(['publishers'], params=params)
-        results = response['results']
-        while response['number_of_total_results'] > response['offset'] + response['number_of_page_results']:
-            params['offset'] = response['offset'] + response['number_of_page_results']
-            response = self.call(['publishers'], params=params)
-            results.extend(response['results'])
+        results = self._retrieve_all_responses('publishers', params)
         return PublisherList(results)
 
     def volume(self, _id: int) -> Volume:
@@ -109,14 +102,7 @@ class Session:
             raise APIError(error.messages)
 
     def volume_list(self, params: Dict[str, Union[str, int]] = None) -> VolumeList:
-        if params is None:
-            params = {}
-        response = self.call(['volumes'], params=params)
-        results = response['results']
-        while response['number_of_total_results'] > response['offset'] + response['number_of_page_results']:
-            params['offset'] = response['offset'] + response['number_of_page_results']
-            response = self.call(['volumes'], params=params)
-            results.extend(response['results'])
+        results = self._retrieve_all_responses('volumes', params)
         return VolumeList(results)
 
     def issue(self, _id: int) -> Issue:
@@ -126,14 +112,7 @@ class Session:
             raise APIError(error.messages)
 
     def issue_list(self, params: Dict[str, Union[str, int]] = None) -> IssueList:
-        if params is None:
-            params = {}
-        response = self.call(['issues'], params=params)
-        results = response['results']
-        while response['number_of_total_results'] > response['offset'] + response['number_of_page_results']:
-            params['offset'] = response['offset'] + response['number_of_page_results']
-            response = self.call(['issues'], params=params)
-            results.extend(response['results'])
+        results = self._retrieve_all_responses('issues', params)
         return IssueList(results)
 
     def story_arc(self, _id: int) -> StoryArc:
@@ -143,12 +122,19 @@ class Session:
             raise APIError(error.messages)
 
     def story_arc_list(self, params: Dict[str, Union[str, int]] = None) -> StoryArcList:
+        results = self._retrieve_all_responses('story_arcs', params)
+        return StoryArcList(results)
+
+    def _retrieve_all_responses(self, resource: str, params: Dict[str, Union[str, int]] = None):
         if params is None:
             params = {}
-        response = self.call(['story_arcs'], params=params)
-        results = response['results']
-        while response['number_of_total_results'] > response['offset'] + response['number_of_page_results']:
+        response = self.call([resource], params=params)
+        result = response['results']
+        while (
+            response['number_of_total_results']
+            > response['offset'] + response['number_of_page_results']
+        ):
             params['offset'] = response['offset'] + response['number_of_page_results']
-            response = self.call(['story_arcs'], params=params)
-            results.extend(response['results'])
-        return StoryArcList(results)
+            response = self.call([resource], params=params)
+            result.extend(response['results'])
+        return result
