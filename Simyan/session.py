@@ -1,24 +1,33 @@
 import platform
 import re
 from collections import OrderedDict
+from enum import Enum
+from json import JSONDecodeError
 from typing import Any, Dict, List, Optional, Union
 from urllib.parse import urlencode
-from json import JSONDecodeError
 
 from marshmallow import ValidationError
 from ratelimit import limits, sleep_and_retry
 from requests import get
 from requests.exceptions import ConnectionError
 
-from .exceptions import CacheError, APIError
-from .issue import Issue, IssueSchema, IssueList
-from .publisher import Publisher, PublisherSchema, PublisherList
-from .story_arc import StoryArc, StoryArcSchema, StoryArcList
+from .exceptions import APIError, CacheError
+from .issue import Issue, IssueList, IssueSchema
+from .publisher import Publisher, PublisherList, PublisherSchema
 from .sqlite_cache import SqliteCache
-from .volume import Volume, VolumeSchema, VolumeList
+from .story_arc import StoryArc, StoryArcList, StoryArcSchema
+from .volume import Volume, VolumeList, VolumeSchema
 
 MINUTE = 60
 
+class CVType(Enum):
+    VOLUME = 4050
+    ISSUE = 4000
+    PUBLISHER = 4010
+    ARC = 4045
+
+    def __str__(self):
+        return f"{self.value}"
 
 class Session:
     def __init__(self, api_key: str, cache: Optional[SqliteCache] = None):
@@ -76,7 +85,7 @@ class Session:
 
     def publisher(self, _id: int) -> Publisher:
         try:
-            return PublisherSchema().load(self.call(['publisher', f"4010-{_id}"])['results'])
+            return PublisherSchema().load(self.call(['publisher', f"{CVType.PUBLISHER}-{_id}"])['results'])
         except ValidationError as error:
             raise APIError(error.messages)
 
@@ -93,7 +102,7 @@ class Session:
 
     def volume(self, _id: int) -> Volume:
         try:
-            return VolumeSchema().load(self.call(['volume', f"4050-{_id}"])['results'])
+            return VolumeSchema().load(self.call(['volume', f"{CVType.VOLUME}-{_id}"])['results'])
         except ValidationError as error:
             raise APIError(error.messages)
 
@@ -110,7 +119,7 @@ class Session:
 
     def issue(self, _id: int) -> Issue:
         try:
-            return IssueSchema().load(self.call(['issue', f"4000-{_id}"])['results'])
+            return IssueSchema().load(self.call(['issue', f"{CVType.ISSUE}-{_id}"])['results'])
         except ValidationError as error:
             raise APIError(error.messages)
 
@@ -127,7 +136,7 @@ class Session:
 
     def story_arc(self, _id: int) -> StoryArc:
         try:
-            return StoryArcSchema().load(self.call(['story_arc', f"4045-{_id}"])['results'])
+            return StoryArcSchema().load(self.call(['story_arc', f"{CVType.ARC}-{_id}"])['results'])
         except ValidationError as error:
             raise APIError(error.messages)
 
