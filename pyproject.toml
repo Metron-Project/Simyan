@@ -12,6 +12,9 @@ documentation = "https://github.com/Buried-In-Code/Simyan"
 packages = [
 	{ include = "Simyan" }
 ]
+include = [
+    { path = "tests", format = "sdist" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -21,6 +24,8 @@ ratelimit = "^2.2.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
+pytest-cov = "^2.12.1"
+flake8 = "^3.9.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -29,3 +34,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.urls]
 "Issue Tracker" = "https://github.com/Buried-In-Code/Simyan/issues"
 
+[tool.coverage.run]
+source = ["Simyan"]
+
+[tool.coverage.report]
+show_missing = true
