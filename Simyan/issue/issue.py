@@ -37,7 +37,7 @@ class IssueSchema(Schema):
     object_credits = fields.Nested(item.ItemEntrySchema, many=True)
     person_credits = fields.Nested(people.PeopleEntrySchema, many=True)
     site_url = fields.Url(data_key='site_detail_url')
-    store_date = fields.Date(format="%Y-%m-%d")
+    store_date = fields.Date(format="%Y-%m-%d", allow_none=True)
     story_arc_credits = fields.Nested(StoryArcEntrySchema, many=True)
     team_credits = fields.Nested(team.TeamEntrySchema, many=True)
     team_disbanded_in = fields.Nested(team.TeamEntrySchema, many=True)
