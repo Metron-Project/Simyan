@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from Simyan import APIError
+from Simyan.exceptions import APIError
 
 VOLUME_ID = 18216
 ISSUE_ID = 111265
@@ -29,6 +29,7 @@ def test_issue_list(talker):
 def test_issue_list_empty(talker):
     results = talker.issue_list({'filter': 'name:INVALID'})
     assert len(results) == 0
+
 
 def test_issue_bad_cover_date(talker):
     xmen_2 = talker.issue(6787)

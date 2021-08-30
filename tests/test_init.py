@@ -1,10 +1,10 @@
 import pytest
 
-from Simyan import api, Session, AuthenticationError
+from Simyan import api, exceptions, session
 
 
 def test_api():
-    with pytest.raises(AuthenticationError):
+    with pytest.raises(exceptions.AuthenticationError):
         api()
 
     m = None
@@ -13,4 +13,4 @@ def test_api():
     except Exception as exc:
         print(f"Simyan.api() raised {exc} unexpectedly!")
 
-    assert m.__class__.__name__ == Session.__name__
+    assert m.__class__.__name__ == session.Session.__name__

@@ -1,8 +1,9 @@
 from marshmallow import Schema, fields, post_load, INCLUDE, ValidationError
 
-from Simyan import APIError, image
-from Simyan.issue.issue_entry import IssueEntrySchema
-from Simyan.publisher.publisher_entry import PublisherEntrySchema
+from Simyan.exceptions import APIError
+from Simyan import image
+from Simyan.issue_entry import IssueEntrySchema
+from Simyan.publisher_entry import PublisherEntrySchema
 
 
 class StoryArc:

@@ -1,8 +1,9 @@
 from marshmallow import Schema, fields, post_load, INCLUDE, ValidationError
 
-from Simyan import APIError, character, concept, image, location, item, people, team
-from Simyan.story_arc.story_arc_entry import StoryArcEntrySchema
-from Simyan.volume.volume_entry import VolumeEntrySchema
+from Simyan import character, concept, image, location, item, people, team
+from Simyan.story_arc_entry import StoryArcEntrySchema
+from Simyan.volume_entry import VolumeEntrySchema
+from Simyan.exceptions import APIError
 
 
 class Issue:
