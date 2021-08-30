@@ -20,6 +20,7 @@ from .volume import Volume, VolumeList, VolumeSchema
 
 MINUTE = 60
 
+
 class CVType(Enum):
     VOLUME = 4050
     ISSUE = 4000
@@ -28,6 +29,7 @@ class CVType(Enum):
 
     def __str__(self):
         return f"{self.value}"
+
 
 class Session:
     def __init__(self, api_key: str, cache: Optional[SqliteCache] = None):

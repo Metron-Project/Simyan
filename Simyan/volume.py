@@ -1,8 +1,9 @@
 from marshmallow import Schema, fields, post_load, INCLUDE, ValidationError
 
-from Simyan import APIError, character, concept, image, location, item, people
-from Simyan.issue.issue_entry import IssueEntrySchema
-from Simyan.publisher.publisher_entry import PublisherEntrySchema
+from Simyan import character, concept, image, location, item, people
+from Simyan.issue_entry import IssueEntrySchema
+from Simyan.publisher_entry import PublisherEntrySchema
+from Simyan.exceptions import APIError
 
 
 class Volume:

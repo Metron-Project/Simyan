@@ -1,6 +1,6 @@
 import pytest
 
-from Simyan import APIError
+from Simyan.exceptions import APIError
 
 PUBLISHER_ID = 10
 STORY_ARC_ID = 55766
