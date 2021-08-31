@@ -11,7 +11,7 @@ A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvin
 
 ## Built Using
 
-- [Poetry: 1.1.7](https://python-poetry.org)
+- [Poetry: 1.1.8](https://python-poetry.org)
 - [Python: 3.9.6](https://www.python.org/)
 - [marshmallow: 3.13.0](https://pypi.org/project/marshmallow)
 - [requests: 2.26.0](https://pypi.org/project/requests)
@@ -60,4 +60,4 @@ print(result.description)
 
 Big thanks to [Mokkari](https://github.com/bpepple/mokkari) for the inspiration and template for this project.
 
-[![Discord | The DEV Environment](https://discordapp.com/api/guilds/618581423070117932/widget.png?style=banner2)](https://discord.gg/nqGMeGg)
+[![Discord | The-DEV-Environment](https://discordapp.com/api/guilds/618581423070117932/widget.png?style=banner2)](https://discord.gg/nqGMeGg)

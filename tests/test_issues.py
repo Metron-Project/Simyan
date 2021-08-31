@@ -6,13 +6,13 @@ from Simyan.exceptions import APIError
 
 VOLUME_ID = 18216
 ISSUE_ID = 111265
-ISSUE_NUMBER = '1'
+ISSUE_NUMBER = "1"
 
 
 def test_issue(talker):
     result = talker.issue(ISSUE_ID)
-    assert result.volume.id == VOLUME_ID
     assert result.id == ISSUE_ID
+    assert result.volume.id == VOLUME_ID
     assert result.issue_number == ISSUE_NUMBER
 
 
@@ -22,12 +22,15 @@ def test_issue_fail(talker):
 
 
 def test_issue_list(talker):
-    results = talker.issue_list({'filter': f"volume:{VOLUME_ID},issue_number:{ISSUE_NUMBER}"})
-    assert len([x for x in results if x.volume.id == VOLUME_ID and x.id == ISSUE_ID and x.issue_number == ISSUE_NUMBER]) == 1
+    search_results = talker.issue_list({"filter": f"volume:{VOLUME_ID},issue_number:{ISSUE_NUMBER}"})
+    result = [x for x in search_results if x.id == ISSUE_ID][0]
+    assert result.volume.id == VOLUME_ID
+    assert result.id == ISSUE_ID
+    assert result.issue_number == ISSUE_NUMBER
 
 
 def test_issue_list_empty(talker):
-    results = talker.issue_list({'filter': 'name:INVALID'})
+    results = talker.issue_list({"filter": "name:INVALID"})
     assert len(results) == 0
 
 

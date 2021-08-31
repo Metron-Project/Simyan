@@ -4,11 +4,13 @@ from Simyan.exceptions import APIError
 
 PUBLISHER_ID = 10
 STORY_ARC_ID = 55766
-STORY_ARC_NAME = 'Blackest Night'
+STORY_ARC_NAME = "Blackest Night"
 
 
 def test_story_arc(talker):
     result = talker.story_arc(STORY_ARC_ID)
+    assert result.id == STORY_ARC_ID
+    assert result.publisher.id == PUBLISHER_ID
     assert result.name == STORY_ARC_NAME
 
 
@@ -18,10 +20,13 @@ def test_story_arc_fail(talker):
 
 
 def test_story_arc_list(talker):
-    results = talker.story_arc_list({'filter': f"name:{STORY_ARC_NAME}"})
-    assert len([x for x in results if x.id == STORY_ARC_ID and x.name == STORY_ARC_NAME]) == 1
+    search_results = talker.story_arc_list({"filter": f"name:{STORY_ARC_NAME}"})
+    result = [x for x in search_results if x.id == STORY_ARC_ID][0]
+    assert result.id == STORY_ARC_ID
+    assert result.publisher.id == PUBLISHER_ID
+    assert result.name == STORY_ARC_NAME
 
 
 def test_story_arc_list_empty(talker):
-    results = talker.story_arc_list({'filter': 'name:INVALID'})
+    results = talker.story_arc_list({"filter": "name:INVALID"})
     assert len(results) == 0

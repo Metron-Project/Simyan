@@ -4,14 +4,14 @@ from Simyan.exceptions import APIError
 
 PUBLISHER_ID = 10
 VOLUME_ID = 18216
-VOLUME_NAME = 'Green Lantern'
-VOLUME_START_YEAR = '2005'
+VOLUME_NAME = "Green Lantern"
+VOLUME_START_YEAR = "2005"
 
 
 def test_volume(talker):
     result = talker.volume(VOLUME_ID)
-    assert result.publisher.id == PUBLISHER_ID
     assert result.id == VOLUME_ID
+    assert result.publisher.id == PUBLISHER_ID
     assert result.name == VOLUME_NAME
     assert result.start_year == VOLUME_START_YEAR
 
@@ -22,10 +22,14 @@ def test_volume_fail(talker):
 
 
 def test_volume_list(talker):
-    results = talker.volume_list({'filter': f"name:{VOLUME_NAME}"})
-    assert len([x for x in results if x.publisher.id == PUBLISHER_ID and x.id == VOLUME_ID and x.name == VOLUME_NAME and x.start_year == VOLUME_START_YEAR]) == 1
+    search_results = talker.volume_list({"filter": f"name:{VOLUME_NAME}"})
+    result = [x for x in search_results if x.id == VOLUME_ID][0]
+    assert result.publisher.id == PUBLISHER_ID
+    assert result.id == VOLUME_ID
+    assert result.name == VOLUME_NAME
+    assert result.start_year == VOLUME_START_YEAR
 
 
 def test_volume_list_empty(talker):
-    results = talker.volume_list({'filter': 'name:INVALID'})
+    results = talker.volume_list({"filter": "name:INVALID"})
     assert len(results) == 0

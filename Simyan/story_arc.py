@@ -1,7 +1,7 @@
-from marshmallow import Schema, fields, post_load, INCLUDE, ValidationError
+from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load
 
-from Simyan.exceptions import APIError
 from Simyan import image
+from Simyan.exceptions import APIError
 from Simyan.issue_entry import IssueEntrySchema
 from Simyan.publisher_entry import PublisherEntrySchema
 
@@ -14,22 +14,22 @@ class StoryArc:
 
 class StoryArcSchema(Schema):
     aliases = fields.Str(allow_none=True)
-    api_url = fields.Url(data_key='api_detail_url')
-    issue_count = fields.Int(data_key='count_of_issue_appearances')
+    api_url = fields.Url(data_key="api_detail_url")
+    issue_count = fields.Int(data_key="count_of_issue_appearances")
     date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
     date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
-    summary = fields.Str(data_key='deck', allow_none=True)
+    summary = fields.Str(data_key="deck", allow_none=True)
     description = fields.Str(allow_none=True)
     # Ignoring Episodes
     # Ignoring First Episode
-    first_issue = fields.Nested(IssueEntrySchema, data_key='first_appeared_in_issue')
+    first_issue = fields.Nested(IssueEntrySchema, data_key="first_appeared_in_issue")
     id = fields.Int()
     image = fields.Nested(image.ImageEntrySchema)
     issues = fields.Nested(IssueEntrySchema, many=True)
     # Ignoring Movies
     name = fields.Str()
     publisher = fields.Nested(PublisherEntrySchema)
-    site_url = fields.Url(data_key='site_detail_url')
+    site_url = fields.Url(data_key="site_detail_url")
 
     class Meta:
         unknown = INCLUDE

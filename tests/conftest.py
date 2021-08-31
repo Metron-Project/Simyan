@@ -14,5 +14,5 @@ def dummy_key():
 def talker(dummy_key):
     return api(
         api_key=dummy_key,
-        cache=sqlite_cache.SqliteCache('tests/Simyan-Cache.sqlite'),
+        cache=sqlite_cache.SqliteCache("tests/Simyan-Cache.sqlite"),
     )
