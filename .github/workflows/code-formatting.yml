@@ -52,4 +52,4 @@ jobs:
       #    Run pre-commit formatting
       #----------------------------------------------
       - name: Run pre-commit formatting
-        run: pre-commit run --all-files
+        run: poetry run pre-commit run --all-files
