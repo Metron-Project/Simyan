@@ -34,10 +34,8 @@ class CVType(Enum):
 class Session:
     def __init__(self, api_key: str, cache: Optional[SqliteCache] = None):
         self.api_key = api_key
-        self.header = {
-            'User-Agent': f"Simyan/{platform.system()}: {platform.release()}"
-        }
-        self.api_url = 'https://comicvine.gamespot.com/api/{}/'
+        self.header = {"User-Agent": f"Simyan/{platform.system()}: {platform.release()}"}
+        self.api_url = "https://comicvine.gamespot.com/api/{}/"
         self.cache = cache
 
     @sleep_and_retry
@@ -45,15 +43,15 @@ class Session:
     def call(self, endpoint: List[Union[str, int]], params: Dict[str, Union[str, int]] = None) -> Dict[str, Any]:
         if params is None:
             params = {}
-        params['api_key'] = self.api_key
-        params['format'] = 'json'
+        params["api_key"] = self.api_key
+        params["format"] = "json"
 
-        cache_params = ''
+        cache_params = ""
         if params:
             ordered_params = OrderedDict(sorted(params.items(), key=lambda x: x[0]))
             cache_params = f"?{urlencode(ordered_params)}"
 
-        url = self.api_url.format('/'.join(str(e) for e in endpoint))
+        url = self.api_url.format("/".join(str(e) for e in endpoint))
         cache_key = f"{url}{cache_params}"
         cache_key = re.sub(r"(.+api_key=)(.+?)(&.+)", r"\1*****\3", cache_key)
 
@@ -75,8 +73,8 @@ class Session:
         except JSONDecodeError as e:
             raise APIError(f"Invalid request: {repr(e)}")
 
-        if 'error' in data and data['error'] != 'OK':
-            raise APIError(data['error'])
+        if "error" in data and data["error"] != "OK":
+            raise APIError(data["error"])
         if self.cache:
             try:
                 self.cache.insert(cache_key, data)
@@ -87,54 +85,51 @@ class Session:
 
     def publisher(self, _id: int) -> Publisher:
         try:
-            return PublisherSchema().load(self.call(['publisher', f"{CVType.PUBLISHER}-{_id}"])['results'])
+            return PublisherSchema().load(self.call(["publisher", f"{CVType.PUBLISHER}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
     def publisher_list(self, params: Dict[str, Union[str, int]] = None) -> PublisherList:
-        results = self._retrieve_all_responses('publishers', params)
+        results = self._retrieve_all_responses("publishers", params)
         return PublisherList(results)
 
     def volume(self, _id: int) -> Volume:
         try:
-            return VolumeSchema().load(self.call(['volume', f"{CVType.VOLUME}-{_id}"])['results'])
+            return VolumeSchema().load(self.call(["volume", f"{CVType.VOLUME}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
     def volume_list(self, params: Dict[str, Union[str, int]] = None) -> VolumeList:
-        results = self._retrieve_all_responses('volumes', params)
+        results = self._retrieve_all_responses("volumes", params)
         return VolumeList(results)
 
     def issue(self, _id: int) -> Issue:
         try:
-            return IssueSchema().load(self.call(['issue', f"{CVType.ISSUE}-{_id}"])['results'])
+            return IssueSchema().load(self.call(["issue", f"{CVType.ISSUE}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
     def issue_list(self, params: Dict[str, Union[str, int]] = None) -> IssueList:
-        results = self._retrieve_all_responses('issues', params)
+        results = self._retrieve_all_responses("issues", params)
         return IssueList(results)
 
     def story_arc(self, _id: int) -> StoryArc:
         try:
-            return StoryArcSchema().load(self.call(['story_arc', f"{CVType.ARC}-{_id}"])['results'])
+            return StoryArcSchema().load(self.call(["story_arc", f"{CVType.ARC}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
     def story_arc_list(self, params: Dict[str, Union[str, int]] = None) -> StoryArcList:
-        results = self._retrieve_all_responses('story_arcs', params)
+        results = self._retrieve_all_responses("story_arcs", params)
         return StoryArcList(results)
 
     def _retrieve_all_responses(self, resource: str, params: Dict[str, Union[str, int]] = None):
         if params is None:
             params = {}
         response = self.call([resource], params=params)
-        result = response['results']
-        while (
-            response['number_of_total_results']
-            > response['offset'] + response['number_of_page_results']
-        ):
-            params['offset'] = response['offset'] + response['number_of_page_results']
+        result = response["results"]
+        while response["number_of_total_results"] > response["offset"] + response["number_of_page_results"]:
+            params["offset"] = response["offset"] + response["number_of_page_results"]
             response = self.call([resource], params=params)
-            result.extend(response['results'])
+            result.extend(response["results"])
         return result

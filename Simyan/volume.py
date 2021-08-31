@@ -1,9 +1,9 @@
-from marshmallow import Schema, fields, post_load, INCLUDE, ValidationError
+from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load
 
-from Simyan import character, concept, image, location, item, people
+from Simyan import character, concept, image, item, location, people
+from Simyan.exceptions import APIError
 from Simyan.issue_entry import IssueEntrySchema
 from Simyan.publisher_entry import PublisherEntrySchema
-from Simyan.exceptions import APIError
 
 
 class Volume:
@@ -14,13 +14,13 @@ class Volume:
 
 class VolumeSchema(Schema):
     aliases = fields.Str(allow_none=True)
-    api_url = fields.Url(data_key='api_detail_url')
+    api_url = fields.Url(data_key="api_detail_url")
     characters = fields.Nested(character.CharacterEntrySchema, many=True)
     concepts = fields.Nested(concept.ConceptEntrySchema, many=True)
-    issue_count = fields.Int(data_key='count_of_issues')
+    issue_count = fields.Int(data_key="count_of_issues")
     date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
     date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
-    summary = fields.Str(data_key='deck', allow_none=True)
+    summary = fields.Str(data_key="deck", allow_none=True)
     description = fields.Str(allow_none=True)
     first_issue = fields.Nested(IssueEntrySchema)
     id = fields.Int()
@@ -31,7 +31,7 @@ class VolumeSchema(Schema):
     objects = fields.Nested(item.ItemEntrySchema, many=True)
     people = fields.Nested(people.PeopleEntrySchema, many=True)
     publisher = fields.Nested(PublisherEntrySchema)
-    site_url = fields.Url(data_key='site_detail_url')
+    site_url = fields.Url(data_key="site_detail_url")
     start_year = fields.Str()
 
     class Meta:

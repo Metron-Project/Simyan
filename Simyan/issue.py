@@ -1,9 +1,9 @@
-from marshmallow import Schema, fields, post_load, INCLUDE, ValidationError
+from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load
 
-from Simyan import character, concept, image, location, item, people, team
+from Simyan import character, concept, image, item, location, people, team
+from Simyan.exceptions import APIError
 from Simyan.story_arc_entry import StoryArcEntrySchema
 from Simyan.volume_entry import VolumeEntrySchema
-from Simyan.exceptions import APIError
 
 
 class Issue:
@@ -14,14 +14,14 @@ class Issue:
 
 class IssueSchema(Schema):
     aliases = fields.Str(allow_none=True)
-    api_url = fields.Url(data_key='api_detail_url')
+    api_url = fields.Url(data_key="api_detail_url")
     character_credits = fields.Nested(character.CharacterEntrySchema, many=True)
     character_died_in = fields.Nested(character.CharacterEntrySchema, many=True)
     concept_credits = fields.Nested(concept.ConceptEntrySchema, many=True)
     cover_date = fields.Date(format="%Y-%m-%d")
     date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
     date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
-    summary = fields.Str(data_key='deck', allow_none=True)
+    summary = fields.Str(data_key="deck", allow_none=True)
     description = fields.Str()
     first_appearance_characters = fields.Str(allow_none=True)
     first_appearance_concepts = fields.Str(allow_none=True)
@@ -37,7 +37,7 @@ class IssueSchema(Schema):
     name = fields.Str()
     object_credits = fields.Nested(item.ItemEntrySchema, many=True)
     person_credits = fields.Nested(people.PeopleEntrySchema, many=True)
-    site_url = fields.Url(data_key='site_detail_url')
+    site_url = fields.Url(data_key="site_detail_url")
     store_date = fields.Date(format="%Y-%m-%d", allow_none=True)
     story_arc_credits = fields.Nested(StoryArcEntrySchema, many=True)
     team_credits = fields.Nested(team.TeamEntrySchema, many=True)

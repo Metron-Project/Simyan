@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "simyan"
-version = "0.2.0"
+name = "Simyan"
+version = "0.3.0"
 description = "A Python wrapper for the Comicvine API."
 license = "MIT"
 authors = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
@@ -23,9 +23,14 @@ requests = "^2.26.0"
 ratelimit = "^2.2.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.4"
+pytest = "^6.2.5"
 pytest-cov = "^2.12.1"
 flake8 = "^3.9.2"
+black = "^21.8b0"
+isort = "^5.9.3"
+pre-commit = "^2.14.1"
+pyupgrade = "^2.25.0"
+seed-isort-config = "^2.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -33,6 +38,18 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.urls]
 "Issue Tracker" = "https://github.com/Buried-In-Code/Simyan/issues"
+
+[tool.black]
+line-length = 120
+target-version = ['py39'] 
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 120
+default_section = "THIRDPARTY"
+known_first_party = []
+known_third_party = ["marshmallow", "pytest", "ratelimit", "requests"]
 
 [tool.coverage.run]
 source = ["Simyan"]

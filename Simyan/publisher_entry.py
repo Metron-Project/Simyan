@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, post_load, INCLUDE
+from marshmallow import INCLUDE, Schema, fields, post_load
 
 
 class PublisherEntry:
@@ -8,7 +8,7 @@ class PublisherEntry:
 
 
 class PublisherEntrySchema(Schema):
-    api_url = fields.Url(data_key='api_detail_url')
+    api_url = fields.Url(data_key="api_detail_url")
     id = fields.Int()
     name = fields.Str()
 

@@ -6,4 +6,9 @@ updates:
       interval: "daily"
     labels:
       - "Type: Maintenance"
-      - "Status: Awaiting Review"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "Type: Maintenance"
