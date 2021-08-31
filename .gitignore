@@ -15,9 +15,9 @@ dist/
 *.old
 *.json
 *.ini
-
-# =====Project=====
-
 .coverage
 .coverage.*
 coverage.xml
+!.pre-commit-config.yaml
+
+# =====Project-Specific=====
