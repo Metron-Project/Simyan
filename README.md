@@ -1,21 +1,16 @@
 # Simyan
 
-[![Version](https://img.shields.io/github/tag-pre/Buried-In-Code/Simyan.svg?label=version&style=flat-square)](https://github.com/Buried-In-Code/Simyan/releases)
-[![Issues](https://img.shields.io/github/issues/Buried-In-Code/Simyan.svg?style=flat-square)](https://github.com/Buried-In-Code/Simyan/issues)
-[![Contributors](https://img.shields.io/github/contributors/Buried-In-Code/Simyan.svg?style=flat-square)](https://github.com/Buried-In-Code/Simyan/graphs/contributors)
-[![License](https://img.shields.io/github/license/Buried-In-Code/Simyan.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![PyPI - Python](https://img.shields.io/pypi/pyversions/Simyan.svg?logo=Python&label=Python-Versions&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
+[![PyPI - Version](https://img.shields.io/pypi/v/Simyan.svg?logo=PyPI&label=Version&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/Simyan.svg?logo=PyPI&label=Downloads&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
+[![PyPI - License](https://img.shields.io/pypi/l/Simyan.svg?logo=PyPI&label=License&style=flat-square)](https://opensource.org/licenses/MIT)
 
-[![Code Analysis](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code-Analysis?label=Code-Analysis&logo=github&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-analysis.yml)
+[![Github - Contributors](https://img.shields.io/github/contributors/Buried-In-Code/Simyan.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Buried-In-Code/Simyan/graphs/contributors)
+[![Github Action - Code Analysis](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code-Analysis?logo=Github-Actions&label=Code-Analysis&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-analysis.yml)
+[![Github Action - Code Formatting](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code-Formatting?logo=Github-Actions&label=Code-Formatting&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-formatting.yml)
+
 
 A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvine.gamespot.com/api/) API.
-
-## Built Using
-
-- [Poetry: 1.1.8](https://python-poetry.org)
-- [Python: 3.9.6](https://www.python.org/)
-- [marshmallow: 3.13.0](https://pypi.org/project/marshmallow)
-- [requests: 2.26.0](https://pypi.org/project/requests)
-- [ratelimit: 2.2.1](https://pypi.org/project/ratelimit)
 
 ## Installation
 
@@ -60,4 +55,4 @@ print(result.description)
 
 Big thanks to [Mokkari](https://github.com/bpepple/mokkari) for the inspiration and template for this project.
 
-[![Discord | The-DEV-Environment](https://discordapp.com/api/guilds/618581423070117932/widget.png?style=banner2)](https://discord.gg/nqGMeGg)
+[![Social - Discord](https://img.shields.io/discord/618581423070117932.svg?logo=Discord&label=The-DEV-Environment&style=flat-square&colorB=7289da)](https://discord.gg/nqGMeGg)
