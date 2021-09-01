@@ -11,6 +11,7 @@ from ratelimit import limits, sleep_and_retry
 from requests import get
 from requests.exceptions import ConnectionError
 
+from .creator import Creator, CreatorList, CreatorSchema
 from .exceptions import APIError, CacheError
 from .issue import Issue, IssueList, IssueSchema
 from .publisher import Publisher, PublisherList, PublisherSchema
@@ -26,6 +27,7 @@ class CVType(Enum):
     ISSUE = 4000
     PUBLISHER = 4010
     ARC = 4045
+    CREATOR = 4040
 
     def __str__(self):
         return f"{self.value}"
@@ -122,6 +124,16 @@ class Session:
     def story_arc_list(self, params: Dict[str, Union[str, int]] = None) -> StoryArcList:
         results = self._retrieve_all_responses("story_arcs", params)
         return StoryArcList(results)
+
+    def creator(self, _id: int) -> Creator:
+        try:
+            return CreatorSchema().load(self.call(["person", f"{CVType.CREATOR}-{_id}"])["results"])
+        except ValidationError as error:
+            raise APIError(error.messages)
+
+    def creator_list(self, params: Dict[str, Union[str, int]] = None) -> CreatorList:
+        results = self._retrieve_all_responses("people", params)
+        return CreatorList(results)
 
     def _retrieve_all_responses(self, resource: str, params: Dict[str, Union[str, int]] = None):
         if params is None:

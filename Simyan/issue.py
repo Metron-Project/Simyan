@@ -1,6 +1,7 @@
 from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load
 
-from Simyan import character, concept, image, item, location, people, team
+from Simyan import character, concept, image, item, location, team
+from Simyan.creator_entry import CreatorEntrySchema
 from Simyan.exceptions import APIError
 from Simyan.story_arc_entry import StoryArcEntrySchema
 from Simyan.volume_entry import VolumeEntrySchema
@@ -36,7 +37,7 @@ class IssueSchema(Schema):
     location_credits = fields.Nested(location.LocationEntrySchema, many=True)
     name = fields.Str()
     object_credits = fields.Nested(item.ItemEntrySchema, many=True)
-    person_credits = fields.Nested(people.PeopleEntrySchema, many=True)
+    creators = fields.Nested(CreatorEntrySchema, many=True)
     site_url = fields.Url(data_key="site_detail_url")
     store_date = fields.Date(format="%Y-%m-%d", allow_none=True)
     story_arc_credits = fields.Nested(StoryArcEntrySchema, many=True)

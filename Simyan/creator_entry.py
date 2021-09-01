@@ -1,22 +1,23 @@
 from marshmallow import INCLUDE, Schema, fields, post_load
 
 
-class PeopleEntry:
+class CreatorEntry:
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
 
-class PeopleEntrySchema(Schema):
+class CreatorEntrySchema(Schema):
     api_url = fields.Url(data_key="api_detail_url")
     id = fields.Int()
     name = fields.Str()
     site_url = fields.Url(data_key="site_detail_url")
+    role = fields.Str()
     count = fields.Str()
 
     class Meta:
         unknown = INCLUDE
 
     @post_load
-    def make_object(self, data, **kwargs) -> PeopleEntry:
-        return PeopleEntry(**data)
+    def make_object(self, data, **kwargs) -> CreatorEntry:
+        return CreatorEntry(**data)

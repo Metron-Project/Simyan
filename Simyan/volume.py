@@ -1,6 +1,7 @@
 from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load
 
-from Simyan import character, concept, image, item, location, people
+from Simyan import character, concept, image, item, location
+from Simyan.creator_entry import CreatorEntrySchema
 from Simyan.exceptions import APIError
 from Simyan.issue_entry import IssueEntrySchema
 from Simyan.publisher_entry import PublisherEntrySchema
@@ -29,7 +30,7 @@ class VolumeSchema(Schema):
     locations = fields.Nested(location.LocationEntrySchema, many=True)
     name = fields.Str()
     objects = fields.Nested(item.ItemEntrySchema, many=True)
-    people = fields.Nested(people.PeopleEntrySchema, many=True)
+    creators = fields.Nested(CreatorEntrySchema, many=True)
     publisher = fields.Nested(PublisherEntrySchema)
     site_url = fields.Url(data_key="site_detail_url")
     start_year = fields.Str()
