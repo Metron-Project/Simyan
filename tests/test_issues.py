@@ -1,19 +1,43 @@
-import datetime
+from datetime import date
 
 import pytest
 
 from Simyan.exceptions import APIError
 
+COVER_DATE = date(year=2005, month=7, day=1)
+FIRST_APPEARANCE_STORY_ARCS = None
+ID = 111265
+NAME = "Airborne"
+NUMBER = "1"
+CREATORS_COUNT = 10
+CREATOR_ID = 10945
+CREATOR_NAME = "Alex Ross"
+CREATOR_ROLES = "inker, colorist, cover"
+STORE_DATE = date(year=2005, month=5, day=18)
+STORY_ARCS_COUNT = 1
+STORY_ARC_ID = 54588
+STORY_ARC_NAME = "Green Lantern: Rebirth"
 VOLUME_ID = 18216
-ISSUE_ID = 111265
-ISSUE_NUMBER = "1"
+VOLUME_NAME = "Green Lantern"
 
 
 def test_issue(talker):
-    result = talker.issue(ISSUE_ID)
-    assert result.id == ISSUE_ID
+    result = talker.issue(ID)
+    assert result.cover_date == COVER_DATE
+    assert result.first_appearance_story_arcs == FIRST_APPEARANCE_STORY_ARCS
+    assert result.id == ID
+    assert result.name == NAME
+    assert result.number == NUMBER
+    assert len(result.creators) == CREATORS_COUNT
+    assert result.creators[0].id == CREATOR_ID
+    assert result.creators[0].name == CREATOR_NAME
+    assert result.creators[0].roles == CREATOR_ROLES
+    assert result.store_date == STORE_DATE
+    assert len(result.story_arcs) == STORY_ARCS_COUNT
+    assert result.story_arcs[0].id == STORY_ARC_ID
+    assert result.story_arcs[0].name == STORY_ARC_NAME
     assert result.volume.id == VOLUME_ID
-    assert result.issue_number == ISSUE_NUMBER
+    assert result.volume.name == VOLUME_NAME
 
 
 def test_issue_fail(talker):
@@ -22,11 +46,18 @@ def test_issue_fail(talker):
 
 
 def test_issue_list(talker):
-    search_results = talker.issue_list({"filter": f"volume:{VOLUME_ID},issue_number:{ISSUE_NUMBER}"})
-    result = [x for x in search_results if x.id == ISSUE_ID][0]
+    search_results = talker.issue_list({"filter": f"volume:{VOLUME_ID},issue_number:{NUMBER}"})
+    result = [x for x in search_results if x.id == ID][0]
+    assert result.cover_date == COVER_DATE
+    # Search doesn't contain First Appearance Story Arcs
+    assert result.id == ID
+    assert result.name == NAME
+    assert result.number == NUMBER
+    # Search doesn't contain Creators
+    assert result.store_date == STORE_DATE
+    # Search doesn't contain Story Arcs
     assert result.volume.id == VOLUME_ID
-    assert result.id == ISSUE_ID
-    assert result.issue_number == ISSUE_NUMBER
+    assert result.volume.name == VOLUME_NAME
 
 
 def test_issue_list_empty(talker):
@@ -37,11 +68,11 @@ def test_issue_list_empty(talker):
 def test_issue_bad_cover_date(talker):
     xmen_2 = talker.issue(6787)
     assert xmen_2.store_date is None
-    assert xmen_2.cover_date == datetime.date(1963, 11, 1)
+    assert xmen_2.cover_date == date(1963, 11, 1)
     assert xmen_2.id == 6787
-    assert xmen_2.issue_number == "2"
-    assert len(xmen_2.person_credits) == 4
-    assert xmen_2.person_credits[0].name == "Jack Kirby"
-    assert xmen_2.person_credits[0].role == "penciler"
+    assert xmen_2.number == "2"
+    assert len(xmen_2.creators) == 4
+    assert xmen_2.creators[0].name == "Jack Kirby"
+    assert xmen_2.creators[0].roles == "penciler"
     assert len(xmen_2.character_credits) == 10
     assert xmen_2.character_credits[0].name == "Angel"

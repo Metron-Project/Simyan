@@ -18,7 +18,6 @@ class PublisherSchema(Schema):
     characters = fields.Nested(character.CharacterEntrySchema, many=True)
     date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
     date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
-    summary = fields.Str(data_key="deck", allow_none=True)
     description = fields.Str(allow_none=True)
     id = fields.Int()
     image = fields.Nested(image.ImageEntrySchema)
@@ -27,7 +26,8 @@ class PublisherSchema(Schema):
     location_state = fields.Str(allow_none=True)
     name = fields.Str()
     site_url = fields.Url(data_key="site_detail_url")
-    story_arcs = fields.Nested(StoryArcEntrySchema, many=True)
+    story_arcs = fields.Nested(StoryArcEntrySchema, data_key="story_arcs", many=True)
+    summary = fields.Str(data_key="deck", allow_none=True)
     teams = fields.Nested(team.TeamEntrySchema, many=True)
     volumes = fields.Nested(VolumeEntrySchema, many=True)
 
