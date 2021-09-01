@@ -11,7 +11,7 @@ class IssueEntrySchema(Schema):
     api_url = fields.Url(data_key="api_detail_url")
     id = fields.Int()
     name = fields.Str(allow_none=True)
-    issue_number = fields.Str(allow_none=True)
+    number = fields.Str(data_key="issue_number", allow_none=True)
 
     class Meta:
         unknown = INCLUDE

@@ -12,7 +12,7 @@ class CreatorEntrySchema(Schema):
     id = fields.Int()
     name = fields.Str()
     site_url = fields.Url(data_key="site_detail_url")
-    role = fields.Str()
+    roles = fields.Str(data_key="role")
     count = fields.Str()
 
     class Meta:
