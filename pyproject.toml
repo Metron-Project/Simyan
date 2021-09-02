@@ -17,7 +17,7 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 marshmallow = "^3.13.0"
 requests = "^2.26.0"
 ratelimit = "^2.2.1"
@@ -31,6 +31,7 @@ isort = "^5.9.3"
 pre-commit = "^2.14.1"
 pyupgrade = "^2.25.0"
 seed-isort-config = "^2.2.0"
+tox = "^3.24.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
