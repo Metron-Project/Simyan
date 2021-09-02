@@ -1,7 +1,7 @@
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_load
 
-from Simyan.entries import GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
 from Simyan.exceptions import APIError
+from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
 
 
 class StoryArcResult:

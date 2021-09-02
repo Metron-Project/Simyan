@@ -1,7 +1,7 @@
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_load
 
-from Simyan.entries import ImageEntrySchema
 from Simyan.exceptions import APIError
+from Simyan.generic_entries import ImageEntrySchema
 
 
 class PublisherResult:

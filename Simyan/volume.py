@@ -1,6 +1,6 @@
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
-from Simyan.entries import CountEntrySchema, GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
+from Simyan.generic_entries import CountEntrySchema, GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
 
 
 class Volume:

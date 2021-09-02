@@ -45,7 +45,7 @@ class IssueEntry:
 
 
 class IssueEntrySchema(GenericEntrySchema):
-    number = fields.Str(data_key="issue_number")
+    number = fields.Str(data_key="issue_number", allow_none=True)
 
     class Meta:
         unknown = EXCLUDE
