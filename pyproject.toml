@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Simyan"
-version = "0.3.0"
+version = "0.4.0"
 description = "A Python wrapper for the Comicvine API."
 license = "MIT"
 authors = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
@@ -15,9 +15,23 @@ packages = [
 include = [
     { path = "tests", format = "sdist" }
 ]
+classifiers = [
+	"Development Status :: 3 - Alpha",
+	"Environment :: Console",
+	"Intended Audience :: Developers",
+	"License :: OSI Approved :: MIT License",
+	"Natural Language :: English",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Internet",
+	"Typing :: Typed"
+]
+keywords=["comics", "comic", "metadata"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 marshmallow = "^3.13.0"
 requests = "^2.26.0"
 ratelimit = "^2.2.1"
@@ -42,7 +56,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 120
-target-version = ['py39'] 
+target-version = ['py37']
 
 [tool.isort]
 profile = "black"
