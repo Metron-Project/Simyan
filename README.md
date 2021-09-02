@@ -9,6 +9,8 @@
 [![Github Action - Code Analysis](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code-Analysis?logo=Github-Actions&label=Code-Analysis&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-analysis.yml)
 [![Github Action - Code Formatting](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code-Formatting?logo=Github-Actions&label=Code-Formatting&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-formatting.yml)
 
+[![Code Style - Black](https://img.shields.io/badge/Code%20Style-Black-000000.svg?style=flat-square)](https://github.com/psf/black)
+
 A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvine.gamespot.com/api/) API.
 
 ## Installation
