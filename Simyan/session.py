@@ -11,22 +11,27 @@ from ratelimit import limits, sleep_and_retry
 from requests import get
 from requests.exceptions import ConnectionError
 
-from .creator import Creator, CreatorList, CreatorSchema
-from .exceptions import APIError, CacheError
-from .issue import Issue, IssueList, IssueSchema
-from .publisher import Publisher, PublisherList, PublisherSchema
-from .sqlite_cache import SqliteCache
-from .story_arc import StoryArc, StoryArcList, StoryArcSchema
-from .volume import Volume, VolumeList, VolumeSchema
+from Simyan.creator import Creator, CreatorSchema
+from Simyan.creator_list import CreatorList
+from Simyan.exceptions import APIError, CacheError
+from Simyan.issue import Issue, IssueSchema
+from Simyan.issue_list import IssueList
+from Simyan.publisher import Publisher, PublisherSchema
+from Simyan.publisher_list import PublisherList
+from Simyan.sqlite_cache import SqliteCache
+from Simyan.story_arc import StoryArc, StoryArcSchema
+from Simyan.story_arc_list import StoryArcList
+from Simyan.volume import Volume, VolumeSchema
+from Simyan.volume_list import VolumeList
 
 MINUTE = 60
 
 
 class CVType(Enum):
+    PUBLISHER = 4010
     VOLUME = 4050
     ISSUE = 4000
-    PUBLISHER = 4010
-    ARC = 4045
+    STORY_ARC = 4045
     CREATOR = 4040
 
     def __str__(self):
@@ -115,9 +120,10 @@ class Session:
         results = self._retrieve_all_responses("issues", params)
         return IssueList(results)
 
+    #
     def story_arc(self, _id: int) -> StoryArc:
         try:
-            return StoryArcSchema().load(self.call(["story_arc", f"{CVType.ARC}-{_id}"])["results"])
+            return StoryArcSchema().load(self.call(["story_arc", f"{CVType.STORY_ARC}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
