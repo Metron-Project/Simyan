@@ -7,7 +7,6 @@ FIRST_ISSUE_NAME = "Agent Orange Part 1"
 FIRST_ISSUE_NUMBER = "39"
 ID = 55766
 ISSUE_COUNT = 0
-ISSUES_COUNT = 86
 ISSUE_ID = 155207
 ISSUE_NAME = "Agent Orange Part 1"
 NAME = "Blackest Night"
@@ -22,7 +21,6 @@ def test_story_arc(talker):
     assert result.first_issue.number == FIRST_ISSUE_NUMBER
     assert result.id == ID
     assert result.issue_count == ISSUE_COUNT
-    assert len(result.issues) == ISSUES_COUNT
     assert result.issues[0].id == ISSUE_ID
     assert result.issues[0].name == ISSUE_NAME
     assert result.name == NAME
@@ -43,7 +41,6 @@ def test_story_arc_list(talker):
     assert result.first_issue.number == FIRST_ISSUE_NUMBER
     assert result.id == ID
     assert result.issue_count == ISSUE_COUNT
-    # Search doesn't contain Issues
     assert result.name == NAME
     assert result.publisher.id == PUBLISHER_ID
     assert result.publisher.name == PUBLISHER_NAME

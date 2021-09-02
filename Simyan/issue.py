@@ -1,10 +1,6 @@
-from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load
+from marshmallow import EXCLUDE, Schema, fields, post_load
 
-from Simyan import character, concept, image, item, location, team
-from Simyan.creator_entry import CreatorEntrySchema
-from Simyan.exceptions import APIError
-from Simyan.story_arc_entry import StoryArcEntrySchema
-from Simyan.volume_entry import VolumeEntrySchema
+from Simyan.generic_entries import CreatorEntrySchema, GenericEntrySchema, ImageEntrySchema
 
 
 class Issue:
@@ -16,63 +12,40 @@ class Issue:
 class IssueSchema(Schema):
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
-    character_credits = fields.Nested(character.CharacterEntrySchema, many=True)
-    character_died_in = fields.Nested(character.CharacterEntrySchema, many=True)
-    concept_credits = fields.Nested(concept.ConceptEntrySchema, many=True)
+    character_deaths = fields.Nested(GenericEntrySchema, data_key="character_died_in", many=True)
+    characters = fields.Nested(GenericEntrySchema, data_key="character_credits", many=True)
+    concepts = fields.Nested(GenericEntrySchema, data_key="concept_credits", many=True)
     cover_date = fields.Date(format="%Y-%m-%d")
     date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
     date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
     description = fields.Str()
-    first_appearance_characters = fields.Str(allow_none=True)
-    first_appearance_concepts = fields.Str(allow_none=True)
-    first_appearance_locations = fields.Str(allow_none=True)
-    first_appearance_objects = fields.Str(allow_none=True)
+    first_appearance_characters = fields.Nested(GenericEntrySchema, allow_none=True)
+    first_appearance_concepts = fields.Nested(GenericEntrySchema, allow_none=True)
+    first_appearance_locations = fields.Nested(GenericEntrySchema, allow_none=True)
+    first_appearance_objects = fields.Nested(GenericEntrySchema, allow_none=True)
     first_appearance_story_arcs = fields.Nested(
-        StoryArcEntrySchema, data_key="first_appearance_storyarcs", allow_none=True
+        GenericEntrySchema, data_key="first_appearance_storyarcs", allow_none=True
     )
-    first_appearance_teams = fields.Str(allow_none=True)
+    first_appearance_teams = fields.Nested(GenericEntrySchema, allow_none=True)
     has_staff_review = fields.Bool()
     id = fields.Int()
-    image = fields.Nested(image.ImageEntrySchema)
-    location_credits = fields.Nested(location.LocationEntrySchema, many=True)
-    name = fields.Str()
+    image = fields.Nested(ImageEntrySchema)
+    locations = fields.Nested(GenericEntrySchema, data_key="location_credits", many=True)
+    name = fields.Str(allow_none=True)
     number = fields.Str(data_key="issue_number")
-    object_credits = fields.Nested(item.ItemEntrySchema, many=True)
+    items = fields.Nested(GenericEntrySchema, data_key="object_credits", many=True)
     creators = fields.Nested(CreatorEntrySchema, data_key="person_credits", many=True)
     site_url = fields.Url(data_key="site_detail_url")
     store_date = fields.Date(format="%Y-%m-%d", allow_none=True)
-    story_arcs = fields.Nested(StoryArcEntrySchema, data_key="story_arc_credits", many=True)
+    story_arcs = fields.Nested(GenericEntrySchema, data_key="story_arc_credits", many=True)
     summary = fields.Str(data_key="deck", allow_none=True)
-    team_credits = fields.Nested(team.TeamEntrySchema, many=True)
-    team_disbanded_in = fields.Nested(team.TeamEntrySchema, many=True)
-    volume = fields.Nested(VolumeEntrySchema)
+    teams = fields.Nested(GenericEntrySchema, data_key="team_credits", many=True)
+    teams_disbanded = fields.Nested(GenericEntrySchema, data_key="team_disbanded_in", many=True)
+    volume = fields.Nested(GenericEntrySchema)
 
     class Meta:
-        unknown = INCLUDE
+        unknown = EXCLUDE
 
     @post_load
     def make_object(self, data, **kwargs) -> Issue:
         return Issue(**data)
-
-
-class IssueList:
-    def __init__(self, response):
-        self.issues = []
-
-        schema = IssueSchema()
-        for iss_dict in response:
-            try:
-                result = schema.load(iss_dict)
-            except ValidationError as error:
-                raise APIError(error)
-
-            self.issues.append(result)
-
-    def __iter__(self):
-        return iter(self.issues)
-
-    def __len__(self):
-        return len(self.issues)
-
-    def __getitem__(self, index: int):
-        return self.issues[index]

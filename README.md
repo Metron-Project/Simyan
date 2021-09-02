@@ -9,17 +9,20 @@
 [![Github Action - Code Analysis](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code-Analysis?logo=Github-Actions&label=Code-Analysis&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-analysis.yml)
 [![Github Action - Code Formatting](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code-Formatting?logo=Github-Actions&label=Code-Formatting&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-formatting.yml)
 
+[![Code Style - Black](https://img.shields.io/badge/Code%20Style-Black-000000.svg?style=flat-square)](https://github.com/psf/black)
 
 A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvine.gamespot.com/api/) API.
 
 ## Installation
 
 ### PyPI
+
 ```bash
 $ pip install Simyan
 ```
 
 ## Example Usage
+
 ```python
 from Simyan import api
 # Your config/secrets
@@ -38,6 +41,7 @@ print(result.summary)
 ```
 
 *There is a cache option to limit required calls to API*
+
 ```python
 from Simyan import api, SqliteCache
 # Your config/secrets
@@ -47,7 +51,7 @@ session = api(api_key=comicvine_api_key, cache=SqliteCache())
 
 # Get details for an Issue
 result = session.issue(_id=189810)
-print(f"{result.volume.name} #{result.issue_number}")
+print(f"{result.volume.name} #{result.number}")
 print(result.description)
 ```
 

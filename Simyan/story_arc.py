@@ -1,9 +1,6 @@
-from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load
+from marshmallow import EXCLUDE, Schema, fields, post_load
 
-from Simyan import image
-from Simyan.exceptions import APIError
-from Simyan.issue_entry import IssueEntrySchema
-from Simyan.publisher_entry import PublisherEntrySchema
+from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
 
 
 class StoryArc:
@@ -22,41 +19,18 @@ class StoryArcSchema(Schema):
     # Ignoring First Episode
     first_issue = fields.Nested(IssueEntrySchema, data_key="first_appeared_in_issue")
     id = fields.Int()
-    image = fields.Nested(image.ImageEntrySchema)
+    image = fields.Nested(ImageEntrySchema)
     issue_count = fields.Int(data_key="count_of_isssue_appearances")
-    issues = fields.Nested(IssueEntrySchema, many=True)
+    issues = fields.Nested(GenericEntrySchema, many=True)
     # Ignoring Movies
     name = fields.Str()
-    publisher = fields.Nested(PublisherEntrySchema)
+    publisher = fields.Nested(GenericEntrySchema)
     site_url = fields.Url(data_key="site_detail_url")
     summary = fields.Str(data_key="deck", allow_none=True)
 
     class Meta:
-        unknown = INCLUDE
+        unknown = EXCLUDE
 
     @post_load
     def make_object(self, data, **kwargs) -> StoryArc:
         return StoryArc(**data)
-
-
-class StoryArcList:
-    def __init__(self, response):
-        self.story_arcs = []
-
-        schema = StoryArcSchema()
-        for pub_dict in response:
-            try:
-                result = schema.load(pub_dict)
-            except ValidationError as error:
-                raise APIError(error)
-
-            self.story_arcs.append(result)
-
-    def __iter__(self):
-        return iter(self.story_arcs)
-
-    def __len__(self):
-        return len(self.story_arcs)
-
-    def __getitem__(self, index: int):
-        return self.story_arcs[index]
