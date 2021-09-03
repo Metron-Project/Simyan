@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Simyan"
-version = "0.4.0"
+version = "0.4.1"
 description = "A Python wrapper for the Comicvine API."
 license = "MIT"
 authors = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
@@ -16,7 +16,7 @@ include = [
     { path = "tests", format = "sdist" }
 ]
 classifiers = [
-	"Development Status :: 3 - Alpha",
+	"Development Status :: 4 - Beta",
 	"Environment :: Console",
 	"Intended Audience :: Developers",
 	"License :: OSI Approved :: MIT License",
@@ -44,7 +44,7 @@ pytest-cov = "^2.12.1"
 flake8 = "^3.9.2"
 black = "^21.8b0"
 isort = "^5.9.3"
-pre-commit = "^2.14.1"
+pre-commit = "^2.15.0"
 pyupgrade = "^2.25.0"
 seed-isort-config = "^2.2.0"
 tox = "^3.24.3"

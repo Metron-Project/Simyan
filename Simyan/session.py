@@ -120,7 +120,6 @@ class Session:
         results = self._retrieve_all_responses("issues", params)
         return IssueList(results)
 
-    #
     def story_arc(self, _id: int) -> StoryArc:
         try:
             return StoryArcSchema().load(self.call(["story_arc", f"{CVType.STORY_ARC}-{_id}"])["results"])
