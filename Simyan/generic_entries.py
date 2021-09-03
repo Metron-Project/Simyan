@@ -88,7 +88,7 @@ class ImageEntrySchema(Schema):
     thumb = fields.Url(data_key="thumb_url")
     tiny = fields.Url(data_key="tiny_url")
     original = fields.Url(data_key="original_url")
-    tags = fields.Str(data_key="image_tags")
+    tags = fields.Str(data_key="image_tags", allow_none=True)
 
     class Meta:
         unknown = EXCLUDE

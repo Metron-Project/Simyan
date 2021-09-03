@@ -1,13 +1,13 @@
 # Simyan
 
 [![PyPI - Python](https://img.shields.io/pypi/pyversions/Simyan.svg?logo=Python&label=Python-Versions&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
+[![PyPI - Status](https://img.shields.io/pypi/status/Simyan.svg?logo=PyPI&label=Status&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
 [![PyPI - Version](https://img.shields.io/pypi/v/Simyan.svg?logo=PyPI&label=Version&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/Simyan.svg?logo=PyPI&label=Downloads&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
 [![PyPI - License](https://img.shields.io/pypi/l/Simyan.svg?logo=PyPI&label=License&style=flat-square)](https://opensource.org/licenses/MIT)
 
 [![Github - Contributors](https://img.shields.io/github/contributors/Buried-In-Code/Simyan.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Buried-In-Code/Simyan/graphs/contributors)
 [![Github Action - Code Analysis](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code-Analysis?logo=Github-Actions&label=Code-Analysis&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-analysis.yml)
-[![Github Action - Code Formatting](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code-Formatting?logo=Github-Actions&label=Code-Formatting&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-formatting.yml)
+[![Github Action - Testing](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Testing?logo=Github-Actions&label=Tests&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/testing.yml)
 
 [![Code Style - Black](https://img.shields.io/badge/Code%20Style-Black-000000.svg?style=flat-square)](https://github.com/psf/black)
 
