@@ -46,10 +46,9 @@ jobs:
       - name: Install library
         run: poetry install --no-interaction
       #----------------------------------------------
-      # Publish Project
+      # Configure and Publish Project on PyPI
       #----------------------------------------------
+      - name: Set PyPI Token
+        run: poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
       - name: Publish Project
         run: poetry publish --build
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_TOKEN }}
