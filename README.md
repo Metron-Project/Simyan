@@ -31,7 +31,7 @@ from config import comicvine_api_key
 session = api(api_key=comicvine_api_key)
 
 # Search for Publisher
-results = session.publisher_list(params={'name': 'DC Comics'})
+results = session.publisher_list(params={'filter': 'name:DC Comics'})
 for publisher in results:
     print(f"{publisher.id} | {publisher.name} - {publisher.site_url}")
 
