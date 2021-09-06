@@ -21,6 +21,8 @@ jobs:
           - ubuntu-latest
           - macos-latest
           - windows-latest
+    env:
+      COMICVINE: ${{ secrets.COMICVINE_KEY }}
     runs-on: ${{ matrix.os }}
     steps:
       #----------------------------------------------
