@@ -6,9 +6,7 @@ license = "MIT"
 authors = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
 maintainers = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
 readme = "README.md"
-homepage = "https://github.com/Buried-In-Code/Simyan"
 repository = "https://github.com/Buried-In-Code/Simyan"
-documentation = "https://github.com/Buried-In-Code/Simyan"
 packages = [
 	{ include = "Simyan" }
 ]
