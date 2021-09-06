@@ -1,4 +1,4 @@
-name: "Code-Analysis"
+name: 'Code Analysis'
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         language:
-          - 'python'
+          - python
 
     steps:
       - name: Checkout repository

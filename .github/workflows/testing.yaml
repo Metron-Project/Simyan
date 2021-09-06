@@ -1,13 +1,27 @@
-name: "Publish"
+name: 'Testing'
 
 on:
   push:
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - 3.7
+          - 3.8
+          - 3.9
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    runs-on: ${{ matrix.os }}
     steps:
       #----------------------------------------------
       #       check-out repo and set-up python
@@ -15,7 +29,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: ${{ matrix.python-version }}
       #----------------------------------------------
       #  -----  install & configure poetry  -----
       #----------------------------------------------
@@ -33,7 +47,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .venv
-          key: venv-ubuntu-latest-3.9-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
       #----------------------------------------------
       # install dependencies if cache does not exist
       #----------------------------------------------
@@ -46,9 +60,7 @@ jobs:
       - name: Install library
         run: poetry install --no-interaction
       #----------------------------------------------
-      # Configure and Publish Project on PyPI
+      #    Run tox testing
       #----------------------------------------------
-      - name: Set PyPI Token
-        run: poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
-      - name: Publish Project
-        run: poetry publish --build
+      - name: Test with tox
+        run: poetry run tox -e py
