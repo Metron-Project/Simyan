@@ -41,6 +41,19 @@ def test_issue_fail(comicvine):
         comicvine.issue(-1)
 
 
+def test_issue_bad_cover_date(comicvine):
+    xmen_2 = comicvine.issue(6787)
+    assert xmen_2.store_date is None
+    assert xmen_2.cover_date == date(1963, 11, 1)
+    assert xmen_2.id == 6787
+    assert xmen_2.number == "2"
+    assert len(xmen_2.creators) == 4
+    assert xmen_2.creators[0].name == "Jack Kirby"
+    assert xmen_2.creators[0].roles == "penciler"
+    assert len(xmen_2.characters) == 10
+    assert xmen_2.characters[0].name == "Angel"
+
+
 def test_issue_list(comicvine):
     search_results = comicvine.issue_list({"filter": f"volume:{VOLUME_ID},issue_number:{NUMBER}"})
     result = [x for x in search_results if x.id == ID][0]
@@ -58,14 +71,11 @@ def test_issue_list_empty(comicvine):
     assert len(results) == 0
 
 
-def test_issue_bad_cover_date(comicvine):
-    xmen_2 = comicvine.issue(6787)
-    assert xmen_2.store_date is None
-    assert xmen_2.cover_date == date(1963, 11, 1)
-    assert xmen_2.id == 6787
-    assert xmen_2.number == "2"
-    assert len(xmen_2.creators) == 4
-    assert xmen_2.creators[0].name == "Jack Kirby"
-    assert xmen_2.creators[0].roles == "penciler"
-    assert len(xmen_2.characters) == 10
-    assert xmen_2.characters[0].name == "Angel"
+def test_issue_no_has_staff_review(comicvine):
+    result = comicvine.issue(505513)
+    assert "has_staff_review" not in result.__dict__.keys()
+
+
+def test_issue_list_no_has_staff_review(comicvine):
+    result = comicvine.issue_list({"filter": "issue_number:1,volume:85930"})
+    assert "has_staff_review" not in result.__dict__.keys()
