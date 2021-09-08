@@ -20,8 +20,8 @@ VOLUME_NAME = "DC Universe: Trinity"
 WEBSITE = None
 
 
-def test_creator(talker):
-    result = talker.creator(ID)
+def test_creator(comicvine):
+    result = comicvine.creator(ID)
     assert result.country == COUNTRY
     assert result.date_of_birth == DATE_OF_BIRTH
     assert result.date_of_death == DATE_OF_DEATH
@@ -40,13 +40,13 @@ def test_creator(talker):
     assert result.website == WEBSITE
 
 
-def test_creator_fail(talker):
+def test_creator_fail(comicvine):
     with pytest.raises(APIError):
-        talker.creator(-1)
+        comicvine.creator(-1)
 
 
-def test_creator_list(talker):
-    search_results = talker.creator_list({"filter": f"name:{NAME}"})
+def test_creator_list(comicvine):
+    search_results = comicvine.creator_list({"filter": f"name:{NAME}"})
     result = [x for x in search_results if x.id == ID][0]
     assert result.country == COUNTRY
     assert result.date_of_birth == DATE_OF_BIRTH
@@ -60,6 +60,6 @@ def test_creator_list(talker):
     assert result.website == WEBSITE
 
 
-def test_creator_list_empty(talker):
-    results = talker.creator_list({"filter": "name:INVALID"})
+def test_creator_list_empty(comicvine):
+    results = comicvine.creator_list({"filter": "name:INVALID"})
     assert len(results) == 0

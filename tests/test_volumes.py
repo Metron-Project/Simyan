@@ -22,8 +22,8 @@ PUBLISHER_NAME = "DC Comics"
 START_YEAR = "2005"
 
 
-def test_volume(talker):
-    result = talker.volume(ID)
+def test_volume(comicvine):
+    result = comicvine.volume(ID)
     assert result.creators[0].id == CREATOR_ID
     assert result.creators[0].name == CREATOR_NAME
     assert result.creators[0].count == CREATOR_COUNT
@@ -44,13 +44,13 @@ def test_volume(talker):
     assert result.start_year == START_YEAR
 
 
-def test_volume_fail(talker):
+def test_volume_fail(comicvine):
     with pytest.raises(APIError):
-        talker.volume(-1)
+        comicvine.volume(-1)
 
 
-def test_volume_list(talker):
-    search_results = talker.volume_list({"filter": f"name:{NAME}"})
+def test_volume_list(comicvine):
+    search_results = comicvine.volume_list({"filter": f"name:{NAME}"})
     result = [x for x in search_results if x.id == ID][0]
     assert result.first_issue.id == FIRST_ISSUE_ID
     assert result.first_issue.name == FIRST_ISSUE_NAME
@@ -66,6 +66,6 @@ def test_volume_list(talker):
     assert result.start_year == START_YEAR
 
 
-def test_volume_list_empty(talker):
-    results = talker.volume_list({"filter": "name:INVALID"})
+def test_volume_list_empty(comicvine):
+    results = comicvine.volume_list({"filter": "name:INVALID"})
     assert len(results) == 0

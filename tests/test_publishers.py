@@ -13,8 +13,8 @@ VOLUME_ID = 771
 VOLUME_NAME = "Movie Comics"
 
 
-def test_publisher(talker):
-    result = talker.publisher(ID)
+def test_publisher(comicvine):
+    result = comicvine.publisher(ID)
     assert result.id == ID
     assert result.location_address == LOCATION_ADDRESS
     assert result.location_city == LOCATION_CITY
@@ -26,13 +26,13 @@ def test_publisher(talker):
     assert result.volumes[0].name == VOLUME_NAME
 
 
-def test_publisher_fail(talker):
+def test_publisher_fail(comicvine):
     with pytest.raises(APIError):
-        talker.publisher(-1)
+        comicvine.publisher(-1)
 
 
-def test_publisher_list(talker):
-    search_results = talker.publisher_list({"filter": f"name:{NAME}"})
+def test_publisher_list(comicvine):
+    search_results = comicvine.publisher_list({"filter": f"name:{NAME}"})
     result = [x for x in search_results if x.id == ID][0]
     assert result.id == ID
     assert result.location_address == LOCATION_ADDRESS
@@ -41,6 +41,6 @@ def test_publisher_list(talker):
     assert result.name == NAME
 
 
-def test_publisher_list_empty(talker):
-    results = talker.publisher_list({"filter": "name:INVALID"})
+def test_publisher_list_empty(comicvine):
+    results = comicvine.publisher_list({"filter": "name:INVALID"})
     assert len(results) == 0

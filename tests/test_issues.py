@@ -19,8 +19,8 @@ VOLUME_ID = 18216
 VOLUME_NAME = "Green Lantern"
 
 
-def test_issue(talker):
-    result = talker.issue(ID)
+def test_issue(comicvine):
+    result = comicvine.issue(ID)
     assert result.cover_date == COVER_DATE
     assert result.first_appearance_story_arcs == FIRST_APPEARANCE_STORY_ARCS
     assert result.id == ID
@@ -36,13 +36,26 @@ def test_issue(talker):
     assert result.volume.name == VOLUME_NAME
 
 
-def test_issue_fail(talker):
+def test_issue_fail(comicvine):
     with pytest.raises(APIError):
-        talker.issue(-1)
+        comicvine.issue(-1)
 
 
-def test_issue_list(talker):
-    search_results = talker.issue_list({"filter": f"volume:{VOLUME_ID},issue_number:{NUMBER}"})
+def test_issue_bad_cover_date(comicvine):
+    xmen_2 = comicvine.issue(6787)
+    assert xmen_2.store_date is None
+    assert xmen_2.cover_date == date(1963, 11, 1)
+    assert xmen_2.id == 6787
+    assert xmen_2.number == "2"
+    assert len(xmen_2.creators) == 4
+    assert xmen_2.creators[0].name == "Jack Kirby"
+    assert xmen_2.creators[0].roles == "penciler"
+    assert len(xmen_2.characters) == 10
+    assert xmen_2.characters[0].name == "Angel"
+
+
+def test_issue_list(comicvine):
+    search_results = comicvine.issue_list({"filter": f"volume:{VOLUME_ID},issue_number:{NUMBER}"})
     result = [x for x in search_results if x.id == ID][0]
     assert result.cover_date == COVER_DATE
     assert result.id == ID
@@ -53,19 +66,16 @@ def test_issue_list(talker):
     assert result.volume.name == VOLUME_NAME
 
 
-def test_issue_list_empty(talker):
-    results = talker.issue_list({"filter": "name:INVALID"})
+def test_issue_list_empty(comicvine):
+    results = comicvine.issue_list({"filter": "name:INVALID"})
     assert len(results) == 0
 
 
-def test_issue_bad_cover_date(talker):
-    xmen_2 = talker.issue(6787)
-    assert xmen_2.store_date is None
-    assert xmen_2.cover_date == date(1963, 11, 1)
-    assert xmen_2.id == 6787
-    assert xmen_2.number == "2"
-    assert len(xmen_2.creators) == 4
-    assert xmen_2.creators[0].name == "Jack Kirby"
-    assert xmen_2.creators[0].roles == "penciler"
-    assert len(xmen_2.characters) == 10
-    assert xmen_2.characters[0].name == "Angel"
+def test_issue_no_has_staff_review(comicvine):
+    result = comicvine.issue(505513)
+    assert "has_staff_review" not in result.__dict__.keys()
+
+
+def test_issue_list_no_has_staff_review(comicvine):
+    result = comicvine.issue_list({"filter": "issue_number:1,volume:85930"})
+    assert "has_staff_review" not in result.__dict__.keys()

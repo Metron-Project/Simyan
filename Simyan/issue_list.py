@@ -17,7 +17,7 @@ class IssueResultSchema(Schema):
     date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
     date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
     description = fields.Str()
-    has_staff_review = fields.Bool()
+    # Ignoring has_staff_review
     id = fields.Int()
     image = fields.Nested(ImageEntrySchema)
     name = fields.Str(allow_none=True)

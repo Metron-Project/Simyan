@@ -27,7 +27,7 @@ class IssueSchema(Schema):
         GenericEntrySchema, data_key="first_appearance_storyarcs", allow_none=True
     )
     first_appearance_teams = fields.Nested(GenericEntrySchema, allow_none=True)
-    has_staff_review = fields.Bool()
+    # Ignoring has_staff_review
     id = fields.Int()
     image = fields.Nested(ImageEntrySchema)
     locations = fields.Nested(GenericEntrySchema, data_key="location_credits", many=True)

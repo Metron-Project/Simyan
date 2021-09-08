@@ -14,8 +14,8 @@ PUBLISHER_ID = 10
 PUBLISHER_NAME = "DC Comics"
 
 
-def test_story_arc(talker):
-    result = talker.story_arc(ID)
+def test_story_arc(comicvine):
+    result = comicvine.story_arc(ID)
     assert result.first_issue.id == FIRST_ISSUE_ID
     assert result.first_issue.name == FIRST_ISSUE_NAME
     assert result.first_issue.number == FIRST_ISSUE_NUMBER
@@ -28,13 +28,13 @@ def test_story_arc(talker):
     assert result.publisher.name == PUBLISHER_NAME
 
 
-def test_story_arc_fail(talker):
+def test_story_arc_fail(comicvine):
     with pytest.raises(APIError):
-        talker.story_arc(-1)
+        comicvine.story_arc(-1)
 
 
-def test_story_arc_list(talker):
-    search_results = talker.story_arc_list({"filter": f"name:{NAME}"})
+def test_story_arc_list(comicvine):
+    search_results = comicvine.story_arc_list({"filter": f"name:{NAME}"})
     result = [x for x in search_results if x.id == ID][0]
     assert result.first_issue.id == FIRST_ISSUE_ID
     assert result.first_issue.name == FIRST_ISSUE_NAME
@@ -46,6 +46,6 @@ def test_story_arc_list(talker):
     assert result.publisher.name == PUBLISHER_NAME
 
 
-def test_story_arc_list_empty(talker):
-    results = talker.story_arc_list({"filter": "name:INVALID"})
+def test_story_arc_list_empty(comicvine):
+    results = comicvine.story_arc_list({"filter": "name:INVALID"})
     assert len(results) == 0

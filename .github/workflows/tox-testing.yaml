@@ -1,4 +1,4 @@
-name: 'Testing'
+name: 'Tox Testing'
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
           - macos-latest
           - windows-latest
     env:
-      COMICVINE: ${{ secrets.COMICVINE_KEY }}
+      COMICVINE_API_KEY: ${{ secrets.COMICVINE_API_KEY }}
     runs-on: ${{ matrix.os }}
     steps:
       #----------------------------------------------
