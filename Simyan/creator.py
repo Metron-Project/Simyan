@@ -1,5 +1,4 @@
-from marshmallow import EXCLUDE, Schema, fields, post_load
-from marshmallow.decorators import pre_load
+from marshmallow import EXCLUDE, Schema, fields, post_load, pre_load
 
 from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema
 
