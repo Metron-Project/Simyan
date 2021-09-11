@@ -14,10 +14,10 @@ class CreatorResultSchema(Schema):
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
     country = fields.Str()
-    date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
-    date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
-    date_of_birth = fields.DateTime(format="%Y-%m-%d %H:%M:%S", data_key="birth", allow_none=True)
-    date_of_death = fields.DateTime(format="%Y-%m-%d %H:%M:%S", data_key="death", allow_none=True)
+    date_added = fields.DateTime()
+    date_last_updated = fields.DateTime()
+    date_of_birth = fields.DateTime(data_key="birth", allow_none=True)
+    date_of_death = fields.DateTime(data_key="death", allow_none=True)
     description = fields.Str()
     email = fields.Str(allow_none=True)
     gender = fields.Int()
@@ -32,6 +32,7 @@ class CreatorResultSchema(Schema):
 
     class Meta:
         unknown = EXCLUDE
+        dateformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> CreatorResult:

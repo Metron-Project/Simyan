@@ -1,5 +1,5 @@
 import pytest
-
+import datetime
 from Simyan.exceptions import APIError
 
 COUNTRY = "United States"
@@ -43,6 +43,11 @@ def test_creator(comicvine):
 def test_creator_fail(comicvine):
     with pytest.raises(APIError):
         comicvine.creator(-1)
+
+def test_creator_with_dob(comicvine):
+    kirby = comicvine.creator(5614)
+    assert kirby.date_of_birth == datetime.datetime(1917, 8, 28, 0, 0)
+    assert kirby.date_of_death == datetime.datetime(1994, 2, 6, 0, 0)
 
 
 def test_creator_list(comicvine):

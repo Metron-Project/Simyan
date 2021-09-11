@@ -13,8 +13,8 @@ class PublisherSchema(Schema):
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
     characters = fields.Nested(GenericEntrySchema, many=True)
-    date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
-    date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
+    date_added = fields.DateTime()
+    date_last_updated = fields.DateTime()
     description = fields.Str(allow_none=True)
     id = fields.Int()
     image = fields.Nested(ImageEntrySchema)
@@ -30,6 +30,7 @@ class PublisherSchema(Schema):
 
     class Meta:
         unknown = EXCLUDE
+        dateformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> Publisher:

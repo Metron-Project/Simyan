@@ -13,8 +13,8 @@ class VolumeResult:
 class VolumeResultSchema(Schema):
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
-    date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
-    date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
+    date_added = fields.DateTime()
+    date_last_updated = fields.DateTime()
     description = fields.Str(allow_none=True)
     first_issue = fields.Nested(IssueEntrySchema)
     id = fields.Int()
@@ -29,6 +29,7 @@ class VolumeResultSchema(Schema):
 
     class Meta:
         unknown = EXCLUDE
+        dateformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> VolumeResult:
