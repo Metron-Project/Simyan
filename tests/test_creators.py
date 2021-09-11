@@ -1,6 +1,7 @@
 import pytest
-
+import datetime
 from Simyan.exceptions import APIError
+from zoneinfo import ZoneInfo
 
 COUNTRY = "United States"
 DATE_OF_BIRTH = None
@@ -38,6 +39,12 @@ def test_creator(talker):
     assert result.volumes[0].id == VOLUME_ID
     assert result.volumes[0].name == VOLUME_NAME
     assert result.website == WEBSITE
+
+
+def test_creator_with_dob(talker):
+    kirby = talker.creator(5614)
+    assert kirby.date_of_birth == datetime.datetime(1917, 8, 28, 0, 0)
+    assert kirby.date_of_death == datetime.datetime(1994, 2, 6, 0, 0)
 
 
 def test_creator_fail(talker):
