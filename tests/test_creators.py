@@ -1,7 +1,6 @@
 import pytest
 import datetime
 from Simyan.exceptions import APIError
-from zoneinfo import ZoneInfo
 
 COUNTRY = "United States"
 DATE_OF_BIRTH = None
