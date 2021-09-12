@@ -1,4 +1,4 @@
-name: 'Tox Testing'
+name: 'Testing'
 
 on:
   push:
@@ -9,7 +9,8 @@ on:
       - main
 
 jobs:
-  test:
+  tox:
+    name: 'Tox Tests'
     strategy:
       fail-fast: false
       matrix:
