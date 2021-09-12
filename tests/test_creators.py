@@ -46,8 +46,8 @@ def test_creator_fail(comicvine):
 
 def test_creator_with_dob(comicvine):
     kirby = comicvine.creator(5614)
-    assert kirby.date_of_birth == datetime.datetime(1917, 8, 28, 0, 0)
-    assert kirby.date_of_death == datetime.datetime(1994, 2, 6, 0, 0)
+    assert kirby.date_of_birth == datetime.date(1917, 8, 28)
+    assert kirby.date_of_death == datetime.date(1994, 2, 6)
 
 
 def test_creator_list(comicvine):
