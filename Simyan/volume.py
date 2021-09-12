@@ -15,8 +15,8 @@ class VolumeSchema(Schema):
     characters = fields.Nested(CountEntrySchema, many=True)
     concepts = fields.Nested(CountEntrySchema, many=True)
     creators = fields.Nested(CountEntrySchema, data_key="people", many=True)
-    date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
-    date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
+    date_added = fields.DateTime()
+    date_last_updated = fields.DateTime()
     description = fields.Str(allow_none=True)
     first_issue = fields.Nested(IssueEntrySchema)
     id = fields.Int()
@@ -34,6 +34,7 @@ class VolumeSchema(Schema):
 
     class Meta:
         unknown = EXCLUDE
+        dateformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> Volume:
