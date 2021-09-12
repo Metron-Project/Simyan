@@ -73,4 +73,4 @@ source = ["Simyan"]
 show_missing = true
 
 [tool.pytest.ini_options]
-addopts = ["--cov", "-n 3"]
+addopts = ["--cov", "-x"]

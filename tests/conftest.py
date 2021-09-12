@@ -12,4 +12,4 @@ def comicvine_api_key():
 
 @pytest.fixture(scope="session")
 def comicvine(comicvine_api_key):
-    return api(api_key=comicvine_api_key, cache=sqlite_cache.SqliteCache("tests/Simyan-Cache.sqlite"))
+    return api(api_key=comicvine_api_key, cache=sqlite_cache.SqliteCache("tests/Simyan-Cache.sqlite", expiry=None))
