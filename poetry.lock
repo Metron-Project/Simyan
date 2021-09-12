@@ -172,7 +172,7 @@ pyflakes = ">=2.3.0,<2.4.0"
 
 [[package]]
 name = "identify"
-version = "2.2.13"
+version = "2.2.14"
 description = "File identification library for Python"
 category = "dev"
 optional = false
@@ -401,7 +401,7 @@ testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtuale
 
 [[package]]
 name = "pyupgrade"
-version = "2.25.0"
+version = "2.25.1"
 description = "A tool to automatically upgrade syntax for newer versions."
 category = "dev"
 optional = false
@@ -696,8 +696,8 @@ flake8 = [
     {file = "flake8-3.9.2.tar.gz", hash = "sha256:07528381786f2a6237b061f6e96610a4167b226cb926e2aa2b6b1d78057c576b"},
 ]
 identify = [
-    {file = "identify-2.2.13-py2.py3-none-any.whl", hash = "sha256:7199679b5be13a6b40e6e19ea473e789b11b4e3b60986499b1f589ffb03c217c"},
-    {file = "identify-2.2.13.tar.gz", hash = "sha256:7bc6e829392bd017236531963d2d937d66fc27cadc643ac0aba2ce9f26157c79"},
+    {file = "identify-2.2.14-py2.py3-none-any.whl", hash = "sha256:113a76a6ba614d2a3dd408b3504446bcfac0370da5995aa6a17fd7c6dffde02d"},
+    {file = "identify-2.2.14.tar.gz", hash = "sha256:32f465f3c48083f345ad29a9df8419a4ce0674bf4a8c3245191d65c83634bdbf"},
 ]
 idna = [
     {file = "idna-3.2-py3-none-any.whl", hash = "sha256:14475042e284991034cb48e06f6851428fb14c4dc953acd9be9a5e95c7b6dd7a"},
@@ -776,8 +776,8 @@ pytest-cov = [
     {file = "pytest_cov-2.12.1-py2.py3-none-any.whl", hash = "sha256:261bb9e47e65bd099c89c3edf92972865210c36813f80ede5277dceb77a4a62a"},
 ]
 pyupgrade = [
-    {file = "pyupgrade-2.25.0-py2.py3-none-any.whl", hash = "sha256:8409f4a166d8fbbf475e4e63912817f8ec07c402979f9399658929ebafaa6043"},
-    {file = "pyupgrade-2.25.0.tar.gz", hash = "sha256:a61084aae26ccedd6ae98fc0cc09383ce4e11b6d519653ff5e2fd131d2023723"},
+    {file = "pyupgrade-2.25.1-py2.py3-none-any.whl", hash = "sha256:6e23f9c3c196b8e120a39d3fbad09265c3e2413a65e085b690606a45e59e8140"},
+    {file = "pyupgrade-2.25.1.tar.gz", hash = "sha256:2b541340157fc9dba0c4cac4f28804aa11fbf2aa2cad83ec05e64abec38f1fea"},
 ]
 pyyaml = [
     {file = "PyYAML-5.4.1-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:3b2b1824fe7112845700f815ff6a489360226a5609b96ec2190a45e62a9fc922"},
