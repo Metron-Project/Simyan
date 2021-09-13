@@ -22,8 +22,6 @@ jobs:
           - ubuntu-latest
           - macos-latest
           - windows-latest
-    env:
-      COMICVINE_API_KEY: ${{ secrets.COMICVINE_API_KEY }}
     runs-on: ${{ matrix.os }}
     steps:
       #----------------------------------------------
