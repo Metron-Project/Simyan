@@ -1,4 +1,4 @@
-name: 'Publish to PyPI'
+name: 'Publishing'
 
 on:
   push:
@@ -6,7 +6,8 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
-  publish:
+  pypi:
+    name: 'Publish to PyPI'
     strategy:
       fail-fast: false
       matrix:
