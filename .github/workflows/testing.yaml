@@ -1,19 +1,29 @@
-name: 'Publish to PyPI'
+name: 'Testing'
 
 on:
   push:
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  publish:
+  tox:
+    name: 'Tox Tests'
     strategy:
       fail-fast: false
       matrix:
         python-version:
+          - 3.7
+          - 3.8
           - 3.9
         os:
           - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    env:
+      COMICVINE_API_KEY: 'Testing-Key'
     runs-on: ${{ matrix.os }}
     steps:
       #----------------------------------------------
@@ -53,9 +63,7 @@ jobs:
       - name: Install library
         run: poetry install --no-interaction
       #----------------------------------------------
-      # Configure and Publish Project on PyPI
+      #    Run tox testing
       #----------------------------------------------
-      - name: Set PyPI Token
-        run: poetry config pypi-token.pypi '${{ secrets.PYPI_TOKEN }}'
-      - name: Publish Project
-        run: poetry publish --build
+      - name: Test with tox
+        run: poetry run tox -e py
