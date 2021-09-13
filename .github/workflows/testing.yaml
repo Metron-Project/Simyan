@@ -22,6 +22,8 @@ jobs:
           - ubuntu-latest
           - macos-latest
           - windows-latest
+    env:
+      COMICVINE_API_KEY: 'Testing-Key'
     runs-on: ${{ matrix.os }}
     steps:
       #----------------------------------------------
