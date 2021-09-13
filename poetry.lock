@@ -401,7 +401,7 @@ testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtuale
 
 [[package]]
 name = "pyupgrade"
-version = "2.25.1"
+version = "2.26.0"
 description = "A tool to automatically upgrade syntax for newer versions."
 category = "dev"
 optional = false
@@ -776,8 +776,8 @@ pytest-cov = [
     {file = "pytest_cov-2.12.1-py2.py3-none-any.whl", hash = "sha256:261bb9e47e65bd099c89c3edf92972865210c36813f80ede5277dceb77a4a62a"},
 ]
 pyupgrade = [
-    {file = "pyupgrade-2.25.1-py2.py3-none-any.whl", hash = "sha256:6e23f9c3c196b8e120a39d3fbad09265c3e2413a65e085b690606a45e59e8140"},
-    {file = "pyupgrade-2.25.1.tar.gz", hash = "sha256:2b541340157fc9dba0c4cac4f28804aa11fbf2aa2cad83ec05e64abec38f1fea"},
+    {file = "pyupgrade-2.26.0-py2.py3-none-any.whl", hash = "sha256:fcfde421775d356eb1e7da443fb23fad6dceca411d8c014acebaed1c2bfeed52"},
+    {file = "pyupgrade-2.26.0.tar.gz", hash = "sha256:03eba5ee3494c334d634a272774a30b0aa28af4f5f07f1d3f5d5bedee86c5bcb"},
 ]
 pyyaml = [
     {file = "PyYAML-5.4.1-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:3b2b1824fe7112845700f815ff6a489360226a5609b96ec2190a45e62a9fc922"},
