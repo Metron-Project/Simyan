@@ -32,7 +32,10 @@ class SqliteCache:
         return self.select(query=key) or None
 
     def insert(self, query: str, response: str):
-        expiry = datetime.now() + timedelta(days=self.expiry)
+        if self.expiry:
+            expiry = datetime.now() + timedelta(days=self.expiry)
+        else:
+            expiry = datetime.now()
         self.cur.execute(
             "INSERT INTO queries(query, response, expiry) VALUES(?, ?, ?);",
             (query, json.dumps(response), expiry.strftime("%Y-%m-%d")),

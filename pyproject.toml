@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Simyan"
-version = "0.5.0"
+version = "0.5.1"
 description = "A Python wrapper for the Comicvine API."
 license = "GPL-3.0-or-later"
 authors = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]

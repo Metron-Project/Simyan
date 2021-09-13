@@ -582,7 +582,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "217b1504aac3e406c091613258257a5493f62711b70524c553e8a3df77cbdc30"
+content-hash = "1d594bbcd7cc700949d6087e7c44e90b63ff656c874a82b9b7c56e0705714c15"
 
 [metadata.files]
 "aspy.refactor-imports" = [
