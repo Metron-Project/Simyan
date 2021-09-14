@@ -13,7 +13,7 @@ from typing import Any, Dict, Optional
 
 class SqliteCache:
     """
-    The SqliteCache object to cache search results from Metron.
+    The SqliteCache object to cache search results from Comic Vine.
 
     :param str db_name: Path and database name to use.
     :param optional, int expiry: How long to keep cache results.

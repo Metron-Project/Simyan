@@ -15,7 +15,7 @@ class Publisher:
     """
     The Publisher object contains information for publishers.
 
-    :param `**kwargs`: The keyword arguments is used for setting publisher data from Metron.
+    :param `**kwargs`: The keyword arguments is used for setting publisher data from Comic Vine.
     """
 
     def __init__(self, **kwargs):
@@ -56,7 +56,7 @@ class PublisherSchema(Schema):
         """
         Make the arc object.
 
-        :param data: Data from Metron reponse.
+        :param data: Data from Comic Vine reponse.
 
         :returns: :class:`Publisher` object
         :rtype: Publisher
