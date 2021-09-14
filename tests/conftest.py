@@ -1,5 +1,6 @@
 """
 Conftest module.
+
 This module contains pytest fixtures.
 """
 import os
