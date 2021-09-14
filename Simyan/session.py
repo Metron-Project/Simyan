@@ -1,3 +1,10 @@
+"""
+Session module.
+
+This module provides the following classes:
+
+- Session
+"""
 import platform
 import re
 from collections import OrderedDict
@@ -28,6 +35,8 @@ MINUTE = 60
 
 
 class CVType(Enum):
+    """Class for Comic Vine resource ids."""
+
     PUBLISHER = 4010
     VOLUME = 4050
     ISSUE = 4000
@@ -35,11 +44,20 @@ class CVType(Enum):
     CREATOR = 4040
 
     def __str__(self):
+        """Return string for Comic Vine resouce id."""
         return f"{self.value}"
 
 
 class Session:
+    """
+    Session to request api endpoints.
+
+    :param str api_key: The api key used for authentication with Comic Vine
+    :param SqliteCache, optional: SqliteCache to use
+    """
+
     def __init__(self, api_key: str, cache: Optional[SqliteCache] = None):
+        """Intialize a new Session."""
         self.api_key = api_key
         self.header = {"User-Agent": f"Simyan/{platform.system()}: {platform.release()}"}
         self.api_url = "https://comicvine.gamespot.com/api/{}/"
@@ -48,6 +66,12 @@ class Session:
     @sleep_and_retry
     @limits(calls=20, period=MINUTE)
     def call(self, endpoint: List[Union[str, int]], params: Dict[str, Union[str, int]] = None) -> Dict[str, Any]:
+        """
+        Make request for api endpoints.
+
+        :param list[str, int] endpoint: The endpoint to request information from.
+        :param dict params: Parameters to add to the request.
+        """
         if params is None:
             params = {}
         params["api_key"] = self.api_key
@@ -91,12 +115,29 @@ class Session:
         return data
 
     def publisher(self, _id: int) -> Publisher:
+        """
+        Request data for a publisher based on its ``_id``.
+
+        :param int _id: The publisher id.
+
+        :return: :class:`Publisher` object
+        :rtype: Publisher
+        """
         try:
             return PublisherSchema().load(self.call(["publisher", f"{CVType.PUBLISHER}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
     def publisher_list(self, params: Dict[str, Union[str, int]] = None) -> PublisherList:
+        """
+        Request a list of publishers.
+
+        :param params: Parameters to add to the request.
+        :type params: dict, optional
+
+        :return: A list of :class:`PublisherResult` objects.
+        :rtype: PublishersList
+        """
         results = self._retrieve_all_responses("publishers", params)
         return PublisherList(results)
 
@@ -111,12 +152,29 @@ class Session:
         return VolumeList(results)
 
     def issue(self, _id: int) -> Issue:
+        """
+        Request data for an issue based on it's ``_id``.
+
+        :param int _id: The issue id.
+
+        :return: :class:`Issue` object
+        :rtype: Issue
+        """
         try:
             return IssueSchema().load(self.call(["issue", f"{CVType.ISSUE}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
     def issue_list(self, params: Dict[str, Union[str, int]] = None) -> IssueList:
+        """
+        Request a list of issues.
+
+        :param params: Parameters to add to the request.
+        :type params: dict, optional
+
+        :return: A list of :class:`IssueResult` objects.
+        :rtype: IssuesList
+        """
         results = self._retrieve_all_responses("issues", params)
         return IssueList(results)
 
@@ -131,12 +189,29 @@ class Session:
         return StoryArcList(results)
 
     def creator(self, _id: int) -> Creator:
+        """
+        Request data for a creator based on its ``_id``.
+
+        :param int _id: The creator id.
+
+        :return: :class:`Creator` object
+        :rtype: Creator
+        """
         try:
             return CreatorSchema().load(self.call(["person", f"{CVType.CREATOR}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
     def creator_list(self, params: Dict[str, Union[str, int]] = None) -> CreatorList:
+        """
+        Request a list of creators.
+
+        :param params: Parameters to add to the request.
+        :type params: dict, optional
+
+        :return: A list of :class:`CreatorResult` objects.
+        :rtype: CreatorsList
+        """
         results = self._retrieve_all_responses("people", params)
         return CreatorList(results)
 
