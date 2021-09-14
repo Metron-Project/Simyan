@@ -1,3 +1,10 @@
+"""
+SQLite Cache module.
+
+This module provides the following classes:
+
+- SqliteCache
+"""
 import json
 import sqlite3
 from datetime import datetime, timedelta
@@ -5,7 +12,15 @@ from typing import Any, Dict, Optional
 
 
 class SqliteCache:
+    """
+    The SqliteCache object to cache search results from Metron.
+
+    :param str db_name: Path and database name to use.
+    :param optional, int expiry: How long to keep cache results.
+    """
+
     def __init__(self, name: str = "Simyan-Cache.sqlite", expiry: Optional[int] = 14):
+        """Intialize a new SqliteCache."""
         self.expiry = expiry
         self.con = sqlite3.connect(name)
         self.cur = self.con.cursor()
@@ -13,6 +28,11 @@ class SqliteCache:
         self.delete()
 
     def select(self, query: str) -> Dict[str, Any]:
+        """
+        Statement to retrieve data from the cache database.
+
+        :param str query: Search string.
+        """
         if self.expiry:
             self.cur.execute(
                 "SELECT response FROM queries WHERE query = ? AND expiry > ?;",
@@ -29,9 +49,20 @@ class SqliteCache:
         return {}
 
     def get(self, key: str) -> Optional[Dict[str, Any]]:
+        """
+        Retrieve data from the cache database.
+
+        :param str key: value to search for.
+        """
         return self.select(query=key) or None
 
     def insert(self, query: str, response: str):
+        """
+        Insert data into the cache database.
+
+        :param str query: Search string.
+        :param str response: data to save.
+        """
         if self.expiry:
             expiry = datetime.now() + timedelta(days=self.expiry)
         else:
@@ -43,9 +74,16 @@ class SqliteCache:
         self.con.commit()
 
     def store(self, key: str, value: str):
+        """
+        Save data to the cache database.
+
+        :param str key: Item id.
+        :param str value: data to save.
+        """
         return self.insert(query=key, response=value)
 
     def delete(self):
+        """Remove data from the cache database."""
         if not self.expiry:
             return
         self.cur.execute(
