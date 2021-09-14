@@ -1,3 +1,8 @@
+"""
+Test Volume module.
+
+This module contains tests for Volume objects.
+"""
 import pytest
 
 from Simyan.exceptions import APIError
@@ -23,6 +28,7 @@ START_YEAR = "2005"
 
 
 def test_volume(comicvine):
+    """Test for a known volume."""
     result = comicvine.volume(ID)
     assert result.creators[0].id == CREATOR_ID
     assert result.creators[0].name == CREATOR_NAME
@@ -45,11 +51,13 @@ def test_volume(comicvine):
 
 
 def test_volume_fail(comicvine):
+    """Test for a non-existant volume."""
     with pytest.raises(APIError):
         comicvine.volume(-1)
 
 
 def test_volume_list(comicvine):
+    """Test the VolumeList."""
     search_results = comicvine.volume_list({"filter": f"name:{NAME}"})
     result = [x for x in search_results if x.id == ID][0]
     assert result.first_issue.id == FIRST_ISSUE_ID
@@ -67,5 +75,6 @@ def test_volume_list(comicvine):
 
 
 def test_volume_list_empty(comicvine):
+    """Test VolumeListy with no results."""
     results = comicvine.volume_list({"filter": "name:INVALID"})
     assert len(results) == 0
