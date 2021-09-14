@@ -28,7 +28,7 @@ class CountEntry:
 
 
 class CountEntrySchema(GenericEntrySchema):
-    count = fields.Str()
+    count = fields.Int()
 
     class Meta:
         unknown = EXCLUDE

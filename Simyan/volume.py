@@ -29,12 +29,13 @@ class VolumeSchema(Schema):
     objects = fields.Nested(CountEntrySchema, many=True)
     publisher = fields.Nested(GenericEntrySchema)
     site_url = fields.Url(data_key="site_detail_url")
-    start_year = fields.Str()
+    start_year = fields.Int()
     summary = fields.Str(data_key="deck", allow_none=True)
 
     class Meta:
         unknown = EXCLUDE
         dateformat = "%Y-%m-%d %H:%M:%S"
+        datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> Volume:
