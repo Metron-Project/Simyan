@@ -33,6 +33,7 @@ class CreatorResultSchema(Schema):
     class Meta:
         unknown = EXCLUDE
         dateformat = "%Y-%m-%d %H:%M:%S"
+        datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> CreatorResult:
