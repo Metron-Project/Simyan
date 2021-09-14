@@ -217,7 +217,7 @@ class Session:
         :type params: dict, optional
 
         :return: A list of :class:`StoryArcResult` objects.
-        :rtype: StoryArcResult
+        :rtype: StoryArcList
         """
         results = self._retrieve_all_responses("story_arcs", params)
         return StoryArcList(results)
