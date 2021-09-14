@@ -142,12 +142,29 @@ class Session:
         return PublisherList(results)
 
     def volume(self, _id: int) -> Volume:
+        """
+        Request data for a volume based on its ``_id``.
+
+        :param int _id: The volume id.
+
+        :return: :class:`Volume` object
+        :rtype: Volume
+        """
         try:
             return VolumeSchema().load(self.call(["volume", f"{CVType.VOLUME}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
     def volume_list(self, params: Dict[str, Union[str, int]] = None) -> VolumeList:
+        """
+        Request a list of volumes.
+
+        :param params: Parameters to add to the request.
+        :type params: dict, optional
+
+        :return: A list of :class:`Volumeresult` objects.
+        :rtype: VolumeList
+        """
         results = self._retrieve_all_responses("volumes", params)
         return VolumeList(results)
 
