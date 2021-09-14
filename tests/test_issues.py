@@ -1,3 +1,8 @@
+"""
+Test Issues module.
+
+This module contains tests for Issue objects.
+"""
 from datetime import date
 
 import pytest
@@ -20,6 +25,7 @@ VOLUME_NAME = "Green Lantern"
 
 
 def test_issue(comicvine):
+    """Test for a known issue."""
     result = comicvine.issue(ID)
     assert result.cover_date == COVER_DATE
     assert result.first_appearance_story_arcs == FIRST_APPEARANCE_STORY_ARCS
@@ -37,11 +43,13 @@ def test_issue(comicvine):
 
 
 def test_issue_fail(comicvine):
+    """Test for a non-existant issue."""
     with pytest.raises(APIError):
         comicvine.issue(-1)
 
 
 def test_issue_bad_cover_date(comicvine):
+    """Test for issue with a cover date."""
     xmen_2 = comicvine.issue(6787)
     assert xmen_2.store_date is None
     assert xmen_2.cover_date == date(1963, 11, 1)
@@ -55,6 +63,7 @@ def test_issue_bad_cover_date(comicvine):
 
 
 def test_issue_list(comicvine):
+    """Test the IssueList."""
     search_results = comicvine.issue_list({"filter": f"volume:{VOLUME_ID},issue_number:{NUMBER}"})
     result = [x for x in search_results if x.id == ID][0]
     assert result.cover_date == COVER_DATE
@@ -67,15 +76,18 @@ def test_issue_list(comicvine):
 
 
 def test_issue_list_empty(comicvine):
+    """Test the IssueList with no results."""
     results = comicvine.issue_list({"filter": "name:INVALID"})
     assert len(results) == 0
 
 
 def test_issue_no_has_staff_review(comicvine):
+    """Test issue that has staff review data."""
     result = comicvine.issue(505513)
     assert "has_staff_review" not in result.__dict__.keys()
 
 
 def test_issue_list_no_has_staff_review(comicvine):
+    """Test issue that does not have staff review data."""
     result = comicvine.issue_list({"filter": "issue_number:1,volume:85930"})
     assert "has_staff_review" not in result.__dict__.keys()
