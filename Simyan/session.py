@@ -179,12 +179,29 @@ class Session:
         return IssueList(results)
 
     def story_arc(self, _id: int) -> StoryArc:
+        """
+        Request data for a story arc based on its ``_id``.
+
+        :param int _id: The story arc id.
+
+        :return: :class:`StoryArc` object
+        :rtype: StoryArc
+        """
         try:
             return StoryArcSchema().load(self.call(["story_arc", f"{CVType.STORY_ARC}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
     def story_arc_list(self, params: Dict[str, Union[str, int]] = None) -> StoryArcList:
+        """
+        Request a list of story arc.
+
+        :param params: Parameters to add to the request.
+        :type params: dict, optional
+
+        :return: A list of :class:`StoryArcResult` objects.
+        :rtype: StoryArcResult
+        """
         results = self._retrieve_all_responses("story_arcs", params)
         return StoryArcList(results)
 
