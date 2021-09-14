@@ -1,15 +1,32 @@
+"""
+Publisher module.
+
+This module provides the following classes:
+
+- Publisher
+- PublisherSchema
+"""
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
 from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema
 
 
 class Publisher:
+    """
+    The Publisher object contains information for publishers.
+
+    :param `**kwargs`: The keyword arguments is used for setting publisher data from Metron.
+    """
+
     def __init__(self, **kwargs):
+        """Intialize a new Publisher."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
 
 class PublisherSchema(Schema):
+    """Schema for the Publisher API."""
+
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
     characters = fields.Nested(GenericEntrySchema, many=True)
@@ -29,9 +46,19 @@ class PublisherSchema(Schema):
     volumes = fields.Nested(GenericEntrySchema, many=True)
 
     class Meta:
+        """Any unknown fields will be excluded."""
+
         unknown = EXCLUDE
         dateformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> Publisher:
+        """
+        Make the arc object.
+
+        :param data: Data from Metron reponse.
+
+        :returns: :class:`Publisher` object
+        :rtype: Publisher
+        """
         return Publisher(**data)
