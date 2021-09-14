@@ -88,6 +88,6 @@ def test_issue_no_has_staff_review(comicvine):
 
 
 def test_issue_list_no_has_staff_review(comicvine):
-    """Test issue that does not have staff review data."""
+    """Test IssueList that has staff review data."""
     result = comicvine.issue_list({"filter": "issue_number:1,volume:85930"})
     assert "has_staff_review" not in result.__dict__.keys()
