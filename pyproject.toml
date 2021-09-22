@@ -47,7 +47,7 @@ isort = "^5.9.3"
 pre-commit = "^2.15.0"
 pyupgrade = "^2.26.0"
 seed-isort-config = "^2.2.0"
-tox = "^3.24.3"
+tox = "^3.24.4"
 flake8-docstrings = "^1.6.0"
 flake8-rst-docstrings = "^0.2.3"
 
