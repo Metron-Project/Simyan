@@ -1,15 +1,32 @@
+"""
+StoryArc module.
+
+This module provides the following classes:
+
+- StoryArc
+- StoryArcSchema
+"""
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
 from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
 
 
 class StoryArc:
+    """
+    The StoryArc object contains information for story arcs.
+
+    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    """
+
     def __init__(self, **kwargs):
+        """Intialize a new StoryArc."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
 
 class StoryArcSchema(Schema):
+    """Schema for the StoryArc API."""
+
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
     date_added = fields.DateTime()
@@ -29,10 +46,20 @@ class StoryArcSchema(Schema):
     summary = fields.Str(data_key="deck", allow_none=True)
 
     class Meta:
+        """Any unknown fields will be excluded."""
+
         unknown = EXCLUDE
         dateformat = "%Y-%m-%d %H:%M:%S"
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> StoryArc:
+        """
+        Make the story arc object.
+
+        :param data: Data from the Comic Vine response.
+
+        :returns: :class:`StoryArc` object
+        :rtype: StoryArc
+        """
         return StoryArc(**data)

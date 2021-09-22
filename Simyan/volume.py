@@ -1,15 +1,32 @@
+"""
+Volume module.
+
+This module provides the following classes:
+
+- Volume
+- VolumeSchema
+"""
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
 from Simyan.generic_entries import CountEntrySchema, GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
 
 
 class Volume:
+    """
+    The Volume object contains information for comic volume.
+
+    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    """
+
     def __init__(self, **kwargs):
+        """Intialize a new Volume."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
 
 class VolumeSchema(Schema):
+    """Schema for the Volume API."""
+
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
     characters = fields.Nested(CountEntrySchema, many=True)
@@ -33,10 +50,20 @@ class VolumeSchema(Schema):
     summary = fields.Str(data_key="deck", allow_none=True)
 
     class Meta:
+        """Any unknown fields will be excluded."""
+
         unknown = EXCLUDE
         dateformat = "%Y-%m-%d %H:%M:%S"
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> Volume:
+        """
+        Make the Volume object.
+
+        :param data: Data from Comic Vine response.
+
+        :returns: :class:`Volume` object
+        :rtype: Volume
+        """
         return Volume(**data)

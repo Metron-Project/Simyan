@@ -1,3 +1,12 @@
+"""
+CreatorList module.
+
+This module provides the following classes:
+
+- CreatorResult
+- CreatorResultSchema
+- CreatorList
+"""
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_load
 
 from Simyan.exceptions import APIError
@@ -5,12 +14,21 @@ from Simyan.generic_entries import ImageEntrySchema
 
 
 class CreatorResult:
+    """
+    The CreatorResult object.
+
+    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    """
+
     def __init__(self, **kwargs):
+        """Intialize a new CreatorResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
 
 class CreatorResultSchema(Schema):
+    """Schema for the CreatorResult API."""
+
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
     country = fields.Str()
@@ -31,17 +49,30 @@ class CreatorResultSchema(Schema):
     website = fields.Str(allow_none=True)
 
     class Meta:
+        """Any unknown fields will be exclude."""
+
         unknown = EXCLUDE
         dateformat = "%Y-%m-%d %H:%M:%S"
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> CreatorResult:
+        """
+        Make the CreatorResult object.
+
+        :param data: Data from the Comic Vine reponse.
+
+        :returns: :class:`CreatorResult` object
+        :rtype: CreatorResult
+        """
         return CreatorResult(**data)
 
 
 class CreatorList:
+    """The CreatorList object contains a list of `CreatorResult` objects."""
+
     def __init__(self, response):
+        """Initialize a new CreatorList."""
         self.creators = []
 
         schema = CreatorResultSchema()
@@ -54,10 +85,13 @@ class CreatorList:
             self.creators.append(result)
 
     def __iter__(self):
+        """Return an iterator object."""
         return iter(self.creators)
 
     def __len__(self):
+        """Return the length of the object."""
         return len(self.creators)
 
     def __getitem__(self, index: int):
+        """Return the object of a at index."""
         return self.creators[index]

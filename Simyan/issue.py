@@ -1,15 +1,32 @@
+"""
+Issue module.
+
+This module provides the following classes:
+
+- Issue
+- IssueSchema
+"""
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
 from Simyan.generic_entries import CreatorEntrySchema, GenericEntrySchema, ImageEntrySchema
 
 
 class Issue:
+    """
+    The Issue object contains information for an issue.
+
+    :param `**kwargs`: The keyword arguments is used for setting issue data from Comic Vine.
+    """
+
     def __init__(self, **kwargs):
+        """Intialize a new Issue."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
 
 class IssueSchema(Schema):
+    """Schema for the Issue API."""
+
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
     character_deaths = fields.Nested(GenericEntrySchema, data_key="character_died_in", many=True)
@@ -44,10 +61,20 @@ class IssueSchema(Schema):
     volume = fields.Nested(GenericEntrySchema)
 
     class Meta:
+        """Any unknown fields will be excluded."""
+
         unknown = EXCLUDE
         dateformat = "%Y-%m-%d"
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> Issue:
+        """
+        Make the issue object.
+
+        :param data: Data from the Comic Vine response.
+
+        :returns: :class:`Issue` object
+        :rtype: Issue
+        """
         return Issue(**data)
