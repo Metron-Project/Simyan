@@ -47,7 +47,8 @@ class PublisherResultSchema(Schema):
         """Any unknown fields will be excluded."""
 
         unknown = EXCLUDE
-        dateformat = "%Y-%m-%d %H:%M:%S"
+        dateformat = "%Y-%m-%d"
+        datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> PublisherResult:

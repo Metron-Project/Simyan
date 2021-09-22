@@ -31,9 +31,9 @@ class IssueResultSchema(Schema):
 
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
-    cover_date = fields.Date(format="%Y-%m-%d")
-    date_added = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
-    date_last_updated = fields.DateTime(format="%Y-%m-%d %H:%M:%S")
+    cover_date = fields.Date()
+    date_added = fields.DateTime()
+    date_last_updated = fields.DateTime()
     description = fields.Str()
     # Ignoring has_staff_review
     id = fields.Int()
@@ -41,7 +41,7 @@ class IssueResultSchema(Schema):
     name = fields.Str(allow_none=True)
     number = fields.Str(data_key="issue_number")
     site_url = fields.Url(data_key="site_detail_url")
-    store_date = fields.Date(format="%Y-%m-%d", allow_none=True)
+    store_date = fields.Date(allow_none=True)
     summary = fields.Str(data_key="deck", allow_none=True)
     volume = fields.Nested(GenericEntrySchema)
 
@@ -49,6 +49,8 @@ class IssueResultSchema(Schema):
         """Any unknown fields will be excluded."""
 
         unknown = EXCLUDE
+        dateformat = "%Y-%m-%d"
+        datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
     def make_object(self, data, **kwargs) -> IssueResult:

@@ -55,6 +55,7 @@ class CreatorSchema(Schema):
 
         unknown = EXCLUDE
         dateformat = "%Y-%m-%d %H:%M:%S"
+        datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @pre_load
     def process_input(self, data, **kwargs):

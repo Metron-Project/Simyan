@@ -72,7 +72,7 @@ class CountEntry:
 class CountEntrySchema(GenericEntrySchema):
     """Schema for the CountEntry data."""
 
-    count = fields.Str()
+    count = fields.Int()
 
     class Meta:
         """Any unknown fields will be excluded."""

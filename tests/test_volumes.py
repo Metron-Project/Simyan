@@ -9,7 +9,7 @@ from Simyan.exceptions import APIError
 
 CREATOR_ID = 40439
 CREATOR_NAME = "Geoff Johns"
-CREATOR_COUNT = "67"
+CREATOR_COUNT = 67
 FIRST_ISSUE_ID = 111265
 FIRST_ISSUE_NAME = "Airborne"
 FIRST_ISSUE_NUMBER = "1"
@@ -24,7 +24,7 @@ LAST_ISSUE_NUMBER = "67"
 NAME = "Green Lantern"
 PUBLISHER_ID = 10
 PUBLISHER_NAME = "DC Comics"
-START_YEAR = "2005"
+START_YEAR = 2005
 
 
 def test_volume(comicvine):
