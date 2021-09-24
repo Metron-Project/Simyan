@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Simyan"
-version = "0.5.1"
+version = "0.5.2"
 description = "A Python wrapper for the Comicvine API."
 license = "GPL-3.0-or-later"
 authors = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
@@ -41,13 +41,13 @@ sphinxcontrib-napoleon = {version = "^0.7", optional = true}
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 pytest-cov = "^2.12.1"
+pre-commit = "^2.15.0"
 flake8 = "^3.9.2"
 black = "^21.9b0"
 isort = "^5.9.3"
-pre-commit = "^2.15.0"
-pyupgrade = "^2.26.0"
+pyupgrade = "^2.27.0"
 seed-isort-config = "^2.2.0"
-tox = "^3.24.3"
+tox = "^3.24.4"
 flake8-docstrings = "^1.6.0"
 flake8-rst-docstrings = "^0.2.3"
 
