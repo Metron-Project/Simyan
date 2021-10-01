@@ -1,4 +1,4 @@
-name: 'Testing'
+name: "Testing"
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   tox:
-    name: 'Tox Tests'
+    name: "Tox Tests"
     strategy:
       fail-fast: false
       matrix:
@@ -23,7 +23,7 @@ jobs:
           - macos-latest
           - windows-latest
     env:
-      COMICVINE_API_KEY: 'Testing-Key'
+      COMICVINE_API_KEY: "Testing-Key"
     runs-on: ${{ matrix.os }}
     steps:
       #----------------------------------------------

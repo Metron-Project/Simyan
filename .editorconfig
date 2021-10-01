@@ -13,8 +13,9 @@ tab_width = 4
 indent_size = 2
 tab_width = 2
 
-[{*.har,*.json}]
+[{*.har,*.json,*.jsonschema}]
 indent_size = 2
+tab_width = 2
 
 [{*.markdown,*.md}]
 indent_style = space
@@ -24,3 +25,4 @@ indent_style = space
 
 [{*.yaml,*.yml}]
 indent_size = 2
+tab_width = 2
