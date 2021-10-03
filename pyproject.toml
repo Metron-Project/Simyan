@@ -1,13 +1,12 @@
 [tool.poetry]
 name = "Simyan"
-version = "0.5.3"
+version = "0.5.2"
 description = "A Python wrapper for the Comicvine API."
 license = "GPL-3.0-or-later"
-authors = ["Buried-In-Code <BuriedInCode@tuta.io>"]
-maintainers = ["Buried-In-Code <BuriedInCode@tuta.io>"]
+authors = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
+maintainers = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
 readme = "README.md"
 repository = "https://github.com/Buried-In-Code/Simyan"
-documentation = "https://simyan.readthedocs.io/en/latest/"
 packages = [
 	{ include = "Simyan" }
 ]
@@ -42,15 +41,15 @@ sphinxcontrib-napoleon = {version = "^0.7", optional = true}
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 pytest-cov = "^2.12.1"
-tox = "^3.24.4"
 pre-commit = "^2.15.0"
-pyupgrade = "^2.28.1"
-black = "^21.9b0"
 flake8 = "^3.9.2"
+black = "^21.9b0"
+isort = "^5.9.3"
+pyupgrade = "^2.27.0"
+seed-isort-config = "^2.2.0"
+tox = "^3.24.4"
 flake8-docstrings = "^1.6.0"
 flake8-rst-docstrings = "^0.2.3"
-isort = "^5.9.3"
-seed-isort-config = "^2.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -1,4 +1,4 @@
-name: "Code Analysis"
+name: 'Code Analysis'
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "30 0 * * 1"
+    - cron: '30 0 * * 1'
 
 jobs:
   analyze:
