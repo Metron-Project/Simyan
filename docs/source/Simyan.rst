@@ -4,6 +4,22 @@ Simyan package
 Submodules
 ----------
 
+Simyan.character module
+---------------------
+
+.. automodule:: Simyan.character
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Simyan.character\_list module
+---------------------------
+
+.. automodule:: Simyan.character_list
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Simyan.creator module
 ---------------------
 
