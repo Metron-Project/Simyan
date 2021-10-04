@@ -19,7 +19,7 @@ class Volume:
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new Volume."""
+        """Initialize a new Volume."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 

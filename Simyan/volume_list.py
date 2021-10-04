@@ -21,7 +21,7 @@ class VolumeResult:
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new VolumeResult."""
+        """Initialize a new VolumeResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -90,5 +90,5 @@ class VolumeList:
         return len(self.volumes)
 
     def __getitem__(self, index: int):
-        """Return the object of a at index."""
+        """Return the result object at the passed index."""
         return self.volumes[index]

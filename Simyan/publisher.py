@@ -19,7 +19,7 @@ class Publisher:
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new Publisher."""
+        """Initialize a new Publisher."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -55,9 +55,9 @@ class PublisherSchema(Schema):
     @post_load
     def make_object(self, data, **kwargs) -> Publisher:
         """
-        Make the arc object.
+        Make the publisher object.
 
-        :param data: Data from Comic Vine reponse.
+        :param data: Data from Comic Vine response.
 
         :returns: :class:`Publisher` object
         :rtype: Publisher

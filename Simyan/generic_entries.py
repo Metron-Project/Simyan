@@ -25,7 +25,7 @@ class GenericEntry:
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new GenericEntry."""
+        """Initialize a new GenericEntry."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -58,13 +58,13 @@ class GenericEntrySchema(Schema):
 
 class CountEntry:
     """
-    The CountEntry object contains count information.
+    The CountEntry object contains generic information with an added count field.
 
     :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new CountEntry."""
+        """Initialize a new CountEntry."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -94,13 +94,13 @@ class CountEntrySchema(GenericEntrySchema):
 
 class IssueEntry:
     """
-    The IssueEntry object contains count information.
+    The IssueEntry object contains generic information with an added number field.
 
     :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new IssueEntry."""
+        """Initialize a new IssueEntry."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -130,13 +130,13 @@ class IssueEntrySchema(GenericEntrySchema):
 
 class CreatorEntry:
     """
-    The CreatorEntry object contains creator role information.
+    The CreatorEntry object contains generic information with an added roles field.
 
     :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new CreatorEntry."""
+        """Initialize a new CreatorEntry."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -172,7 +172,7 @@ class ImageEntry:
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new ImageEntry."""
+        """Initialize a new ImageEntry."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 

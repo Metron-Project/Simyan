@@ -27,11 +27,11 @@ $ pip3 install -U --user Simyan
 ## Example Usage
 
 ```python
-from Simyan import api
+from Simyan import create_session
 # Your config/secrets
 from config import comicvine_api_key
 
-session = api(api_key=comicvine_api_key)
+session = create_session(api_key=comicvine_api_key)
 
 # Search for Publisher
 results = session.publisher_list(params={'filter': 'name:DC Comics'})
@@ -46,11 +46,11 @@ print(result.summary)
 *There is a cache option to limit required calls to API*
 
 ```python
-from Simyan import api, SqliteCache
+from Simyan import create_session, SqliteCache
 # Your config/secrets
 from config import comicvine_api_key
 
-session = api(api_key=comicvine_api_key, cache=SqliteCache())
+session = create_session(api_key=comicvine_api_key, cache=SqliteCache())
 
 # Get details for an Issue
 result = session.issue(_id=189810)

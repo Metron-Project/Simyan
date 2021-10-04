@@ -51,7 +51,7 @@ def test_volume(comicvine):
 
 
 def test_volume_fail(comicvine):
-    """Test for a non-existant volume."""
+    """Test for a non-existent volume."""
     with pytest.raises(APIError):
         comicvine.volume(-1)
 
@@ -75,6 +75,6 @@ def test_volume_list(comicvine):
 
 
 def test_volume_list_empty(comicvine):
-    """Test VolumeListy with no results."""
+    """Test VolumeList with no results."""
     results = comicvine.volume_list({"filter": "name:INVALID"})
     assert len(results) == 0

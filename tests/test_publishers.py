@@ -33,7 +33,7 @@ def test_publisher(comicvine):
 
 
 def test_publisher_fail(comicvine):
-    """Test for a non-existant publisher."""
+    """Test for a non-existent publisher."""
     with pytest.raises(APIError):
         comicvine.publisher(-1)
 

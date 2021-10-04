@@ -19,7 +19,7 @@ class Creator:
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new Creator."""
+        """Initialize a new Creator."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -78,7 +78,7 @@ class CreatorSchema(Schema):
         """
         Make the Creator object.
 
-        :param data: Data from Comic Vine reponse.
+        :param data: Data from Comic Vine response.
 
         :returns: :class:`Creator` object
         :rtype: Creator

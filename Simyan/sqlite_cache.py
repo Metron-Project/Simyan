@@ -15,12 +15,12 @@ class SqliteCache:
     """
     The SqliteCache object to cache search results from Comic Vine.
 
-    :param str db_name: Path and database name to use.
+    :param str name: Path and database name to use.
     :param optional, int expiry: How long to keep cache results.
     """
 
     def __init__(self, name: str = "Simyan-Cache.sqlite", expiry: Optional[int] = 14):
-        """Intialize a new SqliteCache."""
+        """Initialize a new SqliteCache."""
         self.expiry = expiry
         self.con = sqlite3.connect(name)
         self.cur = self.con.cursor()

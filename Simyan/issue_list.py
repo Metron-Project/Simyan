@@ -21,7 +21,7 @@ class IssueResult:
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new IssueResult."""
+        """Initialize a new IssueResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -35,7 +35,6 @@ class IssueResultSchema(Schema):
     date_added = fields.DateTime()
     date_last_updated = fields.DateTime()
     description = fields.Str()
-    # Ignoring has_staff_review
     id = fields.Int()
     image = fields.Nested(ImageEntrySchema)
     name = fields.Str(allow_none=True)
@@ -90,5 +89,5 @@ class IssueList:
         return len(self.issues)
 
     def __getitem__(self, index: int):
-        """Return the object of a at index."""
+        """Return the result object at the passed index."""
         return self.issues[index]

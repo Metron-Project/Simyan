@@ -21,7 +21,7 @@ class StoryArcResult:
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new StoryArcResult."""
+        """Initialize a new StoryArcResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -34,7 +34,6 @@ class StoryArcResultSchema(Schema):
     date_added = fields.DateTime()
     date_last_updated = fields.DateTime()
     description = fields.Str(allow_none=True)
-    # Ignoring First Episode
     first_issue = fields.Nested(IssueEntrySchema, data_key="first_appeared_in_issue")
     id = fields.Int()
     image = fields.Nested(ImageEntrySchema)
@@ -89,5 +88,5 @@ class StoryArcList:
         return len(self.story_arcs)
 
     def __getitem__(self, index: int):
-        """Return the object of a at index."""
+        """Return the result object at the passed index."""
         return self.story_arcs[index]

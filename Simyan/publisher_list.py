@@ -21,7 +21,7 @@ class PublisherResult:
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new PublisherResult."""
+        """Initialize a new PublisherResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -88,5 +88,5 @@ class PublisherList:
         return len(self.publishers)
 
     def __getitem__(self, index: int):
-        """Return the object of a at index."""
+        """Return the result object at the passed index."""
         return self.publishers[index]

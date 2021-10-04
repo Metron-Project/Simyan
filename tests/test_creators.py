@@ -49,7 +49,7 @@ def test_creator(comicvine):
 
 
 def test_creator_fail(comicvine):
-    """Test for a non-existant creator."""
+    """Test for a non-existent creator."""
     with pytest.raises(APIError):
         comicvine.creator(-1)
 

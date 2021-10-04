@@ -4,6 +4,7 @@ Session module.
 This module provides the following classes:
 
 - Session
+- CVType
 """
 import platform
 import re
@@ -18,6 +19,8 @@ from ratelimit import limits, sleep_and_retry
 from requests import get
 from requests.exceptions import ConnectionError
 
+from Simyan.character import Character, CharacterSchema
+from Simyan.character_list import CharacterList
 from Simyan.creator import Creator, CreatorSchema
 from Simyan.creator_list import CreatorList
 from Simyan.exceptions import APIError, CacheError
@@ -42,9 +45,10 @@ class CVType(Enum):
     ISSUE = 4000
     STORY_ARC = 4045
     CREATOR = 4040
+    CHARACTER = 4005
 
     def __str__(self):
-        """Return string for Comic Vine resouce id."""
+        """Return string for Comic Vine resource id."""
         return f"{self.value}"
 
 
@@ -53,11 +57,11 @@ class Session:
     Session to request api endpoints.
 
     :param str api_key: The api key used for authentication with Comic Vine
-    :param SqliteCache, optional: SqliteCache to use
+    :param SqliteCache, optional cache: SqliteCache to use
     """
 
     def __init__(self, api_key: str, cache: Optional[SqliteCache] = None):
-        """Intialize a new Session."""
+        """Initialize a new Session."""
         self.api_key = api_key
         self.header = {"User-Agent": f"Simyan/{platform.system()}: {platform.release()}"}
         self.api_url = "https://comicvine.gamespot.com/api/{}/"
@@ -248,6 +252,33 @@ class Session:
         """
         results = self._retrieve_all_responses("people", params)
         return CreatorList(results)
+
+    def character(self, _id: int) -> Character:
+        """
+        Request data for a character based on its ``_id``.
+
+        :param int _id: The character id.
+
+        :return: :class:`Character` object
+        :rtype: Character
+        """
+        try:
+            return CharacterSchema().load(self.call(["character", f"{CVType.CHARACTER}-{_id}"])["results"])
+        except ValidationError as error:
+            raise APIError(error.messages)
+
+    def character_list(self, params: Dict[str, Union[str, int]] = None) -> CharacterList:
+        """
+        Request a list of characters.
+
+        :param params: Parameters to add to the request.
+        :type params: dict, optional
+
+        :return: A list of :class:`CreatorResult` objects.
+        :rtype: CreatorsList
+        """
+        results = self._retrieve_all_responses("characters", params)
+        return CharacterList(results)
 
     def _retrieve_all_responses(self, resource: str, params: Dict[str, Union[str, int]] = None):
         if params is None:

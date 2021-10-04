@@ -19,7 +19,7 @@ class Issue:
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new Issue."""
+        """Initialize a new Issue."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -44,7 +44,6 @@ class IssueSchema(Schema):
         GenericEntrySchema, data_key="first_appearance_storyarcs", allow_none=True
     )
     first_appearance_teams = fields.Nested(GenericEntrySchema, allow_none=True)
-    # Ignoring has_staff_review
     id = fields.Int()
     image = fields.Nested(ImageEntrySchema)
     locations = fields.Nested(GenericEntrySchema, data_key="location_credits", many=True)

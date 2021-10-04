@@ -43,7 +43,7 @@ def test_issue(comicvine):
 
 
 def test_issue_fail(comicvine):
-    """Test for a non-existant issue."""
+    """Test for a non-existent issue."""
     with pytest.raises(APIError):
         comicvine.issue(-1)
 
