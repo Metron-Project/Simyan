@@ -6,20 +6,45 @@ This module provides the following classes:
 - Volume
 - VolumeSchema
 """
+from typing import Any, Dict
+
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
 from Simyan.generic_entries import CountEntrySchema, GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
 
 
 class Volume:
-    """
-    The Volume object contains information for comic volume.
+    r"""
+    The Volume object contains information for a volume.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting Volume data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Volume has used, separated by ``\n``.
+        api_url (str): Url to the ComicVine API.
+        characters (list of :obj: `CountEntry`): List of characters in the Volume.
+        concepts (list of :obj: `CountEntry`): List of concepts in the Volume.
+        creators (list of :obj: `CountEntry`): List of creators in the Volume.
+        date_added (datetime): Date and time when the Volume was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Volume was updated on ComicVine.
+        description (str, Optional): Long description of the Volume.
+        first_issue (:obj: `IssueEntry`): First issue of the Volume.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Volume.
+        issue_count (int): Number of issues in the Volume.
+        issues (list of :obj: `IssueEntry`): List of issues in the Volume.
+        last_issue (:obj: `IssueEntry`): Last issue of the Volume.
+        locations (list of :obj: `CountEntry`): List of locations in the Volume.
+        name (str): Name/Title of the Volume.
+        objects (list of :obj: `CountEntry`): List of objects in the Volume.
+        publisher (:obj: `GenericEntry`): The publisher of the Volume.
+        site_url (str): Url to the ComicVine Website.
+        start_year (int): The year the Volume started.
+        summary (str, Optional): Short description of the Volume.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new Volume."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -57,13 +82,15 @@ class VolumeSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
-    def make_object(self, data, **kwargs) -> Volume:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> Volume:
         """
         Make the Volume object.
 
-        :param data: Data from Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`Volume` object
-        :rtype: Volume
+        Returns:
+            A `Volume` object
         """
         return Volume(**data)

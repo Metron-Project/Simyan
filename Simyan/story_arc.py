@@ -6,20 +6,38 @@ This module provides the following classes:
 - StoryArc
 - StoryArcSchema
 """
+from typing import Any, Dict
+
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
 from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
 
 
 class StoryArc:
-    """
-    The StoryArc object contains information for story arcs.
+    r"""
+    The StoryArc object contains information for a story arc.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting StoryArc data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Story Arc has used, separated by ``\n``.
+        api_url (str): Url to the ComicVine API.
+        date_added (datetime): Date and time when the Story Arc was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Story Arc was updated on ComicVine.
+        description (str, Optional): Long description of the Story Arc.
+        first_issue (:obj: `GenericEntry`): First issue of the Story Arc.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Story Arc.
+        issue_count (int): Number of issues in the Story Arc.
+        issues (list of :obj: `GenericEntry`): List of issues in the Story Arc.
+        name (str): Name/Title of the Story Arc.
+        publisher (:obj: `GenericEntry`): The publisher of the Story Arc.
+        site_url (str): Url to the ComicVine Website.
+        summary (str, Optional): Short description of the Story Arc.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new StoryArc."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -50,13 +68,15 @@ class StoryArcSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
-    def make_object(self, data, **kwargs) -> StoryArc:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> StoryArc:
         """
-        Make the story arc object.
+        Make the StoryArc object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`StoryArc` object
-        :rtype: StoryArc
+        Returns:
+            A `StoryArc` object
         """
         return StoryArc(**data)

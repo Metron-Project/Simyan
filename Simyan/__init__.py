@@ -12,13 +12,18 @@ from Simyan.sqlite_cache import SqliteCache
 
 
 def create_session(api_key: Optional[str] = None, cache: Optional[SqliteCache] = None) -> Session:
-    """Entry function that sets credentials to use the Comic Vine API, and whether to use a database cache for results.
+    """
+    Entry function that sets credentials to use the ComicVine API, and whether to use a database cache for results.
 
-    :param api_key: User's api key to access the Comic Vine api.
-    :type api_key: str, optional
+    Args:
+        api_key: User's API key to access the ComicVine API.
+        cache: SqliteCache to use.
 
-    :param cache: SqliteCache to use
-    :type cache: SqliteCache, optional
+    Returns:
+        A session object with the user's API key and Optional cache
+
+    Raises:
+        AuthenticationError: If no API key is provided
     """
     if api_key is None:
         raise AuthenticationError("Missing API Key.")
@@ -28,12 +33,17 @@ def create_session(api_key: Optional[str] = None, cache: Optional[SqliteCache] =
 
 @deprecated(deprecated_in="0.6", removed_in="1.0", current_version=__version__, details="Use `create_session` instead")
 def api(api_key: Optional[str] = None, cache: Optional[SqliteCache] = None) -> Session:
-    """Entry function that sets credentials to use the Comic Vine API, and whether to use a database cache for results.
+    """
+    Entry function that sets credentials to use the ComicVine API, and whether to use a database cache for results.
 
-    :param api_key: User's api key to access the Comic Vine api.
-    :type api_key: str, optional
+    Args:
+        api_key: User's API key to access the ComicVine API.
+        cache: SqliteCache to use.
 
-    :param cache: SqliteCache to use
-    :type cache: SqliteCache, optional
+    Returns:
+        A session object with the user's API key and Optional cache
+
+    Raises:
+        AuthenticationError: If no API key is provided
     """
     return create_session(api_key=api_key, cache=cache)

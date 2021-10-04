@@ -14,6 +14,8 @@ This module provides the following classes:
 - ImageEntry
 - ImageEntrySchema
 """
+from typing import Any, Dict
+
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
 
@@ -21,11 +23,17 @@ class GenericEntry:
     """
     The GenericEntry object contains generic information.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting data from ComicVine.
+
+    Attributes:
+        api_url (str): Url to the ComicVine API.
+        id (int): Identifier used in ComicVine.
+        name (str):
+        site_url (str): Url to the ComicVine Website.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new GenericEntry."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -44,14 +52,16 @@ class GenericEntrySchema(Schema):
         unknown = EXCLUDE
 
     @post_load
-    def make_object(self, data, **kwargs) -> GenericEntry:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> GenericEntry:
         """
         Make the GenericEntry object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`GenericEntry` object
-        :rtype: GenericEntry
+        Returns:
+            A `GenericEntry` object
         """
         return GenericEntry(**data)
 
@@ -60,11 +70,18 @@ class CountEntry:
     """
     The CountEntry object contains generic information with an added count field.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting data from ComicVine.
+
+    Attributes:
+        api_url (str): Url to the ComicVine API.
+        id (int): Identifier used in ComicVine.
+        name (str):
+        site_url (str): Url to the ComicVine Website.
+        count (int):
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new CountEntry."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -80,14 +97,16 @@ class CountEntrySchema(GenericEntrySchema):
         unknown = EXCLUDE
 
     @post_load
-    def make_object(self, data, **kwargs) -> CountEntry:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> CountEntry:
         """
         Make the CountEntry object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`CountEntry` object
-        :rtype: CountEntry
+        Returns:
+            A `CountEntry` object
         """
         return CountEntry(**data)
 
@@ -96,11 +115,18 @@ class IssueEntry:
     """
     The IssueEntry object contains generic information with an added number field.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting data from ComicVine.
+
+    Attributes:
+        api_url (str): Url to the ComicVine API.
+        id (int): Identifier used in ComicVine.
+        name (str):
+        site_url (str): Url to the ComicVine Website.
+        number (str, Optional):
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new IssueEntry."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -116,27 +142,36 @@ class IssueEntrySchema(GenericEntrySchema):
         unknown = EXCLUDE
 
     @post_load
-    def make_object(self, data, **kwargs) -> IssueEntry:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> IssueEntry:
         """
         Make the IssueEntry object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`IssueEntry` object
-        :rtype: IssueEntry
+        Returns:
+            An `IssueEntry` object
         """
         return IssueEntry(**data)
 
 
 class CreatorEntry:
-    """
+    r"""
     The CreatorEntry object contains generic information with an added roles field.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting data from ComicVine.
+
+    Attributes:
+        api_url (str): Url to the ComicVine API.
+        id (int): Identifier used in ComicVine.
+        name (str):
+        site_url (str): Url to the ComicVine Website.
+        roles (str): separated by ``\n``
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new CreatorEntry."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -152,14 +187,16 @@ class CreatorEntrySchema(GenericEntrySchema):
         unknown = EXCLUDE
 
     @post_load
-    def make_object(self, data, **kwargs) -> CreatorEntry:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> CreatorEntry:
         """
         Make the CreatorEntry object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`CreatorEntry` object
-        :rtype: CreatorEntry
+        Returns:
+            A `CreatorEntry` object
         """
         return CreatorEntry(**data)
 
@@ -168,11 +205,23 @@ class ImageEntry:
     """
     The ImageEntry object contains image information.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting data from ComicVine.
+
+    Attributes:
+        icon (str): Url to image of Icon size.
+        medium (str): Url to image of Medium size.
+        screen (str): Url to image of Screen size.
+        screen_large (str): Url to image of Screen Large size.
+        small (str): Url to image of Small size.
+        super (str): Url to image of Super size.
+        thumb (str): Url to image of Thumbnail size.
+        tiny (str): Url to image of Tiny size.
+        original (str): Url to image of Original size.
+        tags (str, Optional):
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new ImageEntry."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -197,13 +246,15 @@ class ImageEntrySchema(Schema):
         unknown = EXCLUDE
 
     @post_load
-    def make_object(self, data, **kwargs) -> ImageEntry:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> ImageEntry:
         """
         Make the ImageEntry object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`ImageEntry` object
-        :rtype: ImageEntry
+        Returns:
+            An `ImageEntry` object
         """
         return ImageEntry(**data)

@@ -6,20 +6,52 @@ This module provides the following classes:
 - Character
 - CharacterSchema
 """
+from typing import Any, Dict
+
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
 from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
 
 
 class Character:
-    """
-    The Character object contains information for characters.
+    r"""
+    The Character object contains information for a character.
 
-    :param `**kwargs`: The keyword arguments is used for setting character data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting Character data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Character has used, separated by ``\n``.
+        api_url (str): Url to the ComicVine API.
+        creators (list of :obj: `GenericEntry`): List of creators which worked on the Character.
+        date_added (datetime): Date and time when the Character was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Character was updated on ComicVine.
+        date_of_birth (date, Optional): Date when the Character was born.
+        deaths (list of :obj: `GenericEntry`): List of times when the Character has died.
+        description (str): Long description of the Character.
+        enemies (list of :obj: `GenericEntry`): List of enemies the Character has.
+        enemy_teams (list of :obj: `GenericEntry`): List of enemy teams the Character has.
+        first_issue (:obj: `IssueEntry`): First issue the Character appeared in.
+        friendly_teams (list of :obj: `GenericEntry`): List of friendly teams the Character has.
+        friends (list of :obj: `GenericEntry`): List of friends the Character has.
+        gender (int): Character gender.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Character.
+        issue_count (int, Optional): Number of issues the Character appears in.
+        issues (list of :obj: `GenericEntry`): List of issues the Character appears in.
+        name (str): Real name or public identity of Character.
+        origin (:obj: `GenericEntry`): The type of Character.
+        powers (list of :obj: `GenericEntry`): List of powers the Character has.
+        publisher (:obj: `GenericEntry`): The publisher of the Character.
+        real_name (str): Name of the Character.
+        site_url (str): Url to the ComicVine Website.
+        story_arcs (list of :obj: `GenericEntry`): List of story arcs the Character appears in.
+        summary (str, Optional): Short description of the Character.
+        teams (list of :obj: `GenericEntry`): List of teams the Character appears in.
+        volumes (list of :obj: `GenericEntry`): List of volumes the Character appears in.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new Character."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -38,23 +70,23 @@ class CharacterSchema(Schema):
     enemies = fields.Nested(GenericEntrySchema, data_key="character_enemies", many=True)
     enemy_teams = fields.Nested(GenericEntrySchema, data_key="team_enemies", many=True)
     first_issue = fields.Nested(IssueEntrySchema)
-    friend_teams = fields.Nested(GenericEntrySchema, data_key="team_friends", many=True)
+    friendly_teams = fields.Nested(GenericEntrySchema, data_key="team_friends", many=True)
     friends = fields.Nested(GenericEntrySchema, data_key="character_friends", many=True)
     gender = fields.Int()
     id = fields.Int()
     image = fields.Nested(ImageEntrySchema)
-    issue_appearances = fields.Nested(GenericEntrySchema, data_key="issue_credits", many=True)
     issue_count = fields.Int(data_key="count_of_issue_appearances", allow_none=True)
+    issues = fields.Nested(GenericEntrySchema, data_key="issue_credits", many=True)
     name = fields.Str()
     origin = fields.Nested(GenericEntrySchema)
     powers = fields.Nested(GenericEntrySchema, many=True)
     publisher = fields.Nested(GenericEntrySchema)
     real_name = fields.Str()
     site_url = fields.Url(data_key="site_detail_url")
-    story_arc_appearances = fields.Nested(GenericEntrySchema, data_key="story_arc_credits", many=True)
+    story_arcs = fields.Nested(GenericEntrySchema, data_key="story_arc_credits", many=True)
     summary = fields.Str(data_key="deck", allow_none=True)
     teams = fields.Nested(GenericEntrySchema, many=True)
-    volume_appearances = fields.Nested(GenericEntrySchema, data_key="volume_credits", many=True)
+    volumes = fields.Nested(GenericEntrySchema, data_key="volume_credits", many=True)
 
     class Meta:
         """Any unknown fields will be excluded."""
@@ -64,13 +96,15 @@ class CharacterSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
-    def make_object(self, data, **kwargs) -> Character:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> Character:
         """
         Make the Character object.
 
-        :param data: Data from Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`Character` object
-        :rtype: Character
+        Returns:
+            A `Character` object
         """
         return Character(**data)

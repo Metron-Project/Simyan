@@ -10,7 +10,7 @@ This module provides the following classes:
 
 
 class APIError(Exception):
-    """Class for any api errors."""
+    """Class for any API errors."""
 
     pass
 

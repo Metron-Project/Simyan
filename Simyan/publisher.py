@@ -6,20 +6,41 @@ This module provides the following classes:
 - Publisher
 - PublisherSchema
 """
+from typing import Any, Dict
+
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
 from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema
 
 
 class Publisher:
-    """
-    The Publisher object contains information for publishers.
+    r"""
+    The Publisher object contains information for a publisher.
 
-    :param `**kwargs`: The keyword arguments is used for setting publisher data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting Publisher data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Publisher has used, separated by ``\n``.
+        api_url (str): Url to the ComicVine API.
+        characters (list of :obj: `GenericEntry`): List of characters the Publisher created.
+        date_added (datetime): Date and time when the Publisher was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Publisher was updated on ComicVine.
+        description (str): Long description of the Publisher.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Publisher.
+        location_address (str, Optional): Address of the Publisher.
+        location_city (str, Optional): City where the Publisher is.
+        location_state (str, Optional): State where the Publisher is.
+        name (str): Name/Title of the Publisher.
+        site_url (str): Url to the ComicVine Website.
+        story_arcs (list of :obj: `GenericEntry`): List of story arcs the Publisher created.
+        summary (str, Optional): Short description of the Publisher.
+        teams (list of :obj: `GenericEntry`): List of teams the Publisher created.
+        volumes (list of :obj: `GenericEntry`): List of volumes the Publisher created.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new Publisher."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -53,13 +74,15 @@ class PublisherSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
-    def make_object(self, data, **kwargs) -> Publisher:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> Publisher:
         """
-        Make the publisher object.
+        Make the Publisher object.
 
-        :param data: Data from Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`Publisher` object
-        :rtype: Publisher
+        Returns:
+            A `Publisher` object
         """
         return Publisher(**data)

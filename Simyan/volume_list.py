@@ -7,6 +7,8 @@ This module provides the following classes:
 - VolumeResultSchema
 - VolumeList
 """
+from typing import Any, Dict, List
+
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_load
 
 from Simyan.exceptions import APIError
@@ -14,14 +16,31 @@ from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema, IssueEn
 
 
 class VolumeResult:
-    """
-    The VolumeResult object contains information for comic volumes.
+    r"""
+    The VolumeResult object contains information for a volume.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting Volume data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Volume has used, separated by ``\n``.
+        api_url (str): Url to the ComicVine API.
+        date_added (datetime): Date and time when the Volume was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Volume was updated on ComicVine.
+        description (str, Optional): Long description of the Volume.
+        first_issue (:obj: `IssueEntry`): First issue of the Volume.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Volume.
+        issue_count (int): Number of issues in the Volume.
+        last_issue (:obj: `IssueEntry`): Last issue of the Volume.
+        name (str): Name/Title of the Volume.
+        publisher (:obj: `GenericEntry`): The publisher of the Volume.
+        site_url (str): Url to the ComicVine Website.
+        start_year (int): The year the Volume started.
+        summary (str, Optional): Short description of the Volume.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new VolumeResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -53,29 +72,35 @@ class VolumeResultSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
-    def make_object(self, data, **kwargs) -> VolumeResult:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> VolumeResult:
         """
         Make the VolumeResult object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`VolumeResult` object
-        :rtype: VolumeResult
+        Returns:
+            A `VolumeResult` object
         """
         return VolumeResult(**data)
 
 
 class VolumeList:
-    """The VolumeList object contains a list of `VolumeResult` objects."""
+    """
+    The VolumeList object contains a list of `VolumeResult` objects.
 
-    def __init__(self, response):
-        """Initialize a new VolumeList."""
+    Args:
+        response: List of responses returned from ComicVine
+    """
+
+    def __init__(self, response: List[Dict[str, Any]]):
         self.volumes = []
 
         schema = VolumeResultSchema()
-        for vol_dict in response:
+        for entry in response:
             try:
-                result = schema.load(vol_dict)
+                result = schema.load(entry)
             except ValidationError as error:
                 raise APIError(error)
 

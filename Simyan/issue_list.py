@@ -7,6 +7,8 @@ This module provides the following classes:
 - IssueResultSchema
 - IssuesList
 """
+from typing import Any, Dict, List
+
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_load
 
 from Simyan.exceptions import APIError
@@ -14,14 +16,30 @@ from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema
 
 
 class IssueResult:
-    """
+    r"""
     The IssueResult object contains information for an issue.
 
-    :param `**kwargs`: The keyword arguments is used for setting issue data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting Issue data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Issue has used, separated by ``\n``.
+        api_url (str): Url to the ComicVine API.
+        cover_date (date): Date on the cover of the Issue.
+        date_added (datetime): Date and time when the Issue was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Issue was updated on ComicVine.
+        description (str): Long description of the Issue.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Issue.
+        name (str): Name/Title of the Issue.
+        number (str): The Issue number.
+        site_url (str): Url to the ComicVine Website.
+        store_date (date, Optional): Date the Issue went on sale on stores.
+        summary (str, Optional): Short description of the Issue.
+        volume (:obj: `GenericEntry`): The volume the Issue is in.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new IssueResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -52,29 +70,35 @@ class IssueResultSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
-    def make_object(self, data, **kwargs) -> IssueResult:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> IssueResult:
         """
         Make the IssueResult object.
 
-        :param data: Data from Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`IssueResult` object
-        :rtype: IssueResult
+        Returns:
+            An `IssueResult` object
         """
         return IssueResult(**data)
 
 
 class IssueList:
-    """The IssuesList object contains a list of `IssueResult` objects."""
+    """
+    The IssueList object contains a list of `IssueResult` objects.
 
-    def __init__(self, response):
-        """Initialize a new IssuesList."""
+    Args:
+        response: List of responses returned from ComicVine
+    """
+
+    def __init__(self, response: List[Dict[str, Any]]):
         self.issues = []
 
         schema = IssueResultSchema()
-        for iss_dict in response:
+        for entry in response:
             try:
-                result = schema.load(iss_dict)
+                result = schema.load(entry)
             except ValidationError as error:
                 raise APIError(error)
 

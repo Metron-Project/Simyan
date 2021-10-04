@@ -7,6 +7,8 @@ This module provides the following classes:
 - PublisherResultSchema
 - PublishersList
 """
+from typing import Any, Dict, List
+
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_load
 
 from Simyan.exceptions import APIError
@@ -14,14 +16,29 @@ from Simyan.generic_entries import ImageEntrySchema
 
 
 class PublisherResult:
-    """
+    r"""
     The PublisherResult object contains information for a publisher.
 
-    :param `**kwargs`: The keyword arguments is used for setting publisher data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting Publisher data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Publisher has used, separated by ``\n``.
+        api_url (str): Url to the ComicVine API.
+        date_added (datetime): Date and time when the Publisher was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Publisher was updated on ComicVine.
+        description (str): Long description of the Publisher.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Publisher.
+        location_address (str, Optional): Address of the Publisher.
+        location_city (str, Optional): City where the Publisher is.
+        location_state (str, Optional): State where the Publisher is.
+        name (str): Name/Title of the Publisher.
+        site_url (str): Url to the ComicVine Website.
+        summary (str, Optional): Short description of the Publisher.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new PublisherResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -51,29 +68,35 @@ class PublisherResultSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
-    def make_object(self, data, **kwargs) -> PublisherResult:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> PublisherResult:
         """
         Make the PublisherResult object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`PublisherResult` object
-        :rtype: PublisherResult
+        Returns:
+            A `PublisherResult` object
         """
         return PublisherResult(**data)
 
 
 class PublisherList:
-    """The PublishersList object contains a list of `PublisherResult` objects."""
+    """
+    The PublisherList object contains a list of `PublisherResult` objects.
 
-    def __init__(self, response):
-        """Initialize a new PublishersList."""
+    Args:
+        response: List of responses returned from ComicVine
+    """
+
+    def __init__(self, response: List[Dict[str, Any]]):
         self.publishers = []
 
         schema = PublisherResultSchema()
-        for pub_dict in response:
+        for entry in response:
             try:
-                result = schema.load(pub_dict)
+                result = schema.load(entry)
             except ValidationError as error:
                 raise APIError(error)
 

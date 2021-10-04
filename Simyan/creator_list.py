@@ -7,6 +7,8 @@ This module provides the following classes:
 - CreatorResultSchema
 - CreatorList
 """
+from typing import Any, Dict, List
+
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_load
 
 from Simyan.exceptions import APIError
@@ -14,14 +16,34 @@ from Simyan.generic_entries import ImageEntrySchema
 
 
 class CreatorResult:
-    """
-    The CreatorResult object.
+    r"""
+    The CreatorResult object contains information for a creator.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting Creator data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Creator has used, separated by ``\n``.
+        api_url (str): Url to the Creator on the ComicVine API.
+        country (str): Country where the Creator is from.
+        date_added (datetime): Date and time when the Creator was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Creator was updated on ComicVine.
+        date_of_birth (date, Optional): Date when the Creator was born.
+        date_of_death (date, Optional): Date when the Creator died.
+        description (str): Long description of the Creator.
+        email (str, Optional): Email address of the Creator.
+        gender (int): Creator gender.
+        hometown (str, Optional): Hometown of the Creator.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Creator.
+        issue_count (int, Optional): Number of issues the Creator appears in.
+        name (str): Name of the Creator.
+        site_url (str): Url to the Creator on the ComicVine Website.
+        summary (str, Optional): Short description of the Creator.
+        website (str, Optional): Url to the Creator's website.
     """
 
     def __init__(self, **kwargs):
-        """Intialize a new CreatorResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -56,29 +78,35 @@ class CreatorResultSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
-    def make_object(self, data, **kwargs) -> CreatorResult:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> CreatorResult:
         """
         Make the CreatorResult object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`CreatorResult` object
-        :rtype: CreatorResult
+        Returns:
+            A `CreatorResult` object
         """
         return CreatorResult(**data)
 
 
 class CreatorList:
-    """The CreatorList object contains a list of `CreatorResult` objects."""
+    """
+    The CreatorList object contains a list of `CreatorResult` objects.
 
-    def __init__(self, response):
-        """Initialize a new CreatorList."""
+    Args:
+        response: List of responses returned from ComicVine
+    """
+
+    def __init__(self, response: List[Dict[str, Any]]):
         self.creators = []
 
         schema = CreatorResultSchema()
-        for iss_dict in response:
+        for entry in response:
             try:
-                result = schema.load(iss_dict)
+                result = schema.load(entry)
             except ValidationError as error:
                 raise APIError(error)
 

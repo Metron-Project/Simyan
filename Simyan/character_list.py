@@ -16,14 +16,33 @@ from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema, IssueEn
 
 
 class CharacterResult:
-    """
-    The CharacterResult object.
+    r"""
+    The CharacterResult object contains information for a character.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting Character data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Character has used, separated by ``\n``.
+        api_url (str): Url to the ComicVine API.
+        date_added (datetime): Date and time when the Character was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Character was updated on ComicVine.
+        date_of_birth (date, Optional): Date when the Character was born.
+        description (str): Long description of the Character.
+        first_issue (:obj: `IssueEntry`): First issue the Character appeared in.
+        gender (int): Character gender.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Character.
+        issue_count (int, Optional): Number of issues the Character appears in.
+        name (str): Real name or public identity of Character.
+        origin (:obj: `GenericEntry`): The type of Character.
+        publisher (:obj: `GenericEntry`): The publisher of the Character.
+        real_name (str): Name of the Character.
+        site_url (str): Url to the ComicVine Website.
+        summary (str, Optional): Short description of the Character.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new CharacterResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -57,28 +76,29 @@ class CharacterResultSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
-    def make_object(self, data, **kwargs) -> CharacterResult:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> CharacterResult:
         """
         Make the CharacterResult object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`CharacterResult` object
-        :rtype: CharacterResult
+        Returns:
+            A `CharacterResult` object
         """
         return CharacterResult(**data)
 
 
 class CharacterList:
-    """The CharacterList object contains a list of `CharacterResult` objects."""
+    """
+    The CharacterList object contains a list of `CharacterResult` objects.
+
+    Args:
+        response: List of responses returned from ComicVine
+    """
 
     def __init__(self, response: List[Dict[str, Any]]):
-        """
-        Initialize a new CharacterList.
-
-        :param response: List of responses returned from Comicvine
-        :type response: List
-        """
         self.characters = []
 
         schema = CharacterResultSchema()

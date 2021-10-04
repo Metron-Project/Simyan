@@ -37,8 +37,8 @@ from Simyan.volume_list import VolumeList
 MINUTE = 60
 
 
-class CVType(Enum):
-    """Class for Comic Vine resource ids."""
+class ComicVineResource(Enum):
+    """Class for ComicVine Resource ids."""
 
     PUBLISHER = 4010
     VOLUME = 4050
@@ -48,20 +48,31 @@ class CVType(Enum):
     CHARACTER = 4005
 
     def __str__(self):
-        """Return string for Comic Vine resource id."""
+        """
+        Generate string version of Resource id.
+
+        Returns:
+            String version of the ComicVineResource value
+        """
         return f"{self.value}"
 
 
 class Session:
     """
-    Session to request api endpoints.
+    Session to request ComicVine API endpoints.
 
-    :param str api_key: The api key used for authentication with Comic Vine
-    :param SqliteCache, optional cache: SqliteCache to use
+    Args:
+        api_key: User's API key to access the ComicVine API.
+        cache: SqliteCache to use if set.
+
+    Attributes:
+        api_key (str): User's API key to access the ComicVine API.
+        header (dict of str: str): Header that will be used when accessing the ComicVine API.
+        api_url (str): Url of the ComicVine API.
+        cache (SqliteCache, Optional): SqliteCache to use if set.
     """
 
     def __init__(self, api_key: str, cache: Optional[SqliteCache] = None):
-        """Initialize a new Session."""
         self.api_key = api_key
         self.header = {"User-Agent": f"Simyan/{platform.system()}: {platform.release()}"}
         self.api_url = "https://comicvine.gamespot.com/api/{}/"
@@ -69,12 +80,20 @@ class Session:
 
     @sleep_and_retry
     @limits(calls=20, period=MINUTE)
-    def call(self, endpoint: List[Union[str, int]], params: Dict[str, Union[str, int]] = None) -> Dict[str, Any]:
+    def _get(self, endpoint: List[Union[str, int]], params: Dict[str, Union[str, int]] = None) -> dict[str, Any]:
         """
-        Make request for api endpoints.
+        Make GET request to ComicVine API endpoint.
 
-        :param list[str, int] endpoint: The endpoint to request information from.
-        :param dict params: Parameters to add to the request.
+        Args:
+            endpoint: The endpoint to request information from.
+            params: Parameters to add to the request.
+
+        Returns:
+            Json response from the ComicVine API.
+
+        Raises:
+            CacheError: If is unable to retrieve or push to the Cache correctly.
+            APIError: If there is an issue with the request or response to the ComicVine API.
         """
         if params is None:
             params = {}
@@ -120,173 +139,227 @@ class Session:
 
     def publisher(self, _id: int) -> Publisher:
         """
-        Request data for a publisher based on its ``_id``.
+        Request data for a Publisher based on its ``_id``.
 
-        :param int _id: The publisher id.
+        Args:
+            _id: The Publisher id.
 
-        :return: :class:`Publisher` object
-        :rtype: Publisher
+        Returns:
+            A `Publisher` object
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the Publisher Object.
         """
         try:
-            return PublisherSchema().load(self.call(["publisher", f"{CVType.PUBLISHER}-{_id}"])["results"])
+            return PublisherSchema().load(self._get(["publisher", f"{ComicVineResource.PUBLISHER}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
-    def publisher_list(self, params: Dict[str, Union[str, int]] = None) -> PublisherList:
+    def publisher_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> PublisherList:
         """
-        Request a list of publishers.
+        Request data for a list of Publishers.
 
-        :param params: Parameters to add to the request.
-        :type params: dict, optional
+        Args:
+            params: Parameters to add to the request.
 
-        :return: A list of :class:`PublisherResult` objects.
-        :rtype: PublishersList
+        Returns:
+            A list of `PublisherResult` objects.
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the PublisherList Object.
         """
-        results = self._retrieve_all_responses("publishers", params)
+        results = self._retrieve_all_responses(["publishers"], params)
         return PublisherList(results)
 
     def volume(self, _id: int) -> Volume:
         """
-        Request data for a volume based on its ``_id``.
+        Request data for a Volume based on its ``_id``.
 
-        :param int _id: The volume id.
+        Args:
+            _id: The Volume id.
 
-        :return: :class:`Volume` object
-        :rtype: Volume
+        Returns:
+            A `Volume` object
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the Volume Object.
         """
         try:
-            return VolumeSchema().load(self.call(["volume", f"{CVType.VOLUME}-{_id}"])["results"])
+            return VolumeSchema().load(self._get(["volume", f"{ComicVineResource.VOLUME}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
-    def volume_list(self, params: Dict[str, Union[str, int]] = None) -> VolumeList:
+    def volume_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> VolumeList:
         """
-        Request a list of volumes.
+        Request data for a list of Volumes.
 
-        :param params: Parameters to add to the request.
-        :type params: dict, optional
+        Args:
+            params: Parameters to add to the request.
 
-        :return: A list of :class:`Volumeresult` objects.
-        :rtype: VolumeList
+        Returns:
+            A list of `VolumeResult` objects.
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the VolumeList Object.
         """
-        results = self._retrieve_all_responses("volumes", params)
+        results = self._retrieve_all_responses(["volumes"], params)
         return VolumeList(results)
 
     def issue(self, _id: int) -> Issue:
         """
-        Request data for an issue based on it's ``_id``.
+        Request data for an Issue based on its ``_id``.
 
-        :param int _id: The issue id.
+        Args:
+            _id: The Issue id.
 
-        :return: :class:`Issue` object
-        :rtype: Issue
+        Returns:
+            A `Issue` object
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the Issue Object.
         """
         try:
-            return IssueSchema().load(self.call(["issue", f"{CVType.ISSUE}-{_id}"])["results"])
+            return IssueSchema().load(self._get(["issue", f"{ComicVineResource.ISSUE}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
-    def issue_list(self, params: Dict[str, Union[str, int]] = None) -> IssueList:
+    def issue_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> IssueList:
         """
-        Request a list of issues.
+        Request data for a list of Issues.
 
-        :param params: Parameters to add to the request.
-        :type params: dict, optional
+        Args:
+            params: Parameters to add to the request.
 
-        :return: A list of :class:`IssueResult` objects.
-        :rtype: IssuesList
+        Returns:
+            A list of `IssueResult` objects.
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the IssueList Object.
         """
-        results = self._retrieve_all_responses("issues", params)
+        results = self._retrieve_all_responses(["issues"], params)
         return IssueList(results)
 
     def story_arc(self, _id: int) -> StoryArc:
         """
-        Request data for a story arc based on its ``_id``.
+        Request data for a Story Arc based on its ``_id``.
 
-        :param int _id: The story arc id.
+        Args:
+            _id: The Story Arc id.
 
-        :return: :class:`StoryArc` object
-        :rtype: StoryArc
+        Returns:
+            A `StoryArc` object
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the StoryArc Object.
         """
         try:
-            return StoryArcSchema().load(self.call(["story_arc", f"{CVType.STORY_ARC}-{_id}"])["results"])
+            return StoryArcSchema().load(self._get(["story_arc", f"{ComicVineResource.STORY_ARC}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
-    def story_arc_list(self, params: Dict[str, Union[str, int]] = None) -> StoryArcList:
+    def story_arc_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> StoryArcList:
         """
-        Request a list of story arc.
+        Request data for a list of Story Arcs.
 
-        :param params: Parameters to add to the request.
-        :type params: dict, optional
+        Args:
+            params: Parameters to add to the request.
 
-        :return: A list of :class:`StoryArcResult` objects.
-        :rtype: StoryArcList
+        Returns:
+            A list of `StoryArcResult` objects.
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the StoryArcList Object.
         """
-        results = self._retrieve_all_responses("story_arcs", params)
+        results = self._retrieve_all_responses(["story_arcs"], params)
         return StoryArcList(results)
 
     def creator(self, _id: int) -> Creator:
         """
-        Request data for a creator based on its ``_id``.
+        Request data for a Creator based on its ``_id``.
 
-        :param int _id: The creator id.
+        Args:
+            _id: The Creator id.
 
-        :return: :class:`Creator` object
-        :rtype: Creator
+        Returns:
+            A `Creator` object
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the Creator Object.
         """
         try:
-            return CreatorSchema().load(self.call(["person", f"{CVType.CREATOR}-{_id}"])["results"])
+            return CreatorSchema().load(self._get(["person", f"{ComicVineResource.CREATOR}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
-    def creator_list(self, params: Dict[str, Union[str, int]] = None) -> CreatorList:
+    def creator_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> CreatorList:
         """
-        Request a list of creators.
+        Request data for a list of Creators.
 
-        :param params: Parameters to add to the request.
-        :type params: dict, optional
+        Args:
+            params: Parameters to add to the request.
 
-        :return: A list of :class:`CreatorResult` objects.
-        :rtype: CreatorsList
+        Returns:
+            A list of `CreatorResult` objects.
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the CreatorList Object.
         """
-        results = self._retrieve_all_responses("people", params)
+        results = self._retrieve_all_responses(["people"], params)
         return CreatorList(results)
 
     def character(self, _id: int) -> Character:
         """
-        Request data for a character based on its ``_id``.
+        Request data for a Character based on its ``_id``.
 
-        :param int _id: The character id.
+        Args:
+            _id: The Character id.
 
-        :return: :class:`Character` object
-        :rtype: Character
+        Returns:
+            A `Character` object
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the Character Object.
         """
         try:
-            return CharacterSchema().load(self.call(["character", f"{CVType.CHARACTER}-{_id}"])["results"])
+            return CharacterSchema().load(self._get(["character", f"{ComicVineResource.CHARACTER}-{_id}"])["results"])
         except ValidationError as error:
             raise APIError(error.messages)
 
-    def character_list(self, params: Dict[str, Union[str, int]] = None) -> CharacterList:
+    def character_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> CharacterList:
         """
-        Request a list of characters.
+        Request data for a list of Characters.
 
-        :param params: Parameters to add to the request.
-        :type params: dict, optional
+        Args:
+            params: Parameters to add to the request.
 
-        :return: A list of :class:`CreatorResult` objects.
-        :rtype: CreatorsList
+        Returns:
+            A list of `CharacterResult` objects.
+
+        Raises:
+            APIError: If there is an issue with the mapping the response to the CharacterList Object.
         """
-        results = self._retrieve_all_responses("characters", params)
+        results = self._retrieve_all_responses(["characters"], params)
         return CharacterList(results)
 
-    def _retrieve_all_responses(self, resource: str, params: Dict[str, Union[str, int]] = None):
+    def _retrieve_all_responses(
+        self, endpoint: List[Union[str, int]], params: Optional[Dict[str, Union[str, int]]] = None
+    ) -> list[dict[str, Any]]:
+        """
+        Keep getting responses until all the results are collected.
+
+        Args:
+            endpoint: The endpoint to request information from.
+            params: Parameters to add to the request.
+
+        Returns:
+            A list of json response results.
+        """
         if params is None:
             params = {}
-        response = self.call([resource], params=params)
+        response = self._get(endpoint=endpoint, params=params)
         result = response["results"]
         while response["number_of_total_results"] > response["offset"] + response["number_of_page_results"]:
             params["offset"] = response["offset"] + response["number_of_page_results"]
-            response = self.call([resource], params=params)
+            response = self._get(endpoint=endpoint, params=params)
             result.extend(response["results"])
         return result

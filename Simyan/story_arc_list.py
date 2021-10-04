@@ -7,6 +7,8 @@ This module provides the following classes:
 - StoryArcResultSchema
 - StoryArcList
 """
+from typing import Any, Dict, List
+
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_load
 
 from Simyan.exceptions import APIError
@@ -14,14 +16,29 @@ from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema, IssueEn
 
 
 class StoryArcResult:
-    """
-    The StoryArcResult object contains information for story arcs.
+    r"""
+    The StoryArcResult object contains information for a story arc.
 
-    :param `**kwargs`: The keyword arguments is used for setting data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting StoryArc data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Story Arc has used, separated by ``\n``.
+        api_url (str): Url to the ComicVine API.
+        date_added (datetime): Date and time when the Story Arc was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Story Arc was updated on ComicVine.
+        description (str, Optional): Long description of the Story Arc.
+        first_issue (:obj: `GenericEntry`): First issue of the Story Arc.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Story Arc.
+        issue_count (int): Number of issues in the Story Arc.
+        name (str): Name/Title of the Story Arc.
+        publisher (:obj: `GenericEntry`): The publisher of the Story Arc.
+        site_url (str): Url to the ComicVine Website.
+        summary (str, Optional): Short description of the Story Arc.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new StoryArcResult."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -51,29 +68,35 @@ class StoryArcResultSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @post_load
-    def make_object(self, data, **kwargs) -> StoryArcResult:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> StoryArcResult:
         """
         Make the StoryArcResult object.
 
-        :param data: Data from the Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`StoryArcResult` object
-        :rtype: StoryArcResult
+        Returns:
+            A `StoryArcResult` object
         """
         return StoryArcResult(**data)
 
 
 class StoryArcList:
-    """The StoryArcsList object contains a list of `StoryArcResult` objects."""
+    """
+    The StoryArcList object contains a list of `StoryArcResult` objects.
 
-    def __init__(self, response):
-        """Initialize a new StoryArcList."""
+    Args:
+        response: List of responses returned from ComicVine
+    """
+
+    def __init__(self, response: List[Dict[str, Any]]):
         self.story_arcs = []
 
         schema = StoryArcResultSchema()
-        for pub_dict in response:
+        for entry in response:
             try:
-                result = schema.load(pub_dict)
+                result = schema.load(entry)
             except ValidationError as error:
                 raise APIError(error)
 

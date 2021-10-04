@@ -46,6 +46,8 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+napoleon_include_special_with_doc = True
+
 
 # -- Options for HTML output -------------------------------------------------
 

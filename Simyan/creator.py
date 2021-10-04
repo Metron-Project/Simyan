@@ -6,20 +6,46 @@ This module provides the following classes:
 - Creator
 - CreatorSchema
 """
+from typing import Any, Dict
+
 from marshmallow import EXCLUDE, Schema, fields, post_load, pre_load
 
 from Simyan.generic_entries import GenericEntrySchema, ImageEntrySchema
 
 
 class Creator:
-    """
-    The Creator object contains information for creators.
+    r"""
+    The Creator object contains information for a creator.
 
-    :param `**kwargs`: The keyword arguments is used for setting creator data from Comic Vine.
+    Args:
+        **kwargs: The keyword argument is used for setting Creator data from ComicVine.
+
+    Attributes:
+        aliases (str): List of names the Creator has used, separated by ``\n``.
+        api_url (str): Url to the ComicVine API.
+        country (str): Country where the Creator is from.
+        characters (list of :obj: `GenericEntry`): List of characters the Creator has created.
+        date_added (datetime): Date and time when the Creator was added to ComicVine.
+        date_last_updated (datetime): Date and time when the Creator was updated on ComicVine.
+        date_of_birth (date, Optional): Date when the Creator was born.
+        date_of_death (date, Optional): Date when the Creator died.
+        description (str): Long description of the Creator.
+        email (str, Optional): Email address of the Creator.
+        gender (int): Creator gender.
+        hometown (str, Optional): Hometown of the Creator.
+        id (int): Identifier used in ComicVine.
+        image (:obj: `ImageEntry`): Different sized images, posters and thumbnails for the Creator.
+        issue_count (int, Optional): Number of issues the Creator appears in.
+        issues (list of :obj: `GenericEntry`): List of issues the Creator appears in.
+        name (str): Name of the Creator.
+        site_url (str): Url to the ComicVine Website.
+        story_arcs (list of :obj: `GenericEntry`): List of story arcs the Creator appears in.
+        summary (str, Optional): Short description of the Creator.
+        volumes (list of :obj: `GenericEntry`): List of volumes the Creator appears in.
+        website (str, Optional): Url to the Creator's website.
     """
 
     def __init__(self, **kwargs):
-        """Initialize a new Creator."""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -30,7 +56,7 @@ class CreatorSchema(Schema):
     aliases = fields.Str(allow_none=True)
     api_url = fields.Url(data_key="api_detail_url")
     country = fields.Str()
-    created_characters = fields.Nested(GenericEntrySchema, many=True)
+    characters = fields.Nested(GenericEntrySchema, many=True)
     date_added = fields.DateTime()
     date_last_updated = fields.DateTime()
     date_of_birth = fields.Date(data_key="birth", allow_none=True)
@@ -58,13 +84,16 @@ class CreatorSchema(Schema):
         datetimeformat = "%Y-%m-%d %H:%M:%S"
 
     @pre_load
-    def process_input(self, data, **kwargs):
+    def process_input(self, data: Dict[str, Any], **kwargs) -> Dict[str, Any]:
         """
-        Only keep the date of death information from Comic Vine.
+        Only keep the date of death information from ComicVine. The timezone info they include is not of any use.
 
-        The time zone info they include is not of any use.
+        Args:
+            data: Data from the ComicVine response
+            **kwargs:
 
-        :param data: Data from the Comic Vine response
+        Returns:
+            ComicVine response with the date of death information included.
         """
         new_data = data
 
@@ -74,13 +103,15 @@ class CreatorSchema(Schema):
         return new_data
 
     @post_load
-    def make_object(self, data, **kwargs) -> Creator:
+    def make_object(self, data: Dict[str, Any], **kwargs) -> Creator:
         """
         Make the Creator object.
 
-        :param data: Data from Comic Vine response.
+        Args:
+            data: Data from the ComicVine response.
+            **kwargs:
 
-        :returns: :class:`Creator` object
-        :rtype: Creator
+        Returns:
+            A `Creator` object
         """
         return Creator(**data)

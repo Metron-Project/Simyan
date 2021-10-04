@@ -13,14 +13,19 @@ from typing import Any, Dict, Optional
 
 class SqliteCache:
     """
-    The SqliteCache object to cache search results from Comic Vine.
+    The SqliteCache object to cache search results from ComicVine.
 
-    :param str name: Path and database name to use.
-    :param optional, int expiry: How long to keep cache results.
+    Args:
+        name: Path and database name to use.
+        expiry: How long to keep cache results.
+
+    Attributes:
+        expiry (int, Optional): How long to keep cache results.
+        con (Connection): Database connection
+        cur (Cursor): Database cursor
     """
 
     def __init__(self, name: str = "Simyan-Cache.sqlite", expiry: Optional[int] = 14):
-        """Initialize a new SqliteCache."""
         self.expiry = expiry
         self.con = sqlite3.connect(name)
         self.cur = self.con.cursor()
@@ -29,9 +34,13 @@ class SqliteCache:
 
     def select(self, query: str) -> Dict[str, Any]:
         """
-        Statement to retrieve data from the cache database.
+        Retrieve data from the cache database.
 
-        :param str query: Search string.
+        Args:
+            query: Search string
+
+        Returns:
+            Dict with select result or empty
         """
         if self.expiry:
             self.cur.execute(
@@ -52,7 +61,11 @@ class SqliteCache:
         """
         Retrieve data from the cache database.
 
-        :param str key: value to search for.
+        Args:
+            key: Search string
+
+        Returns:
+            Dict with select result or empty
         """
         return self.select(query=key) or None
 
@@ -60,8 +73,9 @@ class SqliteCache:
         """
         Insert data into the cache database.
 
-        :param str query: Search string.
-        :param str response: data to save.
+        Args:
+            query: Search string
+            response: data to save
         """
         if self.expiry:
             expiry = datetime.now() + timedelta(days=self.expiry)
@@ -75,15 +89,16 @@ class SqliteCache:
 
     def store(self, key: str, value: str):
         """
-        Save data to the cache database.
+        Insert data into the cache database.
 
-        :param str key: Item id.
-        :param str value: data to save.
+        Args:
+            key: Search string
+            value: data to save
         """
         return self.insert(query=key, response=value)
 
     def delete(self):
-        """Remove data from the cache database."""
+        """Remove all expired data from the cache database."""
         if not self.expiry:
             return
         self.cur.execute(
