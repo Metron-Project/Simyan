@@ -1,141 +1,28 @@
-Simyan package
+simyan package
 ==============
 
-Submodules
-----------
-
-Simyan.character module
----------------------
-
-.. automodule:: Simyan.character
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.character\_list module
----------------------------
-
-.. automodule:: Simyan.character_list
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.creator module
----------------------
-
-.. automodule:: Simyan.creator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.creator\_list module
----------------------------
-
-.. automodule:: Simyan.creator_list
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.exceptions module
+simyan.exceptions module
 ------------------------
 
-.. automodule:: Simyan.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. automodule:: simyan.exceptions
 
-Simyan.generic\_entries module
+simyan.generic\_entries module
 ------------------------------
 
-.. automodule:: Simyan.generic_entries
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. automodule:: simyan.generic_entries
 
-Simyan.issue module
--------------------
-
-.. automodule:: Simyan.issue
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.issue\_list module
--------------------------
-
-.. automodule:: Simyan.issue_list
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.publisher module
------------------------
-
-.. automodule:: Simyan.publisher
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.publisher\_list module
------------------------------
-
-.. automodule:: Simyan.publisher_list
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.session module
+simyan.session module
 ---------------------
 
-.. automodule:: Simyan.session
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. automodule:: simyan.session
 
-Simyan.sqlite\_cache module
+simyan.sqlite\_cache module
 ---------------------------
 
-.. automodule:: Simyan.sqlite_cache
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. automodule:: simyan.sqlite_cache
 
-Simyan.story\_arc module
-------------------------
+Package contents
+----------------
 
-.. automodule:: Simyan.story_arc
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.story\_arc\_list module
-------------------------------
-
-.. automodule:: Simyan.story_arc_list
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.volume module
---------------------
-
-.. automodule:: Simyan.volume
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Simyan.volume\_list module
---------------------------
-
-.. automodule:: Simyan.volume_list
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: Simyan
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. automodule:: simyan
+   :ignore-module-all:

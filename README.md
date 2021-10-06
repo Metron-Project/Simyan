@@ -21,20 +21,18 @@ A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvin
 ### PyPI
 
 ```bash
-$ pip3 install -U --user Simyan
+$ pip3 install -U --user simyan
 ```
 
 ## Example Usage
 
 ```python
-from Simyan import create_session
-# Your config/secrets
-from config import comicvine_api_key
+from simyan import create_session, SQLiteCache
 
-session = create_session(api_key=comicvine_api_key)
+session = create_session(api_key="ComicVine API Key", cache=SQLiteCache())
 
 # Search for Publisher
-results = session.publisher_list(params={'filter': 'name:DC Comics'})
+results = session.publisher_list(params={"filter": "name:DC Comics"})
 for publisher in results:
     print(f"{publisher.id} | {publisher.name} - {publisher.site_url}")
 
@@ -43,20 +41,14 @@ result = session.volume(_id=26266)
 print(result.summary)
 ```
 
-*There is a cache option to limit required calls to API*
+## Depreciation
 
-```python
-from Simyan import create_session, SqliteCache
-# Your config/secrets
-from config import comicvine_api_key
+This library is in Beta, changes will happen as the library settles.
 
-session = create_session(api_key=comicvine_api_key, cache=SqliteCache())
-
-# Get details for an Issue
-result = session.issue(_id=189810)
-print(f"{result.volume.name} #{result.number}")
-print(result.description)
-```
+The following is the methodology when changing external Methods, Fields and Classes:
+- Fields will be updated/removed in minor releases.
+- Methods will be marked as deprecated and updated/removed in major releases.
+- Classes will be marked as deprecated and updated/removed in major releases.
 
 ## Socials
 
