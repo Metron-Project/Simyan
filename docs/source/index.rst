@@ -16,7 +16,7 @@ Guide
 .. toctree::
     :maxdepth: 2
 
-    Install
+    install
 
 API Reference
 =============
@@ -24,7 +24,7 @@ API Reference
 .. toctree::
     :maxdepth: 2
 
-    Packages
+    packages
 
 Indices and tables
 ==================
