@@ -7,7 +7,8 @@ import os
 
 import pytest
 
-from simyan import SQLiteCache, create_session
+from simyan import create_session
+from simyan.sqlite_cache import SQLiteCache
 
 
 @pytest.fixture(scope="session")

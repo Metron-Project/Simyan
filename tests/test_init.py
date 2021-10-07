@@ -21,7 +21,7 @@ def test_api():
     try:
         m = api(api_key="Something")
     except Exception as exc:
-        print(f"Simyan.api() raised {exc} unexpectedly!")
+        print(f"simyan.api() raised {exc} unexpectedly!")
 
     assert m.__class__.__name__ == Session.__name__
 
@@ -32,6 +32,6 @@ def test_create_session():
     try:
         m = create_session(api_key="Something")
     except Exception as exc:
-        print(f"Simyan.create_session() raised {exc} unexpectedly!")
+        print(f"simyan.create_session() raised {exc} unexpectedly!")
 
     assert m.__class__.__name__ == Session.__name__

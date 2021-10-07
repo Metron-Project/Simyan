@@ -27,7 +27,8 @@ $ pip3 install -U --user simyan
 ## Example Usage
 
 ```python
-from simyan import create_session, SQLiteCache
+from simyan import create_session
+from simyan.sqlite_cache import SQLiteCache
 
 session = create_session(api_key="ComicVine API Key", cache=SQLiteCache())
 
@@ -46,9 +47,9 @@ print(result.summary)
 This library is in Beta, changes will happen as the library settles.
 
 The following is the methodology when changing external Methods, Fields and Classes:
-- Fields will be updated/removed in minor releases.
-- Methods will be marked as deprecated and updated/removed in major releases.
-- Classes will be marked as deprecated and updated/removed in major releases.
+- Fields will be updated/removed in next minor release.
+- Methods will be marked as deprecated and updated/removed in next major release.
+- Classes will be marked as deprecated and updated/removed in next major release.
 
 ## Socials
 

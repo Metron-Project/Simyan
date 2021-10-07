@@ -20,14 +20,20 @@ from requests import get
 from requests.exceptions import ConnectionError
 
 from simyan import __version__
-from simyan.character import Character, CharacterList, CharacterSchema
-from simyan.creator import Creator, CreatorList, CreatorSchema
+from simyan.character import Character, CharacterSchema
+from simyan.character_list import CharacterList
+from simyan.creator import Creator, CreatorSchema
+from simyan.creator_list import CreatorList
 from simyan.exceptions import APIError, CacheError
-from simyan.issue import Issue, IssueList, IssueSchema
-from simyan.publisher import Publisher, PublisherList, PublisherSchema
+from simyan.issue import Issue, IssueSchema
+from simyan.issue_list import IssueList
+from simyan.publisher import Publisher, PublisherSchema
+from simyan.publisher_list import PublisherList
 from simyan.sqlite_cache import SQLiteCache
-from simyan.story_arc import StoryArc, StoryArcList, StoryArcSchema
-from simyan.volume import Volume, VolumeList, VolumeSchema
+from simyan.story_arc import StoryArc, StoryArcSchema
+from simyan.story_arc_list import StoryArcList
+from simyan.volume import Volume, VolumeSchema
+from simyan.volume_list import VolumeList
 
 MINUTE = 60
 

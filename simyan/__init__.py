@@ -1,6 +1,6 @@
 """simyan package entry file."""
 __version__ = "0.6.0"
-__all__ = ["__version__", "create_session", "api", "SQLiteCache"]
+__all__ = ["__version__", "create_session", "api"]
 
 from typing import Optional
 
@@ -42,4 +42,4 @@ def api(api_key: Optional[str] = None, cache: Optional[SQLiteCache] = None) -> S
     if api_key is None:
         raise AuthenticationError("Missing API Key.")
 
-    return create_session(api_key=api_key, cache=cache)
+    return Session(api_key=api_key, cache=cache)

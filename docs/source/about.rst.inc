@@ -2,7 +2,8 @@
 
 .. code-block:: python
 
-    from simyan import create_session, SQLiteCache
+    from simyan import create_session
+    from simyan.sqlite_cache import SQLiteCache
 
     session = create_session(api_key="ComicVine API Key", cache=SQLiteCache())
 
