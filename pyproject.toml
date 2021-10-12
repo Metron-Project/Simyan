@@ -50,7 +50,7 @@ tox = "^3.24.4"
 pre-commit = "^2.15.0"
 pyupgrade = "^2.29.0"
 black = "^21.9b0"
-flake8 = "^3.9.2"
+flake8 = "^4.0.1"
 flake8-docstrings = "^1.6.0"
 flake8-builtins = "^1.5.3"
 flake8-rst-docstrings = "^0.2.3"
@@ -80,7 +80,7 @@ known_third_party = ["deprecation", "marshmallow", "pytest", "ratelimit", "reque
 docs = ["sphinx-rtd-theme", "sphinxcontrib-napoleon"]
 
 [tool.coverage.run]
-source = ["Simyan"]
+source = ["simyan"]
 
 [tool.coverage.report]
 show_missing = true
