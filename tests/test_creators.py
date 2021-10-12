@@ -1,36 +1,31 @@
 """
-Test Creators module.
+The Test Creators module.
 
 This module contains tests for Creator objects.
 """
-import datetime
+from datetime import date
 
 import pytest
 
-from Simyan.exceptions import APIError
+from simyan.exceptions import APIError
 
 COUNTRY = "United States"
-DATE_OF_BIRTH = None
+DATE_OF_BIRTH = date(year=1973, month=1, day=25)
 DATE_OF_DEATH = None
 EMAIL = None
 GENDER = 1
-HOMETOWN = None
-ID = 41853
+HOMETOWN = "Detroit, MI"
+ID = 40439
 ISSUE_COUNT = None
-ISSUE_ID = 878411
-ISSUE_NAME = None
-NAME = "Peter J. Tomasi"
-STORY_ARC_ID = 60628
-STORY_ARC_NAME = "Destiny"
-VOLUME_ID = 4958
-VOLUME_NAME = "DC Universe: Trinity"
-WEBSITE = None
+NAME = "Geoff Johns"
+WEBSITE = "http://www.geoffjohns.com"
 
 
 def test_creator(comicvine):
     """Test for a known creator."""
     result = comicvine.creator(ID)
     assert result.country == COUNTRY
+    assert result.characters[0].id == 148828
     assert result.date_of_birth == DATE_OF_BIRTH
     assert result.date_of_death == DATE_OF_DEATH
     assert result.email == EMAIL
@@ -38,18 +33,15 @@ def test_creator(comicvine):
     assert result.hometown == HOMETOWN
     assert result.id == ID
     assert result.issue_count == ISSUE_COUNT
-    assert result.issues[0].id == ISSUE_ID
-    assert result.issues[0].name == ISSUE_NAME
+    assert result.issues[0].id == 882780
     assert result.name == NAME
-    assert result.story_arcs[0].id == STORY_ARC_ID
-    assert result.story_arcs[0].name == STORY_ARC_NAME
-    assert result.volumes[0].id == VOLUME_ID
-    assert result.volumes[0].name == VOLUME_NAME
+    assert len(result.story_arcs) == 0
+    assert result.volumes[0].id == 5261
     assert result.website == WEBSITE
 
 
 def test_creator_fail(comicvine):
-    """Test for a non-existant creator."""
+    """Test for a non-existent creator."""
     with pytest.raises(APIError):
         comicvine.creator(-1)
 
@@ -57,8 +49,8 @@ def test_creator_fail(comicvine):
 def test_creator_with_dob(comicvine):
     """Test creators date of birth & death."""
     kirby = comicvine.creator(5614)
-    assert kirby.date_of_birth == datetime.date(1917, 8, 28)
-    assert kirby.date_of_death == datetime.date(1994, 2, 6)
+    assert kirby.date_of_birth == date(1917, 8, 28)
+    assert kirby.date_of_death == date(1994, 2, 6)
 
 
 def test_creator_list(comicvine):

@@ -16,7 +16,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
 # This import needs to be *after* setting the sys path
-import Simyan  # noqa #E402
+import simyan  # noqa #E402
 
 # -- Project information -----------------------------------------------------
 
@@ -25,7 +25,7 @@ copyright = "2021, Brian Pepple"
 author = "Brian Pepple"
 
 # The full version, including alpha/beta/rc tags
-version = release = Simyan.__version__
+version = release = simyan.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -45,6 +45,20 @@ templates_path = ["_templates"]
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
+
+autodoc_typehints = "description"
+autoclass_content = "class"
+autodoc_inherit_docstrings = False
+autodoc_default_options = {
+    "inherited-members": False,
+    "members": True,
+    "undoc-members": True,
+    "exclude-members": "opts",
+    "show-inheritance": True,
+}
+napoleon_google_docstring = True
+napoleon_numpy_docstring = False
+napoleon_use_ivar = True
 
 
 # -- Options for HTML output -------------------------------------------------

@@ -1,5 +1,5 @@
 """
-Test Issues module.
+The Test Issues module.
 
 This module contains tests for Issue objects.
 """
@@ -7,43 +7,44 @@ from datetime import date
 
 import pytest
 
-from Simyan.exceptions import APIError
+from simyan.exceptions import APIError
 
 COVER_DATE = date(year=2005, month=7, day=1)
-FIRST_APPEARANCE_STORY_ARCS = None
 ID = 111265
 NAME = "Airborne"
 NUMBER = "1"
-CREATOR_ID = 10945
-CREATOR_NAME = "Alex Ross"
-CREATOR_ROLES = "inker, colorist, cover"
 STORE_DATE = date(year=2005, month=5, day=18)
-STORY_ARC_ID = 54588
-STORY_ARC_NAME = "Green Lantern: Rebirth"
 VOLUME_ID = 18216
-VOLUME_NAME = "Green Lantern"
 
 
 def test_issue(comicvine):
     """Test for a known issue."""
     result = comicvine.issue(ID)
+    assert result.characters[0].id == 22634
+    assert result.concepts[0].id == 41148
     assert result.cover_date == COVER_DATE
-    assert result.first_appearance_story_arcs == FIRST_APPEARANCE_STORY_ARCS
+    assert result.creators[0].id == 10945
+    assert len(result.deaths) == 0
+    assert result.first_appearance_characters is None
+    assert result.first_appearance_concepts is None
+    assert result.first_appearance_locations is None
+    assert result.first_appearance_objects is None
+    assert result.first_appearance_story_arcs is None
+    assert result.first_appearance_teams is None
     assert result.id == ID
+    assert result.locations[0].id == 56427
     assert result.name == NAME
     assert result.number == NUMBER
-    assert result.creators[0].id == CREATOR_ID
-    assert result.creators[0].name == CREATOR_NAME
-    assert result.creators[0].roles == CREATOR_ROLES
+    assert result.objects[0].id == 41361
     assert result.store_date == STORE_DATE
-    assert result.story_arcs[0].id == STORY_ARC_ID
-    assert result.story_arcs[0].name == STORY_ARC_NAME
-    assert result.volume.id == VOLUME_ID
-    assert result.volume.name == VOLUME_NAME
+    assert result.story_arcs[0].id == 54588
+    assert result.teams[0].id == 6992
+    assert len(result.teams_disbanded) == 0
+    assert result.volume.id == 18216
 
 
 def test_issue_fail(comicvine):
-    """Test for a non-existant issue."""
+    """Test for a non-existent issue."""
     with pytest.raises(APIError):
         comicvine.issue(-1)
 
@@ -72,7 +73,6 @@ def test_issue_list(comicvine):
     assert result.number == NUMBER
     assert result.store_date == STORE_DATE
     assert result.volume.id == VOLUME_ID
-    assert result.volume.name == VOLUME_NAME
 
 
 def test_issue_list_empty(comicvine):

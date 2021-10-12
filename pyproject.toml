@@ -1,14 +1,15 @@
 [tool.poetry]
 name = "Simyan"
-version = "0.5.2"
+version = "0.6.0"
 description = "A Python wrapper for the Comicvine API."
 license = "GPL-3.0-or-later"
-authors = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
-maintainers = ["Buried-In-Code <6057651+Buried-In-Code@users.noreply.github.com>"]
+authors = ["Buried-In-Code <BuriedInCode@tuta.io>"]
+maintainers = ["Buried-In-Code <BuriedInCode@tuta.io>"]
 readme = "README.md"
 repository = "https://github.com/Buried-In-Code/Simyan"
+documentation = "https://simyan.readthedocs.io/en/latest/"
 packages = [
-	{ include = "Simyan" }
+	{ include = "simyan" }
 ]
 include = [
     { path = "tests", format = "sdist" }
@@ -25,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Topic :: Internet",
 	"Typing :: Typed"
 ]
@@ -35,21 +37,25 @@ python = "^3.7"
 marshmallow = "^3.13.0"
 requests = "^2.26.0"
 ratelimit = "^2.2.1"
-sphinx-rtd-theme = {version = "^1.0.0", optional = true}
+deprecation = "^2.1.0"
+
+# Optional dependencies
 sphinxcontrib-napoleon = {version = "^0.7", optional = true}
+sphinx-rtd-theme = {version = "^1.0.0", optional = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
-pytest-cov = "^2.12.1"
-pre-commit = "^2.15.0"
-flake8 = "^3.9.2"
-black = "^21.9b0"
-isort = "^5.9.3"
-pyupgrade = "^2.27.0"
-seed-isort-config = "^2.2.0"
+pytest-cov = "^3.0.0"
 tox = "^3.24.4"
+pre-commit = "^2.15.0"
+pyupgrade = "^2.29.0"
+black = "^21.9b0"
+flake8 = "^4.0.1"
 flake8-docstrings = "^1.6.0"
+flake8-builtins = "^1.5.3"
 flake8-rst-docstrings = "^0.2.3"
+isort = "^5.9.3"
+seed-isort-config = "^2.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -68,13 +74,13 @@ multi_line_output = 3
 line_length = 120
 default_section = "THIRDPARTY"
 known_first_party = []
-known_third_party = ["marshmallow", "pytest", "ratelimit", "requests"]
+known_third_party = ["deprecation", "marshmallow", "pytest", "ratelimit", "requests"]
 
 [tool.poetry.extras]
 docs = ["sphinx-rtd-theme", "sphinxcontrib-napoleon"]
 
 [tool.coverage.run]
-source = ["Simyan"]
+source = ["simyan"]
 
 [tool.coverage.report]
 show_missing = true
