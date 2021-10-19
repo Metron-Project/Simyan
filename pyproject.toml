@@ -34,7 +34,7 @@ keywords=["comics", "comic", "metadata"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-marshmallow = "^3.13.0"
+marshmallow = "^3.14.0"
 requests = "^2.26.0"
 ratelimit = "^2.2.1"
 deprecation = "^2.1.0"
