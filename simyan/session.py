@@ -92,6 +92,7 @@ class Session:
             Json response from the ComicVine API.
         Raises:
             APIError: If there is an issue with the request or response from the ComicVine API.
+            AuthenticationError: If Comicvine returns with an invalid API key response..
             CacheError: If it is unable to retrieve or push to the Cache correctly.
         """
         if params is None:
