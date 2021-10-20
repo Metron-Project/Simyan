@@ -17,21 +17,28 @@ def test_api():
     with pytest.raises(AuthenticationError):
         api()
 
-    m = None
+    session = None
     try:
-        m = api(api_key="Something")
+        session = api(api_key="Something")
     except Exception as exc:
         print(f"simyan.api() raised {exc} unexpectedly!")
 
-    assert m.__class__.__name__ == Session.__name__
+    assert session.__class__.__name__ == Session.__name__
 
 
 def test_create_session():
     """Test for create_session()."""
-    m = None
+    session = None
     try:
-        m = create_session(api_key="Something")
+        session = create_session(api_key="Something")
     except Exception as exc:
         print(f"simyan.create_session() raised {exc} unexpectedly!")
 
-    assert m.__class__.__name__ == Session.__name__
+    assert session.__class__.__name__ == Session.__name__
+
+
+def test_invalid_session():
+    """Test for invalid session."""
+    session = create_session(api_key="Invalid")
+    with pytest.raises(AuthenticationError):
+        session.publisher(_id=1)

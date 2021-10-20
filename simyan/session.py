@@ -24,7 +24,7 @@ from simyan.character import Character, CharacterSchema
 from simyan.character_list import CharacterList
 from simyan.creator import Creator, CreatorSchema
 from simyan.creator_list import CreatorList
-from simyan.exceptions import APIError, CacheError
+from simyan.exceptions import APIError, AuthenticationError, CacheError
 from simyan.issue import Issue, IssueSchema
 from simyan.issue_list import IssueList
 from simyan.publisher import Publisher, PublisherSchema
@@ -92,6 +92,7 @@ class Session:
             Json response from the ComicVine API.
         Raises:
             APIError: If there is an issue with the request or response from the ComicVine API.
+            AuthenticationError: If Comicvine returns with an invalid API key response..
             CacheError: If it is unable to retrieve or push to the Cache correctly.
         """
         if params is None:
@@ -127,6 +128,8 @@ class Session:
             raise APIError(f"Invalid request: {repr(e)}")
 
         if "error" in data and data["error"] != "OK":
+            if data["error"] == "Invalid API Key":
+                raise AuthenticationError(data["error"])
             raise APIError(data["error"])
         if self.cache:
             try:
