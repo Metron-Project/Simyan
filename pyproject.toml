@@ -54,7 +54,7 @@ flake8 = "^4.0.1"
 flake8-docstrings = "^1.6.0"
 flake8-builtins = "^1.5.3"
 flake8-rst-docstrings = "^0.2.3"
-isort = "^5.9.3"
+isort = "^5.10.1"
 seed-isort-config = "^2.2.0"
 
 [build-system]
