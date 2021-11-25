@@ -139,3 +139,4 @@ cython_debug/
 
 .idea/
 .vscode/
+.python-version
