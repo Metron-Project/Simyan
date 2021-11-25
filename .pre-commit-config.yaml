@@ -1,9 +1,11 @@
+default_language_version:
+    python: 'python3.10'
 repos:
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.29.1
     hooks:
       - id: pyupgrade
-        args: [ "--py3-plus", "--py36-plus", "--py37-plus" ]
+        args: [ '--py3-plus', '--py36-plus', '--py37-plus' ]
   - repo: https://github.com/psf/black
     rev: 21.11b1
     hooks:
@@ -13,11 +15,22 @@ repos:
     hooks:
       - id: flake8
         additional_dependencies: [ flake8-docstrings, flake8-builtins, flake8-rst-docstrings ]
-  - repo: https://github.com/pycqa/isort
+  - repo: https://github.com/PyCQA/isort
     rev: 5.10.1
     hooks:
       - id: isort
-  - repo: https://github.com/asottile/seed-isort-config
-    rev: v2.2.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
     hooks:
-      - id: seed-isort-config
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+        exclude_types: [ json ]
+      - id: trailing-whitespace
+        args: [ '--markdown-linebreak-ext=md' ]
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Simyan"
-version = "0.6.1"
+version = "0.6.2"
 description = "A Python wrapper for the Comicvine API."
 license = "GPL-3.0-or-later"
 authors = ["Buried-In-Code <BuriedInCode@tuta.io>"]
@@ -34,7 +34,7 @@ keywords=["comics", "comic", "metadata"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-marshmallow = "^3.14.0"
+marshmallow = "^3.14.1"
 requests = "^2.26.0"
 ratelimit = "^2.2.1"
 deprecation = "^2.1.0"
@@ -48,14 +48,6 @@ pytest = "^6.2.5"
 pytest-cov = "^3.0.0"
 tox = "^3.24.4"
 pre-commit = "^2.15.0"
-pyupgrade = "^2.29.0"
-black = "^21.9b0"
-flake8 = "^4.0.1"
-flake8-docstrings = "^1.6.0"
-flake8-builtins = "^1.5.3"
-flake8-rst-docstrings = "^0.2.3"
-isort = "^5.9.3"
-seed-isort-config = "^2.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -74,7 +66,7 @@ multi_line_output = 3
 line_length = 120
 default_section = "THIRDPARTY"
 known_first_party = []
-known_third_party = ["deprecation", "marshmallow", "pytest", "ratelimit", "requests"]
+known_third_party = []
 
 [tool.poetry.extras]
 docs = ["sphinx-rtd-theme", "sphinxcontrib-napoleon"]
