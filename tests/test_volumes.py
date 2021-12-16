@@ -34,6 +34,12 @@ def test_volume(comicvine):
     assert result.start_year == START_YEAR
 
 
+def test_volume_no_start_year(comicvine):
+    """Test the Volume with no start year."""
+    result = comicvine.volume(88330)
+    assert result.start_year is None
+
+
 def test_volume_fail(comicvine):
     """Test for a non-existent volume."""
     with pytest.raises(APIError):
@@ -51,6 +57,13 @@ def test_volume_list(comicvine):
     assert result.name == NAME
     assert result.publisher.id == PUBLISHER_ID
     assert result.start_year == START_YEAR
+
+
+def test_volume_list_no_start_year(comicvine):
+    """Test the VolumeList with no start year."""
+    search_results = comicvine.volume_list({"filter": "name:The Flash"})
+    result = [x for x in search_results if x.id == 88330][0]
+    assert result.start_year is None
 
 
 def test_volume_list_empty(comicvine):

@@ -36,7 +36,7 @@ class VolumeResult:
         name (str): Name/Title of the Volume.
         publisher (GenericEntry): The publisher of the Volume.
         site_url (str): Url to the ComicVine Website.
-        start_year (int): The year the Volume started.
+        start_year (int, Optional): The year the Volume started.
         summary (str, Optional): Short description of the Volume.
     """
 
@@ -61,7 +61,7 @@ class VolumeResultSchema(Schema):
     name = fields.Str()
     publisher = fields.Nested(GenericEntrySchema)
     site_url = fields.Url(data_key="site_detail_url")
-    start_year = fields.Int()
+    start_year = fields.Int(allow_none=True)
     summary = fields.Str(data_key="deck", allow_none=True)
 
     class Meta:
