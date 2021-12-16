@@ -43,7 +43,7 @@ result = session.volume(_id=26266)
 print(result.summary)
 ```
 
-## Depreciation
+## Deprecation
 
 This library is in Beta, changes will happen as the library settles.
 
