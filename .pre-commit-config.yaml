@@ -1,25 +1,31 @@
 default_language_version:
-    python: 'python3.10'
+  python: python3.7
 repos:
-  - repo: https://github.com/asottile/pyupgrade
+  - repo: 'https://github.com/asottile/pyupgrade'
     rev: v2.29.1
     hooks:
       - id: pyupgrade
-        args: [ '--py3-plus', '--py36-plus', '--py37-plus' ]
-  - repo: https://github.com/psf/black
+        args:
+          - '--py3-plus'
+          - '--py36-plus'
+          - '--py37-plus'
+  - repo: 'https://github.com/psf/black'
     rev: 21.12b0
     hooks:
       - id: black
-  - repo: https://github.com/PyCQA/flake8
+  - repo: 'https://github.com/PyCQA/flake8'
     rev: 4.0.1
     hooks:
       - id: flake8
-        additional_dependencies: [ flake8-docstrings, flake8-builtins, flake8-rst-docstrings ]
-  - repo: https://github.com/PyCQA/isort
+        additional_dependencies:
+          - flake8-docstrings
+          - flake8-builtins
+          - flake8-rst-docstrings
+  - repo: 'https://github.com/PyCQA/isort'
     rev: 5.10.1
     hooks:
       - id: isort
-  - repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: 'https://github.com/pre-commit/pre-commit-hooks'
     rev: v4.0.1
     hooks:
       - id: check-case-conflict
@@ -27,9 +33,15 @@ repos:
       - id: check-toml
       - id: check-yaml
       - id: end-of-file-fixer
-        exclude_types: [ json ]
+        exclude_types:
+          - json
       - id: trailing-whitespace
-        args: [ '--markdown-linebreak-ext=md' ]
+        args:
+          - '--markdown-linebreak-ext=md'
+  - repo: 'https://github.com/sirosen/check-jsonschema'
+    rev: 0.9.1
+    hooks:
+      - id: check-github-workflows
   - repo: meta
     hooks:
       - id: check-hooks-apply
