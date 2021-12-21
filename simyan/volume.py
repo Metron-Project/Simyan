@@ -8,7 +8,7 @@ This module provides the following classes:
 """
 from typing import Any, Dict
 
-from marshmallow import EXCLUDE, Schema, fields, post_load
+from marshmallow import EXCLUDE, Schema, fields, post_load, pre_load
 
 from simyan.generic_entries import CountEntrySchema, GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
 
@@ -38,7 +38,7 @@ class Volume:
         locations (list[CountEntry]): List of locations in the Volume.
         name (str): Name/Title of the Volume.
         objects (list[CountEntry]): List of objects in the Volume.
-        publisher (GenericEntry): The publisher of the Volume.
+        publisher (GenericEntry, Optional): The publisher of the Volume.
         site_url (str): Url to the ComicVine Website.
         start_year (int, Optional): The year the Volume started.
         summary (str, Optional): Short description of the Volume.
@@ -69,7 +69,7 @@ class VolumeSchema(Schema):
     locations = fields.Nested(CountEntrySchema, many=True)
     name = fields.Str()
     objects = fields.Nested(CountEntrySchema, many=True)
-    publisher = fields.Nested(GenericEntrySchema)
+    publisher = fields.Nested(GenericEntrySchema, allow_none=True)
     site_url = fields.Url(data_key="site_detail_url")
     start_year = fields.Int(allow_none=True)
     summary = fields.Str(data_key="deck", allow_none=True)
@@ -80,6 +80,25 @@ class VolumeSchema(Schema):
         unknown = EXCLUDE
         dateformat = "%Y-%m-%d %H:%M:%S"
         datetimeformat = "%Y-%m-%d %H:%M:%S"
+
+    @pre_load
+    def process_input(self, data: Dict[str, Any], **kwargs) -> Dict[str, Any]:
+        """
+        Handle non-int values for start_year.
+
+        Args:
+            data: Data from the ComicVine response
+            **kwargs:
+
+        Returns:
+            ComicVine response with the start year either None or Int.
+        """
+        if "start_year" in data and data["start_year"]:
+            try:
+                data["start_year"] = int(data["start_year"])
+            except ValueError:
+                data["start_year"] = None
+        return data
 
     @post_load
     def make_object(self, data: Dict[str, Any], **kwargs) -> Volume:
