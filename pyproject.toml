@@ -44,7 +44,7 @@ sphinxcontrib-napoleon = {version = "^0.7", optional = true}
 sphinx-rtd-theme = {version = "^1.0.0", optional = true}
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
+pytest = "^7.0.0"
 pytest-cov = "^3.0.0"
 tox = "^3.24.4"
 pre-commit = "^2.16.0"
