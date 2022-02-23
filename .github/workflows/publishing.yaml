@@ -1,4 +1,4 @@
-name: 'Publishing'
+name: Publishing
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   pypi:
-    name: 'Publish to PyPI'
+    name: Publish to PyPI
     strategy:
       fail-fast: false
       matrix:

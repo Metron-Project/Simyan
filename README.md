@@ -48,6 +48,7 @@ print(result.summary)
 This library is in Beta, changes will happen as the library settles.
 
 The following is the methodology when changing public Methods, Fields and Classes:
+
 - Fields will be updated/removed in next minor release.
 - Methods will be marked as deprecated and updated/removed in next major release.
 - Classes will be marked as deprecated and updated/removed in next major release.
