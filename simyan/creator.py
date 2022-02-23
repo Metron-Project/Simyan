@@ -86,7 +86,8 @@ class CreatorSchema(Schema):
     @pre_load
     def process_input(self, data: Dict[str, Any], **kwargs) -> Dict[str, Any]:
         """
-        Only keep the date of death information from ComicVine. The timezone info they include is not of any use.
+        Only keep the date of death information from ComicVine. The timezone info they include is \
+        not of any use.
 
         Args:
             data: Data from the ComicVine response

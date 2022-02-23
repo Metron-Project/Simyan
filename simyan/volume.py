@@ -10,7 +10,12 @@ from typing import Any, Dict
 
 from marshmallow import EXCLUDE, Schema, fields, post_load, pre_load
 
-from simyan.generic_entries import CountEntrySchema, GenericEntrySchema, ImageEntrySchema, IssueEntrySchema
+from simyan.generic_entries import (
+    CountEntrySchema,
+    GenericEntrySchema,
+    ImageEntrySchema,
+    IssueEntrySchema,
+)
 
 
 class Volume:
