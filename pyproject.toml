@@ -58,13 +58,13 @@ build-backend = "poetry.core.masonry.api"
 "Issue Tracker" = "https://github.com/Buried-In-Code/Simyan/issues"
 
 [tool.black]
-line-length = 120
+line-length = 100
 target-version = ['py37']
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
-line_length = 120
+line_length = 100
 default_section = "THIRDPARTY"
 known_first_party = []
 known_third_party = []

@@ -75,13 +75,17 @@ class Session:
 
     def __init__(self, api_key: str, cache: Optional[SQLiteCache] = None):
         self.api_key = api_key
-        self.header = {"User-Agent": f"Simyan/{__version__}/{platform.system()}: {platform.release()}"}
+        self.header = {
+            "User-Agent": f"Simyan/{__version__}/{platform.system()}: {platform.release()}"
+        }
         self.api_url = "https://comicvine.gamespot.com/api/{}/"
         self.cache = cache
 
     @sleep_and_retry
     @limits(calls=20, period=MINUTE)
-    def _get(self, endpoint: List[Union[str, int]], params: Dict[str, Union[str, int]] = None) -> Dict[str, Any]:
+    def _get(
+        self, endpoint: List[Union[str, int]], params: Dict[str, Union[str, int]] = None
+    ) -> Dict[str, Any]:
         """
         Make GET request to ComicVine API endpoint.
 
@@ -151,7 +155,9 @@ class Session:
             APIError: If there is an issue with mapping the response to the Publisher object.
         """
         try:
-            return PublisherSchema().load(self._get(["publisher", f"{ComicVineResource.PUBLISHER}-{_id}"])["results"])
+            return PublisherSchema().load(
+                self._get(["publisher", f"{ComicVineResource.PUBLISHER}-{_id}"])["results"]
+            )
         except ValidationError as error:
             raise APIError(error.messages)
 
@@ -181,7 +187,9 @@ class Session:
             APIError: If there is an issue with mapping the response to the Volume object.
         """
         try:
-            return VolumeSchema().load(self._get(["volume", f"{ComicVineResource.VOLUME}-{_id}"])["results"])
+            return VolumeSchema().load(
+                self._get(["volume", f"{ComicVineResource.VOLUME}-{_id}"])["results"]
+            )
         except ValidationError as error:
             raise APIError(error.messages)
 
@@ -211,7 +219,9 @@ class Session:
             APIError: If there is an issue with mapping the response to the Issue object.
         """
         try:
-            return IssueSchema().load(self._get(["issue", f"{ComicVineResource.ISSUE}-{_id}"])["results"])
+            return IssueSchema().load(
+                self._get(["issue", f"{ComicVineResource.ISSUE}-{_id}"])["results"]
+            )
         except ValidationError as error:
             raise APIError(error.messages)
 
@@ -241,7 +251,9 @@ class Session:
             APIError: If there is an issue with mapping the response to the StoryArc object.
         """
         try:
-            return StoryArcSchema().load(self._get(["story_arc", f"{ComicVineResource.STORY_ARC}-{_id}"])["results"])
+            return StoryArcSchema().load(
+                self._get(["story_arc", f"{ComicVineResource.STORY_ARC}-{_id}"])["results"]
+            )
         except ValidationError as error:
             raise APIError(error.messages)
 
@@ -271,7 +283,9 @@ class Session:
             APIError: If there is an issue with mapping the response to the Creator object.
         """
         try:
-            return CreatorSchema().load(self._get(["person", f"{ComicVineResource.CREATOR}-{_id}"])["results"])
+            return CreatorSchema().load(
+                self._get(["person", f"{ComicVineResource.CREATOR}-{_id}"])["results"]
+            )
         except ValidationError as error:
             raise APIError(error.messages)
 
@@ -301,7 +315,9 @@ class Session:
             APIError: If there is an issue with mapping the response to the Character object.
         """
         try:
-            return CharacterSchema().load(self._get(["character", f"{ComicVineResource.CHARACTER}-{_id}"])["results"])
+            return CharacterSchema().load(
+                self._get(["character", f"{ComicVineResource.CHARACTER}-{_id}"])["results"]
+            )
         except ValidationError as error:
             raise APIError(error.messages)
 
@@ -335,7 +351,10 @@ class Session:
             params = {}
         response = self._get(endpoint=endpoint, params=params)
         result = response["results"]
-        while response["number_of_total_results"] > response["offset"] + response["number_of_page_results"]:
+        while (
+            response["number_of_total_results"]
+            > response["offset"] + response["number_of_page_results"]
+        ):
             params["offset"] = response["offset"] + response["number_of_page_results"]
             response = self._get(endpoint=endpoint, params=params)
             result.extend(response["results"])

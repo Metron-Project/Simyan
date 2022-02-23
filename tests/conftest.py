@@ -20,4 +20,6 @@ def comicvine_api_key():
 @pytest.fixture(scope="session")
 def comicvine(comicvine_api_key):
     """Set the Simyan session fixture."""
-    return create_session(api_key=comicvine_api_key, cache=SQLiteCache("tests/Simyan-Cache.sqlite", expiry=None))
+    return create_session(
+        api_key=comicvine_api_key, cache=SQLiteCache("tests/Simyan-Cache.sqlite", expiry=None)
+    )

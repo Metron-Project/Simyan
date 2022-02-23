@@ -13,7 +13,8 @@ from simyan.sqlite_cache import SQLiteCache
 
 def create_session(api_key: str, cache: Optional[SQLiteCache] = None) -> Session:
     """
-    Entry function that sets credentials to use the ComicVine API, and whether to use a database cache for results.
+    Entry function that sets credentials to use the ComicVine API, and whether to use a database \
+    cache for results.
 
     Args:
         api_key: User's API key to access the ComicVine API.
@@ -25,11 +26,15 @@ def create_session(api_key: str, cache: Optional[SQLiteCache] = None) -> Session
 
 
 @deprecated(
-    deprecated_in="0.6.0", removed_in="1.0.0", current_version=__version__, details="Use `create_session` instead"
+    deprecated_in="0.6.0",
+    removed_in="1.0.0",
+    current_version=__version__,
+    details="Use `create_session` instead",
 )
 def api(api_key: Optional[str] = None, cache: Optional[SQLiteCache] = None) -> Session:
     """
-    Entry function that sets credentials to use the ComicVine API, and whether to use a database cache for results.
+    Entry function that sets credentials to use the ComicVine API, and whether to use a database \
+    cache for results.
 
     Args:
         api_key: User's API key to access the ComicVine API.
