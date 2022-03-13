@@ -17,7 +17,7 @@ from urllib.parse import urlencode
 from marshmallow import ValidationError
 from ratelimit import limits, sleep_and_retry
 from requests import get
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, HTTPError
 
 from simyan import __version__
 from simyan.character import Character, CharacterSchema
@@ -81,13 +81,11 @@ class Session:
         self.api_url = "https://comicvine.gamespot.com/api/{}/"
         self.cache = cache
 
-    @sleep_and_retry
-    @limits(calls=20, period=MINUTE)
     def _get(
         self, endpoint: List[Union[str, int]], params: Dict[str, Union[str, int]] = None
     ) -> Dict[str, Any]:
         """
-        Make GET request to ComicVine API endpoint.
+        Check cache or make GET request to ComicVine API endpoint.
 
         Args:
             endpoint: The endpoint to request information from.
@@ -96,7 +94,7 @@ class Session:
             Json response from the ComicVine API.
         Raises:
             APIError: If there is an issue with the request or response from the ComicVine API.
-            AuthenticationError: If Comicvine returns with an invalid API key response..
+            AuthenticationError: If Comicvine returns with an invalid API key response.
             CacheError: If it is unable to retrieve or push to the Cache correctly.
         """
         if params is None:
@@ -121,27 +119,41 @@ class Session:
             except AttributeError as e:
                 raise CacheError(f"Cache object passed in is missing attribute: {repr(e)}")
 
-        try:
-            response = get(url, params=params, headers=self.header)
-        except ConnectionError as e:
-            raise APIError(f"Connection error: {repr(e)}")
+        response = self.__perform_request(url=url, params=params)
+        if "error" in response and response["error"] != "OK":
+            if response["error"] == "Invalid API Key":
+                raise AuthenticationError(response["error"])
+            raise APIError(response["error"])
 
-        try:
-            data = response.json()
-        except JSONDecodeError as e:
-            raise APIError(f"Invalid request: {repr(e)}")
-
-        if "error" in data and data["error"] != "OK":
-            if data["error"] == "Invalid API Key":
-                raise AuthenticationError(data["error"])
-            raise APIError(data["error"])
         if self.cache:
             try:
-                self.cache.insert(cache_key, data)
+                self.cache.insert(cache_key, response)
             except AttributeError as e:
                 raise CacheError(f"Cache object passed in is missing attribute: {repr(e)}")
 
-        return data
+        return response
+
+    @sleep_and_retry
+    @limits(calls=20, period=MINUTE)
+    def __perform_request(self, url: str, params: Dict[str, Union[str, int]]) -> Dict[str, Any]:
+        """
+        Make GET request to ComicVine API endpoint.
+
+        Args:
+            url: The url to request information from.
+            params: Parameters to add to the request.
+        Returns:
+            Json response from the ComicVine API.
+        Raises:
+            APIError: If there is an issue with the request or response from the ComicVine API.
+        """
+        try:
+            response = get(url, params=params, headers=self.header)
+            return response.json()
+        except (ConnectionError, HTTPError) as err:
+            raise APIError(f"Connection error: {err}")
+        except JSONDecodeError as err:
+            raise APIError(f"Invalid request: {err}")
 
     def publisher(self, _id: int) -> Publisher:
         """

@@ -11,7 +11,7 @@ DATE_OF_BIRTH = None
 FIRST_ISSUE_ID = 38445
 GENDER = 1
 ID = 40431
-ISSUE_COUNT = 1537
+ISSUE_COUNT = 1554
 NAME = "Kyle Rayner"
 ORIGIN_ID = 4
 PUBLISHER_ID = 10
@@ -27,12 +27,12 @@ def test_character(comicvine):
     assert result.enemies[0].id == 47300
     assert result.enemy_teams[0].id == 20659
     assert result.first_issue.id == FIRST_ISSUE_ID
-    assert result.friendly_teams[0].id == 50163
+    assert result.friendly_teams[0].id == 63877
     assert result.friends[0].id == 19067
     assert result.gender == GENDER
     assert result.id == ID
     assert result.issue_count == ISSUE_COUNT
-    assert result.issues[0].id == 886350
+    assert result.issues[0].id == 895904
     assert result.name == NAME
     assert result.origin.id == ORIGIN_ID
     assert result.powers[0].id == 1

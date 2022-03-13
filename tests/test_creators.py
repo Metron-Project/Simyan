@@ -33,7 +33,7 @@ def test_creator(comicvine):
     assert result.hometown == HOMETOWN
     assert result.id == ID
     assert result.issue_count == ISSUE_COUNT
-    assert result.issues[0].id == 882780
+    assert result.issues[0].id == 905804
     assert result.name == NAME
     assert len(result.story_arcs) == 0
     assert result.volumes[0].id == 5261

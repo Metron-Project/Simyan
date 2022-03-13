@@ -2,10 +2,10 @@
 
 .. code-block:: python
 
-    from simyan import create_session
+    from simyan.session import Session
     from simyan.sqlite_cache import SQLiteCache
 
-    session = create_session(api_key="ComicVine API Key", cache=SQLiteCache())
+    session = Session(api_key="ComicVine API Key", cache=SQLiteCache())
 
     # Search for Publisher
     results = session.publisher_list(params={'filter': 'name:DC Comics'})
