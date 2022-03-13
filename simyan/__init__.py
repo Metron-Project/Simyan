@@ -1,7 +1,5 @@
 """simyan package entry file."""
-from importlib.metadata import version
-
-__version__ = version(__package__)
+__version__ = "0.7.2"
 __all__ = ["__version__", "create_session", "api"]
 
 from typing import Optional
