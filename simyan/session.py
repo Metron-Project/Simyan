@@ -85,7 +85,7 @@ class Session:
         self, endpoint: List[Union[str, int]], params: Dict[str, Union[str, int]] = None
     ) -> Dict[str, Any]:
         """
-        Make GET request to ComicVine API endpoint.
+        Check cache or make GET request to ComicVine API endpoint.
 
         Args:
             endpoint: The endpoint to request information from.
@@ -94,7 +94,7 @@ class Session:
             Json response from the ComicVine API.
         Raises:
             APIError: If there is an issue with the request or response from the ComicVine API.
-            AuthenticationError: If Comicvine returns with an invalid API key response..
+            AuthenticationError: If Comicvine returns with an invalid API key response.
             CacheError: If it is unable to retrieve or push to the Cache correctly.
         """
         if params is None:
@@ -136,6 +136,17 @@ class Session:
     @sleep_and_retry
     @limits(calls=20, period=MINUTE)
     def __perform_request(self, url: str, params: Dict[str, Union[str, int]]) -> Dict[str, Any]:
+        """
+        Make GET request to ComicVine API endpoint.
+
+        Args:
+            url: The url to request information from.
+            params: Parameters to add to the request.
+        Returns:
+            Json response from the ComicVine API.
+        Raises:
+            APIError: If there is an issue with the request or response from the ComicVine API.
+        """
         try:
             response = get(url, params=params, headers=self.header)
             return response.json()
