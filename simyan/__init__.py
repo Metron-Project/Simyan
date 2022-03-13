@@ -17,7 +17,7 @@ from simyan.sqlite_cache import SQLiteCache
     deprecated_in="0.6.1",
     removed_in="0.8.0",
     current_version=__version__,
-    details="Use `Session` instead",
+    details="Use `session.Session` instead",
 )
 def create_session(api_key: str, cache: Optional[SQLiteCache] = None) -> Session:
     """
@@ -37,7 +37,7 @@ def create_session(api_key: str, cache: Optional[SQLiteCache] = None) -> Session
     deprecated_in="0.6.0",
     removed_in="0.8.0",
     current_version=__version__,
-    details="Use `Session` instead",
+    details="Use `session.Session` instead",
 )
 def api(api_key: Optional[str] = None, cache: Optional[SQLiteCache] = None) -> Session:
     """
