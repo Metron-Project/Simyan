@@ -28,10 +28,10 @@ $ pip3 install -U --user simyan
 ## Example Usage
 
 ```python
-from simyan import create_session
+from simyan.session import Session
 from simyan.sqlite_cache import SQLiteCache
 
-session = create_session(api_key="ComicVine API Key", cache=SQLiteCache())
+session = Session(api_key="ComicVine API Key", cache=SQLiteCache())
 
 # Search for Publisher
 results = session.publisher_list(params={"filter": "name:DC Comics"})
@@ -42,16 +42,6 @@ for publisher in results:
 result = session.volume(_id=26266)
 print(result.summary)
 ```
-
-## Deprecation
-
-This library is in Beta, changes will happen as the library settles.
-
-The following is the methodology when changing public Methods, Fields and Classes:
-
-- Fields will be updated/removed in next minor release.
-- Methods will be marked as deprecated and updated/removed in next major release.
-- Classes will be marked as deprecated and updated/removed in next major release.
 
 ## Socials
 

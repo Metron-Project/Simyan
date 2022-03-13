@@ -1,5 +1,7 @@
 """simyan package entry file."""
-__version__ = "0.7.1"
+from importlib.metadata import version
+
+__version__ = version(__package__)
 __all__ = ["__version__", "create_session", "api"]
 
 from typing import Optional
@@ -11,6 +13,12 @@ from simyan.session import Session
 from simyan.sqlite_cache import SQLiteCache
 
 
+@deprecated(
+    deprecated_in="0.6.1",
+    removed_in="0.8.0",
+    current_version=__version__,
+    details="Use `Session` instead",
+)
 def create_session(api_key: str, cache: Optional[SQLiteCache] = None) -> Session:
     """
     Entry function that sets credentials to use the ComicVine API, and whether to use a database \
@@ -27,9 +35,9 @@ def create_session(api_key: str, cache: Optional[SQLiteCache] = None) -> Session
 
 @deprecated(
     deprecated_in="0.6.0",
-    removed_in="1.0.0",
+    removed_in="0.8.0",
     current_version=__version__,
-    details="Use `create_session` instead",
+    details="Use `Session` instead",
 )
 def api(api_key: Optional[str] = None, cache: Optional[SQLiteCache] = None) -> Session:
     """

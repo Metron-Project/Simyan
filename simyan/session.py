@@ -130,11 +130,11 @@ class Session:
             data = response.json()
         except JSONDecodeError as e:
             raise APIError(f"Invalid request: {repr(e)}")
-
         if "error" in data and data["error"] != "OK":
             if data["error"] == "Invalid API Key":
                 raise AuthenticationError(data["error"])
             raise APIError(data["error"])
+
         if self.cache:
             try:
                 self.cache.insert(cache_key, data)
