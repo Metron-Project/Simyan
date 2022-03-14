@@ -34,12 +34,12 @@ class Volume:
         date_added (datetime): Date and time when the Volume was added to ComicVine.
         date_last_updated (datetime): Date and time when the Volume was updated on ComicVine.
         description (str, Optional): Long description of the Volume.
-        first_issue (IssueEntry): First issue of the Volume.
+        first_issue (IssueEntry, Optional): First issue of the Volume.
         id (int): Identifier used in ComicVine.
         image (ImageEntry): Different sized images, posters and thumbnails for the Volume.
         issue_count (int): Number of issues in the Volume.
         issues (list[IssueEntry]): List of issues in the Volume.
-        last_issue (IssueEntry): Last issue of the Volume.
+        last_issue (IssueEntry, Optional): Last issue of the Volume.
         locations (list[CountEntry]): List of locations in the Volume.
         name (str): Name/Title of the Volume.
         objects (list[CountEntry]): List of objects in the Volume.
@@ -65,12 +65,12 @@ class VolumeSchema(Schema):
     date_added = fields.DateTime()
     date_last_updated = fields.DateTime()
     description = fields.Str(allow_none=True)
-    first_issue = fields.Nested(IssueEntrySchema)
+    first_issue = fields.Nested(IssueEntrySchema, allow_none=True)
     id = fields.Int()
     image = fields.Nested(ImageEntrySchema)
     issue_count = fields.Int(data_key="count_of_issues")
     issues = fields.Nested(IssueEntrySchema, many=True)
-    last_issue = fields.Nested(IssueEntrySchema)
+    last_issue = fields.Nested(IssueEntrySchema, allow_none=True)
     locations = fields.Nested(CountEntrySchema, many=True)
     name = fields.Str()
     objects = fields.Nested(CountEntrySchema, many=True)
