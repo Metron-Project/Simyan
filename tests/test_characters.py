@@ -6,6 +6,7 @@ This module contains tests for Character objects.
 import pytest
 
 from simyan.exceptions import APIError
+from simyan.session import Session as Comicvine
 
 DATE_OF_BIRTH = None
 FIRST_ISSUE_ID = 38445
@@ -18,7 +19,7 @@ PUBLISHER_ID = 10
 REAL_NAME = "Kyle Rayner"
 
 
-def test_character(comicvine):
+def test_character(comicvine: Comicvine):
     """Test for a known character."""
     result = comicvine.character(ID)
     assert result.creators[0].id == 9569
@@ -43,13 +44,13 @@ def test_character(comicvine):
     assert result.volumes[0].id == 43262
 
 
-def test_character_fail(comicvine):
+def test_character_fail(comicvine: Comicvine):
     """Test for a non-existent character."""
     with pytest.raises(APIError):
         comicvine.character(-1)
 
 
-def test_character_list(comicvine):
+def test_character_list(comicvine: Comicvine):
     """Test the CharactersList."""
     search_results = comicvine.character_list({"filter": f"name:{NAME}"})
     result = [x for x in search_results if x.id == ID][0]
@@ -64,7 +65,7 @@ def test_character_list(comicvine):
     assert result.real_name == REAL_NAME
 
 
-def test_character_list_empty(comicvine):
+def test_character_list_empty(comicvine: Comicvine):
     """Test CharacterList with bad response."""
     results = comicvine.character_list({"filter": "name:INVALID"})
     assert len(results) == 0

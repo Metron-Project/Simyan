@@ -6,6 +6,7 @@ This module contains tests for Publisher objects.
 import pytest
 
 from simyan.exceptions import APIError
+from simyan.session import Session as Comicvine
 
 ID = 10
 LOCATION_ADDRESS = "4000 Warner Blvd"
@@ -14,7 +15,7 @@ LOCATION_STATE = "California"
 NAME = "DC Comics"
 
 
-def test_publisher(comicvine):
+def test_publisher(comicvine: Comicvine):
     """Test for a known publisher."""
     result = comicvine.publisher(ID)
     assert result.characters[0].id == 1253
@@ -28,13 +29,13 @@ def test_publisher(comicvine):
     assert result.volumes[0].id == 771
 
 
-def test_publisher_fail(comicvine):
+def test_publisher_fail(comicvine: Comicvine):
     """Test for a non-existent publisher."""
     with pytest.raises(APIError):
         comicvine.publisher(-1)
 
 
-def test_publisher_list(comicvine):
+def test_publisher_list(comicvine: Comicvine):
     """Test the PublishersList."""
     search_results = comicvine.publisher_list({"filter": f"name:{NAME}"})
     result = [x for x in search_results if x.id == ID][0]
@@ -45,7 +46,7 @@ def test_publisher_list(comicvine):
     assert result.name == NAME
 
 
-def test_publisher_list_empty(comicvine):
+def test_publisher_list_empty(comicvine: Comicvine):
     """Test PublishersList with no results."""
     results = comicvine.publisher_list({"filter": "name:INVALID"})
     assert len(results) == 0

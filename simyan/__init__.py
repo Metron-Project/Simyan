@@ -1,5 +1,5 @@
 """simyan package entry file."""
-__version__ = "0.7.3"
+__version__ = "0.7.4"
 __all__ = ["__version__", "create_session", "api"]
 
 from typing import Optional
