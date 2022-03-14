@@ -109,3 +109,17 @@ def test_volume_no_last_issue(comicvine: Comicvine):
     """Test Volume with no last_issue."""
     result = comicvine.volume(_id=92409)
     assert result.last_issue is None
+
+
+def test_volume_list_no_first_issue(comicvine: Comicvine):
+    """Test VolumeList with no first_issue."""
+    search_results = comicvine.volume_list(params={"filter": "name:Justice League"})
+    result = [x for x in search_results if x.id == 92409][0]
+    assert result.first_issue is None
+
+
+def test_volume_list_no_last_issue(comicvine: Comicvine):
+    """Test VolumeList with no last_issue."""
+    search_results = comicvine.volume_list(params={"filter": "name:Justice League"})
+    result = [x for x in search_results if x.id == 92409][0]
+    assert result.last_issue is None

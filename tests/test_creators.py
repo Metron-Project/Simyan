@@ -8,6 +8,7 @@ from datetime import date
 import pytest
 
 from simyan.exceptions import APIError
+from simyan.session import Session as Comicvine
 
 COUNTRY = "United States"
 DATE_OF_BIRTH = date(year=1973, month=1, day=25)
@@ -21,7 +22,7 @@ NAME = "Geoff Johns"
 WEBSITE = "http://www.geoffjohns.com"
 
 
-def test_creator(comicvine):
+def test_creator(comicvine: Comicvine):
     """Test for a known creator."""
     result = comicvine.creator(ID)
     assert result.country == COUNTRY
@@ -40,20 +41,20 @@ def test_creator(comicvine):
     assert result.website == WEBSITE
 
 
-def test_creator_fail(comicvine):
+def test_creator_fail(comicvine: Comicvine):
     """Test for a non-existent creator."""
     with pytest.raises(APIError):
         comicvine.creator(-1)
 
 
-def test_creator_with_dob(comicvine):
+def test_creator_with_dob(comicvine: Comicvine):
     """Test creators date of birth & death."""
     kirby = comicvine.creator(5614)
     assert kirby.date_of_birth == date(1917, 8, 28)
     assert kirby.date_of_death == date(1994, 2, 6)
 
 
-def test_creator_list(comicvine):
+def test_creator_list(comicvine: Comicvine):
     """Test the CreatorsList."""
     search_results = comicvine.creator_list({"filter": f"name:{NAME}"})
     result = [x for x in search_results if x.id == ID][0]
@@ -69,7 +70,7 @@ def test_creator_list(comicvine):
     assert result.website == WEBSITE
 
 
-def test_creator_list_empty(comicvine):
+def test_creator_list_empty(comicvine: Comicvine):
     """Test CreatorList with bad response."""
     results = comicvine.creator_list({"filter": "name:INVALID"})
     assert len(results) == 0
