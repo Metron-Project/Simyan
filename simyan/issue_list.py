@@ -52,7 +52,7 @@ class IssueResultSchema(Schema):
     cover_date = fields.Date()
     date_added = fields.DateTime()
     date_last_updated = fields.DateTime()
-    description = fields.Str()
+    description = fields.Str(allow_none=True)
     id = fields.Int()
     image = fields.Nested(ImageEntrySchema)
     name = fields.Str(allow_none=True)
