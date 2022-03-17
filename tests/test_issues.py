@@ -95,6 +95,6 @@ def test_issue_list_no_has_staff_review(comicvine: Comicvine):
 
 
 def test_issue_list_no_desc(comicvine: Comicvine):
-    """Test issue list that has a null/no description result"""
+    """Test issue list that has a null/no description result."""
     result = comicvine.issue_list(params={"filter": "volume:18006"})
     assert len(result) == 322
