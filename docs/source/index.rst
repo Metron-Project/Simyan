@@ -6,7 +6,7 @@
 Welcome to Simyan's documentation!
 ==================================
 
-Release v\ |version|.
+Release v\ |release|.
 
 .. include:: about.rst.inc
 
@@ -14,7 +14,7 @@ Guide
 =====
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 5
 
     install
 
@@ -22,9 +22,9 @@ API Reference
 =============
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 5
 
-    packages
+    modules
 
 Indices and tables
 ==================

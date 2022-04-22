@@ -8,7 +8,7 @@ from datetime import date
 import pytest
 
 from simyan.exceptions import APIError
-from simyan.session import Session as Comicvine
+from simyan.service import Comicvine
 
 COVER_DATE = date(year=2005, month=7, day=1)
 ID = 111265
@@ -18,13 +18,13 @@ STORE_DATE = date(year=2005, month=5, day=18)
 VOLUME_ID = 18216
 
 
-def test_issue(comicvine: Comicvine):
+def test_issue(session: Comicvine):
     """Test for a known issue."""
-    result = comicvine.issue(ID)
-    assert result.characters[0].id == 22634
-    assert result.concepts[0].id == 41148
+    result = session.issue(issue_id=ID)
+    assert result.characters[0].id_ == 22634
+    assert result.concepts[0].id_ == 41148
     assert result.cover_date == COVER_DATE
-    assert result.creators[0].id == 10945
+    assert result.creators[0].id_ == 10945
     assert len(result.deaths) == 0
     assert result.first_appearance_characters is None
     assert result.first_appearance_concepts is None
@@ -32,30 +32,30 @@ def test_issue(comicvine: Comicvine):
     assert result.first_appearance_objects is None
     assert result.first_appearance_story_arcs is None
     assert result.first_appearance_teams is None
-    assert result.id == ID
-    assert result.locations[0].id == 56427
+    assert result.id_ == ID
+    assert result.locations[0].id_ == 56427
     assert result.name == NAME
     assert result.number == NUMBER
-    assert result.objects[0].id == 41361
+    assert result.objects[0].id_ == 41361
     assert result.store_date == STORE_DATE
-    assert result.story_arcs[0].id == 54588
-    assert result.teams[0].id == 6992
+    assert result.story_arcs[0].id_ == 54588
+    assert result.teams[0].id_ == 6992
     assert len(result.teams_disbanded) == 0
-    assert result.volume.id == 18216
+    assert result.volume.id_ == 18216
 
 
-def test_issue_fail(comicvine: Comicvine):
+def test_issue_fail(session: Comicvine):
     """Test for a non-existent issue."""
     with pytest.raises(APIError):
-        comicvine.issue(-1)
+        session.issue(issue_id=-1)
 
 
-def test_issue_bad_cover_date(comicvine: Comicvine):
+def test_issue_bad_cover_date(session: Comicvine):
     """Test for issue with a cover date."""
-    xmen_2 = comicvine.issue(6787)
+    xmen_2 = session.issue(issue_id=6787)
     assert xmen_2.store_date is None
     assert xmen_2.cover_date == date(1963, 11, 1)
-    assert xmen_2.id == 6787
+    assert xmen_2.id_ == 6787
     assert xmen_2.number == "2"
     assert len(xmen_2.creators) == 4
     assert xmen_2.creators[0].name == "Jack Kirby"
@@ -64,31 +64,31 @@ def test_issue_bad_cover_date(comicvine: Comicvine):
     assert xmen_2.characters[0].name == "Angel"
 
 
-def test_issue_list(comicvine: Comicvine):
+def test_issue_list(session: Comicvine):
     """Test the IssueList."""
-    search_results = comicvine.issue_list({"filter": f"volume:{VOLUME_ID},issue_number:{NUMBER}"})
-    result = [x for x in search_results if x.id == ID][0]
+    search_results = session.issue_list({"filter": f"volume:{VOLUME_ID},issue_number:{NUMBER}"})
+    result = [x for x in search_results if x.id_ == ID][0]
     assert result.cover_date == COVER_DATE
-    assert result.id == ID
+    assert result.id_ == ID
     assert result.name == NAME
     assert result.number == NUMBER
     assert result.store_date == STORE_DATE
-    assert result.volume.id == VOLUME_ID
+    assert result.volume.id_ == VOLUME_ID
 
 
-def test_issue_list_empty(comicvine: Comicvine):
+def test_issue_list_empty(session: Comicvine):
     """Test the IssueList with no results."""
-    results = comicvine.issue_list({"filter": "name:INVALID"})
+    results = session.issue_list({"filter": "name:INVALID"})
     assert len(results) == 0
 
 
-def test_issue_no_has_staff_review(comicvine: Comicvine):
+def test_issue_no_has_staff_review(session: Comicvine):
     """Test issue that has staff review data."""
-    result = comicvine.issue(505513)
+    result = session.issue(issue_id=505513)
     assert "has_staff_review" not in result.__dict__.keys()
 
 
-def test_issue_list_no_has_staff_review(comicvine: Comicvine):
+def test_issue_list_no_has_staff_review(session: Comicvine):
     """Test IssueList that has staff review data."""
-    result = comicvine.issue_list({"filter": "issue_number:1,volume:85930"})
-    assert "has_staff_review" not in result.__dict__.keys()
+    result = session.issue_list({"filter": "issue_number:1,volume:85930"})
+    assert "has_staff_review" not in result[0].__dict__.keys()

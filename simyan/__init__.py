@@ -1,56 +1,41 @@
 """simyan package entry file."""
-__version__ = "0.7.4"
-__all__ = ["__version__", "create_session", "api"]
+from importlib.metadata import version
 
-from typing import Optional
+__version__ = version("Simyan")
+__all__ = ["__version__", "get_cache_root", "get_config_root", "get_project_root"]
 
-from deprecation import deprecated
-
-from simyan.exceptions import AuthenticationError
-from simyan.session import Session
-from simyan.sqlite_cache import SQLiteCache
+from pathlib import Path
 
 
-@deprecated(
-    deprecated_in="0.6.1",
-    removed_in="0.8.0",
-    current_version=__version__,
-    details="Use `session.Session` instead",
-)
-def create_session(api_key: str, cache: Optional[SQLiteCache] = None) -> Session:
+def get_cache_root() -> Path:
     """
-    Entry function that sets credentials to use the ComicVine API, and whether to use a database \
-    cache for results.
+    Create and return the path to the cache for simyan.
 
-    Args:
-        api_key: User's API key to access the ComicVine API.
-        cache: SQLiteCache to use.
     Returns:
-        A Session object with the user's API key and optional cache.
+        The path to the simyan cache
     """
-    return Session(api_key=api_key, cache=cache)
+    folder = Path.home() / ".cache" / "simyan"
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder
 
 
-@deprecated(
-    deprecated_in="0.6.0",
-    removed_in="0.8.0",
-    current_version=__version__,
-    details="Use `session.Session` instead",
-)
-def api(api_key: Optional[str] = None, cache: Optional[SQLiteCache] = None) -> Session:
+def get_config_root() -> Path:
     """
-    Entry function that sets credentials to use the ComicVine API, and whether to use a database \
-    cache for results.
+    Create and return the path to the config for simyan.
 
-    Args:
-        api_key: User's API key to access the ComicVine API.
-        cache: SQLiteCache to use.
     Returns:
-        A Session object with the user's API key and optional cache.
-    Raises:
-        AuthenticationError: If no API key is provided.
+        The path to the simyan config
     """
-    if api_key is None:
-        raise AuthenticationError("Missing API Key.")
+    folder = Path.home() / ".config" / "simyan"
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder
 
-    return Session(api_key=api_key, cache=cache)
+
+def get_project_root() -> Path:
+    """
+    Return the project root path.
+
+    Returns:
+        The project root path
+    """
+    return Path(__file__).parent.parent
