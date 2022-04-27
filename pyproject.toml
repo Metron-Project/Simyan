@@ -56,6 +56,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.urls]
 "Issue Tracker" = "https://github.com/Buried-In-Code/Simyan/issues"
 
+[tool.poetry.extras]
+docs = ["sphinx-rtd-theme", "sphinxcontrib-napoleon"]
+
 [tool.black]
 line-length = 100
 target-version = ['py38', 'py39', 'py310']
@@ -67,9 +70,6 @@ line_length = 100
 default_section = "THIRDPARTY"
 known_first_party = []
 known_third_party = []
-
-[tool.poetry.extras]
-docs = ["sphinx-rtd-theme", "sphinxcontrib-napoleon"]
 
 [tool.coverage.run]
 source = ["simyan"]
