@@ -277,11 +277,11 @@ six = ">=1.5.2"
 
 [[package]]
 name = "pre-commit"
-version = "2.17.0"
+version = "2.19.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 category = "dev"
 optional = false
-python-versions = ">=3.6.1"
+python-versions = ">=3.7"
 
 [package.dependencies]
 cfgv = ">=2.0.0"
@@ -652,7 +652,7 @@ docs = ["sphinx-rtd-theme", "sphinxcontrib-napoleon"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "0b564f050c1c0c787d4b75a5851413fb1789039a44f3891ccf116d124e3580ad"
+content-hash = "e265dc926c634c91bed4e0a21e1746c3f3fbdb7f113637eb42de8e96afd3e34d"
 
 [metadata.files]
 alabaster = [
@@ -837,8 +837,8 @@ pockets = [
     {file = "pockets-0.9.1.tar.gz", hash = "sha256:9320f1a3c6f7a9133fe3b571f283bcf3353cd70249025ae8d618e40e9f7e92b3"},
 ]
 pre-commit = [
-    {file = "pre_commit-2.17.0-py2.py3-none-any.whl", hash = "sha256:725fa7459782d7bec5ead072810e47351de01709be838c2ce1726b9591dad616"},
-    {file = "pre_commit-2.17.0.tar.gz", hash = "sha256:c1a8040ff15ad3d648c70cc3e55b93e4d2d5b687320955505587fd79bbaed06a"},
+    {file = "pre_commit-2.19.0-py2.py3-none-any.whl", hash = "sha256:10c62741aa5704faea2ad69cb550ca78082efe5697d6f04e5710c3c229afdd10"},
+    {file = "pre_commit-2.19.0.tar.gz", hash = "sha256:4233a1e38621c87d9dda9808c6606d7e7ba0e087cd56d3fe03202a01d2919615"},
 ]
 py = [
     {file = "py-1.11.0-py2.py3-none-any.whl", hash = "sha256:607c53218732647dff4acdfcd50cb62615cedf612e72d1724fb1a0cc6405b378"},
