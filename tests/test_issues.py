@@ -92,3 +92,15 @@ def test_issue_list_no_has_staff_review(session: Comicvine):
     """Test IssueList that has staff review data."""
     result = session.issue_list({"filter": "issue_number:1,volume:85930"})
     assert "has_staff_review" not in result[0].__dict__.keys()
+
+
+def test_issue_no_description(session: Comicvine):
+    """Test issue that has a null/no description result."""
+    result = session.issue(issue_id=134272)
+    assert result.description is None
+
+
+def test_issue_list_no_description(session: Comicvine):
+    """Test IssueList that has a null/no description result."""
+    results = session.issue_list(params={"filter": "volume:18006"})
+    assert len(results) == 322
