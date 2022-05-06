@@ -90,4 +90,4 @@ class ImageEntry:
     original: str = field(
         metadata=config(field_name="original_url")
     )  #: Url to image of Original size.
-    tags: Optional[str] = field(metadata=config(field_name="image_tags"))
+    tags: Optional[str] = field(default=None, metadata=config(field_name="image_tags"))

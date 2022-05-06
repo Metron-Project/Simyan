@@ -74,6 +74,7 @@ class Issue:
         metadata=config(
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
+            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date the Issue went on sale on stores.
     summary: Optional[str] = field(
@@ -116,7 +117,9 @@ class IssueResult:
     api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the Comicvine API.
     cover_date: date = field(
         metadata=config(
-            encoder=date.isoformat, decoder=date.fromisoformat, mm_field=fields.Date(format="iso")
+            encoder=date.isoformat,
+            decoder=date.fromisoformat,
+            mm_field=fields.Date(format="iso"),
         )
     )  #: Date on the cover of the Issue.
     date_added: datetime = field(
@@ -148,6 +151,7 @@ class IssueResult:
         metadata=config(
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
+            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date the Issue went on sale on stores.
     summary: Optional[str] = field(

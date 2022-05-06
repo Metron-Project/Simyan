@@ -54,7 +54,8 @@ class SQLiteCache:
             )
         else:
             self.cur.execute("SELECT response FROM queries WHERE query = ?;", (query,))
-        if results := self.cur.fetchone():
+        results = self.cur.fetchone()
+        if results:
             return json.loads(results[0])
         return {}
 

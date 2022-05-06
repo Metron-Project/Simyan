@@ -60,6 +60,7 @@ class Character:
             field_name="birth",
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
+            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date when the Character was born.
     deaths: List[GenericEntry] = field(
@@ -139,6 +140,7 @@ class CharacterResult:
             field_name="birth",
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
+            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date when the Character was born.
     issue_count: Optional[int] = field(

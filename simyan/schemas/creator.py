@@ -73,6 +73,7 @@ class Creator:
             field_name="birth",
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
+            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date when the Creator was born.
     date_of_death: Optional[date] = field(
@@ -81,6 +82,7 @@ class Creator:
             field_name="death",
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
+            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date when the Creator died.
     email: Optional[str] = None  #: Email address of the Creator.
@@ -139,6 +141,7 @@ class CreatorResult:
             field_name="birth",
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
+            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date when the Creator was born.
     date_of_death: Optional[date] = field(
@@ -147,6 +150,7 @@ class CreatorResult:
             field_name="death",
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
+            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date when the Creator died.
     email: Optional[str] = None  #: Email address of the Creator.
