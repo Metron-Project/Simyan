@@ -25,6 +25,12 @@ A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvin
 $ pip3 install -U --user simyan
 ```
 
+### Poetry
+
+```bash
+$ poetry add simyan
+```
+
 ## Example Usage
 
 ```python
@@ -47,4 +53,4 @@ print(result.summary)
 
 Big thanks to [Mokkari](https://github.com/bpepple/mokkari) for the inspiration and template for this project.
 
-[![Social - Discord](https://img.shields.io/badge/Discord-The--DEV--Environment-7289DA?logo=Discord&style=flat-square)](https://discord.gg/nqGMeGg)
+[![Discord | The-DEV-Environment](https://discordapp.com/api/guilds/618581423070117932/widget.png?style=banner2)](https://discord.gg/nqGMeGg)

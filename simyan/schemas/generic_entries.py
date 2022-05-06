@@ -22,7 +22,7 @@ class GenericEntry:
 
     api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the ComicVine API.
     id_: int = field(metadata=config(field_name="id"))  #: Identifier used in ComicVine.
-    name: Optional[str] = None
+    name: Optional[str] = field(default=None)
     site_url: Optional[str] = field(
         default=None, metadata=config(field_name="site_detail_url")
     )  #: Url to the ComicVine Website.
@@ -36,7 +36,7 @@ class CountEntry:
     api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the ComicVine API.
     id_: int = field(metadata=config(field_name="id"))  #: Identifier used in ComicVine.
     count: int
-    name: Optional[str] = None
+    name: Optional[str] = field(default=None)
     site_url: Optional[str] = field(
         default=None, metadata=config(field_name="site_detail_url")
     )  #: Url to the ComicVine Website.
@@ -49,7 +49,7 @@ class IssueEntry:
 
     api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the ComicVine API.
     id_: int = field(metadata=config(field_name="id"))  #: Identifier used in ComicVine.
-    name: Optional[str] = None
+    name: Optional[str] = field(default=None)
     number: Optional[str] = field(default=None, metadata=config(field_name="issue_number"))
     site_url: Optional[str] = field(
         default=None, metadata=config(field_name="site_detail_url")
@@ -64,7 +64,7 @@ class CreatorEntry:
     api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the ComicVine API.
     id_: int = field(metadata=config(field_name="id"))  #: Identifier used in ComicVine.
     roles: str = field(metadata=config(field_name="role"))  #: separated by ``\n``.
-    name: Optional[str] = None
+    name: Optional[str] = field(default=None)
     site_url: Optional[str] = field(
         default=None, metadata=config(field_name="site_detail_url")
     )  #: Url to the ComicVine Website.

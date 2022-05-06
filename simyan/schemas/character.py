@@ -50,7 +50,9 @@ class Character:
     site_url: str = field(
         metadata=config(field_name="site_detail_url")
     )  #: Url to the ComicVine Website.
-    aliases: Optional[str] = None  #: List of names the Character has used, separated by ``\n``.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Character has used, separated by ``\n``.
     creators: List[GenericEntry] = field(
         default_factory=list
     )  #: List of creators which worked on the Character.
@@ -133,7 +135,9 @@ class CharacterResult:
     site_url: str = field(
         metadata=config(field_name="site_detail_url")
     )  #: Url to the ComicVine Website.
-    aliases: Optional[str] = None  #: List of names the Character has used, separated by ``\n``.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Character has used, separated by ``\n``.
     date_of_birth: Optional[date] = field(
         default=None,
         metadata=config(

@@ -48,33 +48,34 @@ class Issue:
         metadata=config(field_name="site_detail_url")
     )  #: Url to the Comicvine Website.
     volume: GenericEntry  #: The volume the Issue is in.
-    aliases: Optional[str] = None  #: List of names the Issue has used, separated by ``\n``.
-    description: Optional[str] = None  #: Long description of the Issue.
-    first_appearance_characters: Optional[
-        List[GenericEntry]
-    ] = None  #: List of characters who first appear in the Issue.
-    first_appearance_concepts: Optional[
-        List[GenericEntry]
-    ] = None  #: List of concepts which first appear in the Issue.
-    first_appearance_locations: Optional[
-        List[GenericEntry]
-    ] = None  #: List of locations which first appear in the Issue.
-    first_appearance_objects: Optional[
-        List[GenericEntry]
-    ] = None  #: List of objects which first appear in the Issue.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Issue has used, separated by ``\n``.
+    description: Optional[str] = field(default=None)  #: Long description of the Issue.
+    first_appearance_characters: Optional[List[GenericEntry]] = field(
+        default=None
+    )  #: List of characters who first appear in the Issue.
+    first_appearance_concepts: Optional[List[GenericEntry]] = field(
+        default=None
+    )  #: List of concepts which first appear in the Issue.
+    first_appearance_locations: Optional[List[GenericEntry]] = field(
+        default=None
+    )  #: List of locations which first appear in the Issue.
+    first_appearance_objects: Optional[List[GenericEntry]] = field(
+        default=None
+    )  #: List of objects which first appear in the Issue.
     first_appearance_story_arcs: Optional[List[GenericEntry]] = field(
         default=None, metadata=config(field_name="first_appearance_storyarcs")
     )  #: List of story arcs which start in the Issue.
-    first_appearance_teams: Optional[
-        List[GenericEntry]
-    ] = None  #: List of teams which first appear in the Issue.
-    name: Optional[str] = None  #: Name/Title of the Issue.
+    first_appearance_teams: Optional[List[GenericEntry]] = field(
+        default=None
+    )  #: List of teams which first appear in the Issue.
+    name: Optional[str] = field(default=None)  #: Name/Title of the Issue.
     store_date: Optional[date] = field(
         default=None,
         metadata=config(
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
-            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date the Issue went on sale on stores.
     summary: Optional[str] = field(
@@ -143,15 +144,16 @@ class IssueResult:
         metadata=config(field_name="site_detail_url")
     )  #: Url to the Comicvine Website.
     volume: GenericEntry  #: The volume the Issue is in.
-    aliases: Optional[str] = None  #: List of names the Issue has used, separated by ``\n``.
-    description: Optional[str] = None  #: Long description of the Issue.
-    name: Optional[str] = None  #: Name/Title of the Issue.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Issue has used, separated by ``\n``.
+    description: Optional[str] = field(default=None)  #: Long description of the Issue.
+    name: Optional[str] = field(default=None)  #: Name/Title of the Issue.
     store_date: Optional[date] = field(
         default=None,
         metadata=config(
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
-            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date the Issue went on sale on stores.
     summary: Optional[str] = field(

@@ -62,12 +62,14 @@ class Volume:
     site_url: str = field(
         metadata=config(field_name="site_detail_url")
     )  #: Url to the Comicvine Website.
-    aliases: Optional[str] = None  #: List of names the Volume has used, separated by ``\n``.
-    description: Optional[str] = None  #: Long description of the Volume.
-    first_issue: Optional[IssueEntry] = None  #: First issue of the Volume.
-    last_issue: Optional[IssueEntry] = None  #: Last issue of the Volume.
-    publisher: Optional[GenericEntry] = None  #: The publisher of the Volume.
-    start_year: Optional[int] = None  #: The year the Volume started.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Volume has used, separated by ``\n``.
+    description: Optional[str] = field(default=None)  #: Long description of the Volume.
+    first_issue: Optional[IssueEntry] = field(default=None)  #: First issue of the Volume.
+    last_issue: Optional[IssueEntry] = field(default=None)  #: Last issue of the Volume.
+    publisher: Optional[GenericEntry] = field(default=None)  #: The publisher of the Volume.
+    start_year: Optional[int] = field(default=None)  #: The year the Volume started.
     summary: Optional[str] = field(
         default=None, metadata=config(field_name="deck")
     )  #: Short description of the Volume.
@@ -110,12 +112,14 @@ class VolumeResult:
     site_url: str = field(
         metadata=config(field_name="site_detail_url")
     )  #: Url to the Comicvine Website.
-    aliases: Optional[str] = None  #: List of names the Volume has used, separated by ``\n``.
-    description: Optional[str] = None  #: Long description of the Volume.
-    first_issue: Optional[IssueEntry] = None  #: First issue of the Volume.
-    last_issue: Optional[IssueEntry] = None  #: Last issue of the Volume.
-    publisher: Optional[GenericEntry] = None  #: The publisher of the Volume.
-    start_year: Optional[int] = None  #: The year the Volume started.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Volume has used, separated by ``\n``.
+    description: Optional[str] = field(default=None)  #: Long description of the Volume.
+    first_issue: Optional[IssueEntry] = field(default=None)  #: First issue of the Volume.
+    last_issue: Optional[IssueEntry] = field(default=None)  #: Last issue of the Volume.
+    publisher: Optional[GenericEntry] = field(default=None)  #: The publisher of the Volume.
+    start_year: Optional[int] = field(default=None)  #: The year the Volume started.
     summary: Optional[str] = field(
         default=None, metadata=config(field_name="deck")
     )  #: Short description of the Volume.

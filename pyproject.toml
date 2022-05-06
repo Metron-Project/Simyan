@@ -36,7 +36,6 @@ keywords=["comics", "comic", "metadata"]
 python = "^3.7"
 requests = "^2.27.1"
 ratelimit = "^2.2.1"
-deprecation = "^2.1.0"
 dataclasses-json = "^0.5.7"
 
 # Optional dependencies

@@ -49,8 +49,10 @@ class StoryArc:
     site_url: str = field(
         metadata=config(field_name="site_detail_url")
     )  #: Url to the Comicvine Website.
-    aliases: Optional[str] = None  #: List of names the Story Arc has used, separated by ``\n``.
-    description: Optional[str] = None  #: Long description of the Story Arc.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Story Arc has used, separated by ``\n``.
+    description: Optional[str] = field(default=None)  #: Long description of the Story Arc.
     issues: List[GenericEntry] = field(default_factory=list)  #: List of issues in the Story Arc.
     summary: Optional[str] = field(
         default=None, metadata=config(field_name="deck")
@@ -90,8 +92,10 @@ class StoryArcResult:
     site_url: str = field(
         metadata=config(field_name="site_detail_url")
     )  #: Url to the Comicvine Website.
-    aliases: Optional[str] = None  #: List of names the Story Arc has used, separated by ``\n``.
-    description: Optional[str] = None  #: Long description of the Story Arc.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Story Arc has used, separated by ``\n``.
+    description: Optional[str] = field(default=None)  #: Long description of the Story Arc.
     summary: Optional[str] = field(
         default=None, metadata=config(field_name="deck")
     )  #: Short description of the Story Arc.

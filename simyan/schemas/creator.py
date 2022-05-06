@@ -63,7 +63,9 @@ class Creator:
     site_url: str = field(
         metadata=config(field_name="site_detail_url")
     )  #: Url to the Comicvine Website.
-    aliases: Optional[str] = None  #: List of names the Creator has used, separated by ``\n``.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Creator has used, separated by ``\n``.
     characters: List[GenericEntry] = field(
         default_factory=list, metadata=config(field_name="created_characters")
     )  #: List of characters the Creator has created.
@@ -73,7 +75,6 @@ class Creator:
             field_name="birth",
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
-            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date when the Creator was born.
     date_of_death: Optional[date] = field(
@@ -82,11 +83,10 @@ class Creator:
             field_name="death",
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
-            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date when the Creator died.
-    email: Optional[str] = None  #: Email address of the Creator.
-    hometown: Optional[str] = None  #: Hometown of the Creator.
+    email: Optional[str] = field(default=None)  #: Email address of the Creator.
+    hometown: Optional[str] = field(default=None)  #: Hometown of the Creator.
     issue_count: Optional[int] = field(
         default=None, metadata=config(field_name="count_of_isssue_appearances")
     )  #: Number of issues the Creator appears in.
@@ -102,7 +102,7 @@ class Creator:
     volumes: List[GenericEntry] = field(
         default_factory=list, metadata=config(field_name="volume_credits")
     )  #: List of volumes the Creator appears in.
-    website: Optional[str] = None  #: Url to the Creator's website.
+    website: Optional[str] = field(default=None)  #: Url to the Creator's website.
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -134,14 +134,15 @@ class CreatorResult:
     site_url: str = field(
         metadata=config(field_name="site_detail_url")
     )  #: Url to the Comicvine Website.
-    aliases: Optional[str] = None  #: List of names the Creator has used, separated by ``\n``.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Creator has used, separated by ``\n``.
     date_of_birth: Optional[date] = field(
         default=None,
         metadata=config(
             field_name="birth",
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
-            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date when the Creator was born.
     date_of_death: Optional[date] = field(
@@ -150,15 +151,14 @@ class CreatorResult:
             field_name="death",
             encoder=lambda x: x.isoformat() if x else None,
             decoder=lambda x: date.fromisoformat(x) if x else None,
-            mm_field=fields.Date(format="iso"),
         ),
     )  #: Date when the Creator died.
-    email: Optional[str] = None  #: Email address of the Creator.
-    hometown: Optional[str] = None  #: Hometown of the Creator.
+    email: Optional[str] = field(default=None)  #: Email address of the Creator.
+    hometown: Optional[str] = field(default=None)  #: Hometown of the Creator.
     issue_count: Optional[int] = field(
         default=None, metadata=config(field_name="count_of_isssue_appearances")
     )  #: Number of issues the Creator appears in.
     summary: Optional[str] = field(
         default=None, metadata=config(field_name="deck")
     )  #: Short description of the Creator.
-    website: Optional[str] = None  #: Url to the Creator's website.
+    website: Optional[str] = field(default=None)  #: Url to the Creator's website.

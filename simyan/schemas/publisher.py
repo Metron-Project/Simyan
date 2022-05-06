@@ -42,11 +42,13 @@ class Publisher:
     site_url: str = field(
         metadata=config(field_name="site_detail_url")
     )  #: Url to the Comicvine Website.
-    aliases: Optional[str] = None  #: List of names the Publisher has used, separated by ``\n``.
-    description: Optional[str] = None  #: Long description of the Publisher.
-    location_address: Optional[str] = None  #: Address of the Publisher.
-    location_city: Optional[str] = None  #: City where the Publisher is.
-    location_state: Optional[str] = None  #: State where the Publisher is.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Publisher has used, separated by ``\n``.
+    description: Optional[str] = field(default=None)  #: Long description of the Publisher.
+    location_address: Optional[str] = field(default=None)  #: Address of the Publisher.
+    location_city: Optional[str] = field(default=None)  #: City where the Publisher is.
+    location_state: Optional[str] = field(default=None)  #: State where the Publisher is.
     summary: Optional[str] = field(
         default=None, metadata=config(field_name="deck")
     )  #: Short description of the Publisher.
@@ -88,11 +90,13 @@ class PublisherResult:
     site_url: str = field(
         metadata=config(field_name="site_detail_url")
     )  #: Url to the Comicvine Website.
-    aliases: Optional[str] = None  #: List of names the Publisher has used, separated by ``\n``.
-    description: Optional[str] = None  #: Long description of the Publisher.
-    location_address: Optional[str] = None  #: Address of the Publisher.
-    location_city: Optional[str] = None  #: City where the Publisher is.
-    location_state: Optional[str] = None  #: State where the Publisher is.
+    aliases: Optional[str] = field(
+        default=None
+    )  #: List of names the Publisher has used, separated by ``\n``.
+    description: Optional[str] = field(default=None)  #: Long description of the Publisher.
+    location_address: Optional[str] = field(default=None)  #: Address of the Publisher.
+    location_city: Optional[str] = field(default=None)  #: City where the Publisher is.
+    location_state: Optional[str] = field(default=None)  #: State where the Publisher is.
     summary: Optional[str] = field(
         default=None, metadata=config(field_name="deck")
     )  #: Short description of the Publisher.
