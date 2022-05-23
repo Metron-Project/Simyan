@@ -186,8 +186,11 @@ class Comicvine:
         Raises:
             APIError: If there is an issue with mapping the response to the PublisherList object.
         """
-        results = self._retrieve_all_responses(endpoint="/publishers", params=params)
-        return PublisherResult.schema().load(results, many=True)
+        try:
+            results = self._retrieve_all_responses(endpoint="/publishers", params=params)
+            return PublisherResult.schema().load(results, many=True)
+        except ValidationError as error:
+            raise APIError(error.messages)
 
     def volume(self, volume_id: int) -> Volume:
         """
@@ -221,8 +224,11 @@ class Comicvine:
         Raises:
             APIError: If there is an issue with mapping the response to the VolumeList object.
         """
-        results = self._retrieve_all_responses(endpoint="/volumes", params=params)
-        return VolumeResult.schema().load([pre_process_volume(x) for x in results], many=True)
+        try:
+            results = self._retrieve_all_responses(endpoint="/volumes", params=params)
+            return VolumeResult.schema().load([pre_process_volume(x) for x in results], many=True)
+        except ValidationError as error:
+            raise APIError(error.messages)
 
     def issue(self, issue_id: int) -> Issue:
         """
@@ -254,8 +260,11 @@ class Comicvine:
         Raises:
             APIError: If there is an issue with mapping the response to the IssueList object.
         """
-        results = self._retrieve_all_responses(endpoint="/issues", params=params)
-        return IssueResult.schema().load(results, many=True)
+        try:
+            results = self._retrieve_all_responses(endpoint="/issues", params=params)
+            return IssueResult.schema().load(results, many=True)
+        except ValidationError as error:
+            raise APIError(error.messages)
 
     def story_arc(self, story_arc_id: int) -> StoryArc:
         """
@@ -289,8 +298,11 @@ class Comicvine:
         Raises:
             APIError: If there is an issue with mapping the response to the StoryArcList object.
         """
-        results = self._retrieve_all_responses(endpoint="/story_arcs", params=params)
-        return StoryArcResult.schema().load(results, many=True)
+        try:
+            results = self._retrieve_all_responses(endpoint="/story_arcs", params=params)
+            return StoryArcResult.schema().load(results, many=True)
+        except ValidationError as error:
+            raise APIError(error.messages)
 
     def creator(self, creator_id: int) -> Creator:
         """
@@ -324,8 +336,11 @@ class Comicvine:
         Raises:
             APIError: If there is an issue with mapping the response to the CreatorList object.
         """
-        results = self._retrieve_all_responses(endpoint="/people", params=params)
-        return CreatorResult.schema().load([pre_process_creator(x) for x in results], many=True)
+        try:
+            results = self._retrieve_all_responses(endpoint="/people", params=params)
+            return CreatorResult.schema().load([pre_process_creator(x) for x in results], many=True)
+        except ValidationError as error:
+            raise APIError(error.messages)
 
     def character(self, character_id: int) -> Character:
         """
@@ -359,8 +374,11 @@ class Comicvine:
         Raises:
             APIError: If there is an issue with mapping the response to the CharacterList object.
         """
-        results = self._retrieve_all_responses(endpoint="/characters", params=params)
-        return CharacterResult.schema().load(results, many=True)
+        try:
+            results = self._retrieve_all_responses(endpoint="/characters", params=params)
+            return CharacterResult.schema().load(results, many=True)
+        except ValidationError as error:
+            raise APIError(error.messages)
 
     def _retrieve_all_responses(
         self, endpoint: str, params: Optional[Dict[str, Any]] = None
