@@ -5,8 +5,8 @@ This module contains tests for Publisher objects.
 """
 import pytest
 
+from simyan.comicvine import Comicvine
 from simyan.exceptions import APIError
-from simyan.service import Comicvine
 
 ID = 10
 LOCATION_ADDRESS = "4000 Warner Blvd"

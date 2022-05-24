@@ -319,6 +319,7 @@ class Comicvine:
             result = self._get_request(
                 endpoint=f"/person/{ComicvineResource.CREATOR}-{creator_id}"
             )["results"]
+            # print(pre_process_creator(result))
             return Creator.schema().load(pre_process_creator(result))
         except ValidationError as error:
             raise APIError(error.messages)

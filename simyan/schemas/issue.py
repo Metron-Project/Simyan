@@ -22,11 +22,6 @@ class Issue:
     """The Issue object contains information for an issue."""
 
     api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the Comicvine API.
-    cover_date: date = field(
-        metadata=config(
-            encoder=date.isoformat, decoder=date.fromisoformat, mm_field=fields.Date(format="iso")
-        )
-    )  #: Date on the cover of the Issue.
     date_added: datetime = field(
         metadata=config(
             encoder=datetime.isoformat,
@@ -51,6 +46,13 @@ class Issue:
     aliases: Optional[str] = field(
         default=None
     )  #: List of names the Issue has used, separated by ``\n``.
+    cover_date: Optional[date] = field(
+        default=None,
+        metadata=config(
+            encoder=lambda x: x.isoformat() if x else None,
+            decoder=lambda x: date.fromisoformat(x) if x else None,
+        ),
+    )  #: Date on the cover of the Issue.
     description: Optional[str] = field(default=None)  #: Long description of the Issue.
     first_appearance_characters: Optional[List[GenericEntry]] = field(
         default=None
@@ -116,13 +118,6 @@ class IssueResult:
     """The IssueResult object contains information for a issue."""
 
     api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the Comicvine API.
-    cover_date: date = field(
-        metadata=config(
-            encoder=date.isoformat,
-            decoder=date.fromisoformat,
-            mm_field=fields.Date(format="iso"),
-        )
-    )  #: Date on the cover of the Issue.
     date_added: datetime = field(
         metadata=config(
             encoder=datetime.isoformat,
@@ -147,6 +142,13 @@ class IssueResult:
     aliases: Optional[str] = field(
         default=None
     )  #: List of names the Issue has used, separated by ``\n``.
+    cover_date: Optional[date] = field(
+        default=None,
+        metadata=config(
+            encoder=lambda x: x.isoformat() if x else None,
+            decoder=lambda x: date.fromisoformat(x) if x else None,
+        ),
+    )  #: Date on the cover of the Issue.
     description: Optional[str] = field(default=None)  #: Long description of the Issue.
     name: Optional[str] = field(default=None)  #: Name/Title of the Issue.
     store_date: Optional[date] = field(

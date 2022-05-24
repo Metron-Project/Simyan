@@ -7,8 +7,8 @@ from datetime import date
 
 import pytest
 
+from simyan.comicvine import Comicvine
 from simyan.exceptions import APIError
-from simyan.service import Comicvine
 
 COUNTRY = "United States"
 DATE_OF_BIRTH = date(year=1973, month=1, day=25)

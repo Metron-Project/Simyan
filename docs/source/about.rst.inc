@@ -2,7 +2,7 @@
 
 .. code-block:: python
 
-    from simyan.service import Comicvine
+    from simyan.comicvine import Comicvine
     from simyan.sqlite_cache import SQLiteCache
 
     session = Comicvine(api_key="Comicvine API Key", cache=SQLiteCache())

@@ -7,7 +7,7 @@ import os
 
 import pytest
 
-from simyan.service import Comicvine
+from simyan.comicvine import Comicvine
 from simyan.sqlite_cache import SQLiteCache
 
 

@@ -5,8 +5,8 @@ This module contains tests for Character objects.
 """
 import pytest
 
+from simyan.comicvine import Comicvine
 from simyan.exceptions import APIError
-from simyan.service import Comicvine
 
 DATE_OF_BIRTH = None
 FIRST_ISSUE_ID = 38445

@@ -34,7 +34,7 @@ $ poetry add simyan
 ## Example Usage
 
 ```python
-from simyan.service import Comicvine
+from simyan.comicvine import Comicvine
 from simyan.sqlite_cache import SQLiteCache
 
 session = Comicvine(api_key="ComicVine API Key", cache=SQLiteCache())
@@ -53,4 +53,4 @@ print(result.summary)
 
 Big thanks to [Mokkari](https://github.com/bpepple/mokkari) for the inspiration and template for this project.
 
-[![Discord | The-DEV-Environment](https://discordapp.com/api/guilds/618581423070117932/widget.png?style=banner2)](https://discord.gg/nqGMeGg)
+[![Discord | The-DEV-Environment](https://img.shields.io/discord/618581423070117932?color=7289DA&label=The-DEV-Environment&logo=Discord&style=for-the-badge)](https://discord.gg/nqGMeGg)

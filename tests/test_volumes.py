@@ -5,8 +5,8 @@ This module contains tests for Volume objects.
 """
 import pytest
 
+from simyan.comicvine import Comicvine
 from simyan.exceptions import APIError
-from simyan.service import Comicvine
 
 FIRST_ISSUE_ID = 111265
 ID = 18216

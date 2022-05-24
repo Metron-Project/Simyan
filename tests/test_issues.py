@@ -7,8 +7,8 @@ from datetime import date
 
 import pytest
 
+from simyan.comicvine import Comicvine
 from simyan.exceptions import APIError
-from simyan.service import Comicvine
 
 COVER_DATE = date(year=2005, month=7, day=1)
 ID = 111265
@@ -103,4 +103,18 @@ def test_issue_no_description(session: Comicvine):
 def test_issue_list_no_description(session: Comicvine):
     """Test IssueList that has a null/no description result."""
     results = session.issue_list(params={"filter": "volume:18006"})
-    assert len(results) == 322
+    result = [x for x in results if x.id_ == 134272][0]
+    assert result.description is None
+
+
+def test_issue_no_cover_date(session: Comicvine):
+    """Test issue that has a null/no cover_date result."""
+    result = session.issue(issue_id=325298)
+    assert result.cover_date is None
+
+
+def test_issue_list_no_cover_date(session: Comicvine):
+    """Test IssueList that has a null/no cover_date result."""
+    results = session.issue_list(params={"filter": "volume:3088"})
+    result = [x for x in results if x.id_ == 325298][0]
+    assert result.cover_date is None
