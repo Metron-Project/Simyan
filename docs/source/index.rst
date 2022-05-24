@@ -6,7 +6,7 @@
 Welcome to Simyan's documentation!
 ==================================
 
-Release v\ |release|.
+Release v\ |version|.
 
 .. include:: about.rst.inc
 

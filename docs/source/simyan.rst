@@ -23,10 +23,10 @@ simyan.exceptions module
 
 .. automodule:: simyan.exceptions
 
-simyan.service module
-~~~~~~~~~~~~~~~~~~~~~
+simyan.comicvine module
+~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: simyan.service
+.. automodule:: simyan.comicvine
 
 simyan.sqlite\_cache module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -6,7 +6,7 @@ from simyan import __version__
 project = "Simyan"
 copyright = "2021, Brian Pepple"
 author = "Brian Pepple"
-release = __version__
+version = __version__
 
 
 # -- General configuration ---------------------------------------------------
