@@ -1,56 +1,17 @@
 """simyan package entry file."""
-__version__ = "0.7.4"
-__all__ = ["__version__", "create_session", "api"]
+__version__ = "0.8.0"
+__all__ = ["__version__", "get_cache_root"]
 
-from typing import Optional
-
-from deprecation import deprecated
-
-from simyan.exceptions import AuthenticationError
-from simyan.session import Session
-from simyan.sqlite_cache import SQLiteCache
+from pathlib import Path
 
 
-@deprecated(
-    deprecated_in="0.6.1",
-    removed_in="0.8.0",
-    current_version=__version__,
-    details="Use `session.Session` instead",
-)
-def create_session(api_key: str, cache: Optional[SQLiteCache] = None) -> Session:
+def get_cache_root() -> Path:
     """
-    Entry function that sets credentials to use the ComicVine API, and whether to use a database \
-    cache for results.
+    Create and return the path to the cache for simyan.
 
-    Args:
-        api_key: User's API key to access the ComicVine API.
-        cache: SQLiteCache to use.
     Returns:
-        A Session object with the user's API key and optional cache.
+        The path to the simyan cache
     """
-    return Session(api_key=api_key, cache=cache)
-
-
-@deprecated(
-    deprecated_in="0.6.0",
-    removed_in="0.8.0",
-    current_version=__version__,
-    details="Use `session.Session` instead",
-)
-def api(api_key: Optional[str] = None, cache: Optional[SQLiteCache] = None) -> Session:
-    """
-    Entry function that sets credentials to use the ComicVine API, and whether to use a database \
-    cache for results.
-
-    Args:
-        api_key: User's API key to access the ComicVine API.
-        cache: SQLiteCache to use.
-    Returns:
-        A Session object with the user's API key and optional cache.
-    Raises:
-        AuthenticationError: If no API key is provided.
-    """
-    if api_key is None:
-        raise AuthenticationError("Missing API Key.")
-
-    return Session(api_key=api_key, cache=cache)
+    folder = Path.home() / ".cache" / "simyan"
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder

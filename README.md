@@ -25,21 +25,27 @@ A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvin
 $ pip3 install -U --user simyan
 ```
 
+### Poetry
+
+```bash
+$ poetry add simyan
+```
+
 ## Example Usage
 
 ```python
-from simyan.session import Session
+from simyan.comicvine import Comicvine
 from simyan.sqlite_cache import SQLiteCache
 
-session = Session(api_key="ComicVine API Key", cache=SQLiteCache())
+session = Comicvine(api_key="ComicVine API Key", cache=SQLiteCache())
 
 # Search for Publisher
 results = session.publisher_list(params={"filter": "name:DC Comics"})
 for publisher in results:
-    print(f"{publisher.id} | {publisher.name} - {publisher.site_url}")
+    print(f"{publisher.id_} | {publisher.name} - {publisher.site_url}")
 
 # Get details for a Volume
-result = session.volume(_id=26266)
+result = session.volume(volume_id=26266)
 print(result.summary)
 ```
 
@@ -47,4 +53,4 @@ print(result.summary)
 
 Big thanks to [Mokkari](https://github.com/bpepple/mokkari) for the inspiration and template for this project.
 
-[![Social - Discord](https://img.shields.io/badge/Discord-The--DEV--Environment-7289DA?logo=Discord&style=flat-square)](https://discord.gg/nqGMeGg)
+[![Discord | The-DEV-Environment](https://img.shields.io/discord/618581423070117932?color=7289DA&label=The-DEV-Environment&logo=Discord&style=for-the-badge)](https://discord.gg/nqGMeGg)

@@ -33,7 +33,7 @@ jobs:
       #----------------------------------------------
       - name: Load cached venv
         id: cached-venv
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.2
         with:
           path: .venv
           key: venv-${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}

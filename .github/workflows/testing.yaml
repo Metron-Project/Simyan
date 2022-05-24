@@ -23,8 +23,6 @@ jobs:
           - ubuntu-latest
           - macos-latest
           - windows-latest
-    env:
-      COMICVINE_API_KEY: Testing-Key
     runs-on: ${{ matrix.os }}
     steps:
       #----------------------------------------------
@@ -43,7 +41,7 @@ jobs:
       #----------------------------------------------
       - name: Load cached venv
         id: cached-venv
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.2
         with:
           path: .venv
           key: venv-${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -55,4 +53,6 @@ jobs:
         run: poetry install --no-interaction
       #----------------------------------------------
       - name: Test with tox
+        env:
+          COMICVINE_API_KEY: Testing-Key
         run: poetry run tox -e py

@@ -7,7 +7,7 @@ import os
 
 import pytest
 
-from simyan.session import Session
+from simyan.comicvine import Comicvine
 from simyan.sqlite_cache import SQLiteCache
 
 
@@ -18,8 +18,8 @@ def comicvine_api_key():
 
 
 @pytest.fixture(scope="session")
-def comicvine(comicvine_api_key) -> Session:
+def session(comicvine_api_key) -> Comicvine:
     """Set the Simyan session fixture."""
-    return Session(
-        api_key=comicvine_api_key, cache=SQLiteCache("tests/Simyan-Cache.sqlite", expiry=None)
+    return Comicvine(
+        api_key=comicvine_api_key, cache=SQLiteCache("tests/cache.sqlite", expiry=None)
     )
