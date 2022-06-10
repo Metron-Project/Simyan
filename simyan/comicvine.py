@@ -8,13 +8,12 @@ This module provides the following classes:
 """
 import platform
 import re
-from collections import OrderedDict
 from enum import Enum
 from json import JSONDecodeError
 from typing import Any, Dict, List, Optional, Union
 from urllib.parse import urlencode
 
-from marshmallow import ValidationError
+from pydantic import ValidationError, parse_obj_as
 from ratelimit import limits, sleep_and_retry
 from requests import get
 from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
@@ -22,11 +21,11 @@ from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 from simyan import __version__
 from simyan.exceptions import APIError, AuthenticationError, CacheError
 from simyan.schemas.character import Character, CharacterResult
-from simyan.schemas.creator import Creator, CreatorResult, pre_process_creator
+from simyan.schemas.creator import Creator, CreatorResult
 from simyan.schemas.issue import Issue, IssueResult
 from simyan.schemas.publisher import Publisher, PublisherResult
 from simyan.schemas.story_arc import StoryArc, StoryArcResult
-from simyan.schemas.volume import Volume, VolumeResult, pre_process_volume
+from simyan.schemas.volume import Volume, VolumeResult
 from simyan.sqlite_cache import SQLiteCache
 
 MINUTE = 60
@@ -131,8 +130,7 @@ class Comicvine:
 
         cache_params = ""
         if params:
-            ordered_params = OrderedDict(sorted(params.items(), key=lambda x: x[0]))
-            cache_params = f"?{urlencode(ordered_params)}"
+            cache_params = f"?{urlencode({k: params[k] for k in sorted(params)})}"
 
         url = self.API_URL + endpoint
         cache_key = f"{url}{cache_params}"
@@ -175,9 +173,9 @@ class Comicvine:
             result = self._get_request(
                 endpoint=f"/publisher/{ComicvineResource.PUBLISHER}-{publisher_id}"
             )["results"]
-            return Publisher.schema().load(result)
+            return Publisher(**result)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def publisher_list(self, params: Optional[Dict[str, Any]] = None) -> List[PublisherResult]:
         """
@@ -192,9 +190,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_all_responses(endpoint="/publishers", params=params)
-            return PublisherResult.schema().load(results, many=True)
+            return parse_obj_as(List[PublisherResult], results)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def volume(self, volume_id: int) -> Volume:
         """
@@ -211,9 +209,9 @@ class Comicvine:
             result = self._get_request(endpoint=f"/volume/{ComicvineResource.VOLUME}-{volume_id}")[
                 "results"
             ]
-            return Volume.schema().load(pre_process_volume(result))
+            return Volume(**result)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def volume_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None
@@ -230,9 +228,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_all_responses(endpoint="/volumes", params=params)
-            return VolumeResult.schema().load([pre_process_volume(x) for x in results], many=True)
+            return parse_obj_as(List[VolumeResult], results)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def issue(self, issue_id: int) -> Issue:
         """
@@ -249,9 +247,9 @@ class Comicvine:
             result = self._get_request(endpoint=f"/issue/{ComicvineResource.ISSUE}-{issue_id}")[
                 "results"
             ]
-            return Issue.schema().load(result)
+            return Issue(**result)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def issue_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> List[IssueResult]:
         """
@@ -266,9 +264,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_all_responses(endpoint="/issues", params=params)
-            return IssueResult.schema().load(results, many=True)
+            return parse_obj_as(List[IssueResult], results)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def story_arc(self, story_arc_id: int) -> StoryArc:
         """
@@ -285,9 +283,9 @@ class Comicvine:
             result = self._get_request(
                 endpoint=f"/story_arc/{ComicvineResource.STORY_ARC}-{story_arc_id}"
             )["results"]
-            return StoryArc.schema().load(result)
+            return StoryArc(**result)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def story_arc_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None
@@ -304,9 +302,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_all_responses(endpoint="/story_arcs", params=params)
-            return StoryArcResult.schema().load(results, many=True)
+            return parse_obj_as(List[StoryArcResult], results)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def creator(self, creator_id: int) -> Creator:
         """
@@ -324,9 +322,9 @@ class Comicvine:
                 endpoint=f"/person/{ComicvineResource.CREATOR}-{creator_id}"
             )["results"]
             # print(pre_process_creator(result))
-            return Creator.schema().load(pre_process_creator(result))
+            return Creator(**result)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def creator_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None
@@ -343,9 +341,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_all_responses(endpoint="/people", params=params)
-            return CreatorResult.schema().load([pre_process_creator(x) for x in results], many=True)
+            return parse_obj_as(List[CreatorResult], results)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def character(self, character_id: int) -> Character:
         """
@@ -362,9 +360,9 @@ class Comicvine:
             result = self._get_request(
                 endpoint=f"/character/{ComicvineResource.CHARACTER}-{character_id}"
             )["results"]
-            return Character.schema().load(result)
+            return Character(**result)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def character_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None
@@ -381,9 +379,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_all_responses(endpoint="/characters", params=params)
-            return CharacterResult.schema().load(results, many=True)
+            return parse_obj_as(List[CharacterResult], results)
         except ValidationError as error:
-            raise APIError(error.messages)
+            raise APIError(error)
 
     def _retrieve_all_responses(
         self, endpoint: str, params: Optional[Dict[str, Any]] = None

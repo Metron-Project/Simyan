@@ -26,12 +26,12 @@ def test_issue(session: Comicvine):
     assert result.cover_date == COVER_DATE
     assert result.creators[0].id_ == 10945
     assert len(result.deaths) == 0
-    assert result.first_appearance_characters is None
-    assert result.first_appearance_concepts is None
-    assert result.first_appearance_locations is None
-    assert result.first_appearance_objects is None
-    assert result.first_appearance_story_arcs is None
-    assert result.first_appearance_teams is None
+    assert result.first_appearance_characters == []
+    assert result.first_appearance_concepts == []
+    assert result.first_appearance_locations == []
+    assert result.first_appearance_objects == []
+    assert result.first_appearance_story_arcs == []
+    assert result.first_appearance_teams == []
     assert result.id_ == ID
     assert result.locations[0].id_ == 56427
     assert result.name == NAME
