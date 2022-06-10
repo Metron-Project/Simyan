@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Simyan"
-version = "0.8.0"
+version = "0.8.1"
 description = "A Python wrapper for the Comicvine API."
 license = "GPL-3.0-or-later"
 authors = ["Buried-In-Code <BuriedInCode@tuta.io>"]
@@ -34,7 +34,7 @@ keywords=["comics", "comic", "metadata"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-requests = "^2.27.1"
+requests = "^2.28.0"
 ratelimit = "^2.2.1"
 dataclasses-json = "^0.5.7"
 

@@ -17,7 +17,7 @@ from urllib.parse import urlencode
 from marshmallow import ValidationError
 from ratelimit import limits, sleep_and_retry
 from requests import get
-from requests.exceptions import ConnectionError, HTTPError
+from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 
 from simyan import __version__
 from simyan.exceptions import APIError, AuthenticationError, CacheError
@@ -58,24 +58,26 @@ class Comicvine:
 
     Args:
         api_key: User's API key to access the Comicvine API.
+        timeout: Set how long requests will wait for a response (in seconds).
         cache: SQLiteCache to use if set.
 
     Attributes:
+        headers (Dict[str, str]): Header used when requesting from Comicvine API.
         api_key (str): User's API key to access the Comicvine API.
-        header (Dict[str, str]): Header used when requesting from Comicvine API.
-        api_url (str): Comicvine API url.
+        timeout (int): How long requests will wait for a response (in seconds).
         cache (Optional[SQLiteCache]): SQLiteCache to use if set.
     """
 
     API_URL = "https://comicvine.gamespot.com/api"
 
-    def __init__(self, api_key: str, cache: Optional[SQLiteCache] = None):
+    def __init__(self, api_key: str, timeout: int = 30, cache: Optional[SQLiteCache] = None):
         self.headers = {
             "Accept": "application/json",
             "User-Agent": f"Simyan/{__version__}/{platform.system()}: {platform.release()}",
         }
-        self.cache = cache
         self.api_key = api_key
+        self.timeout = timeout
+        self.cache = cache
 
     @sleep_and_retry
     @limits(calls=20, period=MINUTE)
@@ -95,12 +97,14 @@ class Comicvine:
             params = {}
 
         try:
-            response = get(url, params=params, headers=self.headers)
+            response = get(url, params=params, headers=self.headers, timeout=self.timeout)
             return response.json()
         except ConnectionError as ce:
             raise APIError(f"Unable to connect to `{url}`: {ce}")
         except HTTPError as he:
             raise APIError(he.response.text)
+        except ReadTimeout:
+            raise APIError("Server took too long to respond")
         except JSONDecodeError as de:
             raise APIError(f"Invalid response from `{url}`: {de}")
 
