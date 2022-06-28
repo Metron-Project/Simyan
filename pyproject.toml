@@ -34,9 +34,9 @@ keywords=["comics", "comic", "metadata"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
+pydantic = {extras = ["dotenv"], version = "^1.9.1"}
 requests = "^2.28.0"
 ratelimit = "^2.2.1"
-pydantic = "^1.9.1"
 
 # Optional dependencies
 sphinxcontrib-napoleon = {version = "^0.7", optional = true}

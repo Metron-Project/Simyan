@@ -3,25 +3,25 @@ The Exceptions module.
 
 This module provides the following classes:
 
-- APIError
+- ServiceError
 - AuthenticationError
 - CacheError
 """
 
 
-class APIError(Exception):
+class ServiceError(Exception):
     """Class for any API errors."""
 
     pass
 
 
-class AuthenticationError(APIError):
+class AuthenticationError(ServiceError):
     """Class for any authentication errors."""
 
     pass
 
 
-class CacheError(APIError):
+class CacheError(ServiceError):
     """Class for any database cache errors."""
 
     pass

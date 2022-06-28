@@ -1,71 +1,110 @@
 """
-The Test Characters module.
+The Characters test module.
 
 This module contains tests for Character objects.
 """
+from datetime import datetime
+
 import pytest
 
 from simyan.comicvine import Comicvine
-from simyan.exceptions import APIError
-
-DATE_OF_BIRTH = None
-FIRST_ISSUE_ID = 38445
-GENDER = 1
-ID = 40431
-ISSUE_COUNT = 1557
-NAME = "Kyle Rayner"
-ORIGIN_ID = 4
-PUBLISHER_ID = 10
-REAL_NAME = "Kyle Rayner"
+from simyan.exceptions import ServiceError
+from simyan.resource_type import ResourceType
+from simyan.schemas.character import Character
 
 
 def test_character(session: Comicvine):
-    """Test for a known character."""
-    result = session.character(character_id=ID)
-    assert result.creators[0].id_ == 9569
-    assert result.date_of_birth == DATE_OF_BIRTH
-    assert result.deaths[0].id_ == 442830
-    assert result.enemies[0].id_ == 47300
-    assert result.enemy_teams[0].id_ == 20659
-    assert result.first_issue.id_ == FIRST_ISSUE_ID
-    assert result.friendly_teams[0].id_ == 63877
-    assert result.friends[0].id_ == 19067
-    assert result.gender == GENDER
-    assert result.id_ == ID
-    assert result.issue_count == ISSUE_COUNT
-    assert result.issues[0].id_ == 895904
-    assert result.name == NAME
-    assert result.origin.id_ == ORIGIN_ID
-    assert result.powers[0].id_ == 1
-    assert result.publisher.id_ == PUBLISHER_ID
-    assert result.real_name == REAL_NAME
+    """Test using the character endpoint with a valid character_id."""
+    result = session.character(character_id=40431)
+    assert result is not None
+    assert result.character_id == 40431
+
+    assert result.alias_list == [
+        "Green Lantern",
+        "Ion",
+        "Parallax",
+        "Torch Bearer",
+        "White Lantern",
+        "Green Man",
+        "Omega Lantern",
+    ]
+    assert result.api_url == "https://comicvine.gamespot.com/api/character/4005-40431/"
+    assert len(result.creators) == 2
+    assert result.date_added == datetime(2008, 6, 6, 11, 27, 42)
+    assert result.date_of_birth is None
+    assert len(result.deaths) == 2
+    assert len(result.enemies) == 146
+    assert len(result.enemy_teams) == 24
+    assert result.first_issue.id_ == 38445
+    assert len(result.friendly_teams) == 16
+    assert len(result.friends) == 232
+    assert result.gender == 1
+    assert result.issue_count == 1561
+    assert len(result.issues) == 1561
+    assert result.name == "Kyle Rayner"
+    assert result.origin.id_ == 4
+    assert len(result.powers) == 28
+    assert result.publisher.id_ == 10
+    assert result.real_name == "Kyle Rayner"
+    assert result.site_url == "https://comicvine.gamespot.com/kyle-rayner/4005-40431/"
     assert len(result.story_arcs) == 0
-    assert result.teams[0].id_ == 50163
-    assert result.volumes[0].id_ == 43262
+    assert len(result.teams) == 21
+    assert len(result.volumes) == 1
 
 
 def test_character_fail(session: Comicvine):
-    """Test for a non-existent character."""
-    with pytest.raises(APIError):
+    """Test using the character endpoint with an invalid character_id."""
+    with pytest.raises(ServiceError):
         session.character(character_id=-1)
 
 
 def test_character_list(session: Comicvine):
-    """Test the CharactersList."""
-    search_results = session.character_list({"filter": f"name:{NAME}"})
-    result = [x for x in search_results if x.id_ == ID][0]
-    assert result.date_of_birth == DATE_OF_BIRTH
-    assert result.first_issue.id_ == FIRST_ISSUE_ID
-    assert result.gender == GENDER
-    assert result.id_ == ID
-    assert result.issue_count == ISSUE_COUNT
-    assert result.name == NAME
-    assert result.origin.id_ == ORIGIN_ID
-    assert result.publisher.id_ == PUBLISHER_ID
-    assert result.real_name == REAL_NAME
+    """Test using the character_list endpoint with a valid search."""
+    search_results = session.character_list({"filter": "name:Kyle Rayner"})
+    assert len(search_results) != 0
+    result = [x for x in search_results if x.character_id == 40431][0]
+    assert result is not None
+
+    assert result.alias_list == [
+        "Green Lantern",
+        "Ion",
+        "Parallax",
+        "Torch Bearer",
+        "White Lantern",
+        "Green Man",
+        "Omega Lantern",
+    ]
+    assert result.api_url == "https://comicvine.gamespot.com/api/character/4005-40431/"
+    assert result.creators == []
+    assert result.date_added == datetime(2008, 6, 6, 11, 27, 42)
+    assert result.date_of_birth is None
+    assert result.deaths == []
+    assert result.enemies == []
+    assert result.enemy_teams == []
+    assert result.first_issue.id_ == 38445
+    assert result.friendly_teams == []
+    assert result.friends == []
+    assert result.gender == 1
+    assert result.issue_count == 1561
+    assert result.issues == []
+    assert result.name == "Kyle Rayner"
+    assert result.origin.id_ == 4
+    assert result.powers == []
+    assert result.publisher.id_ == 10
+    assert result.real_name == "Kyle Rayner"
+    assert result.site_url == "https://comicvine.gamespot.com/kyle-rayner/4005-40431/"
+    assert result.story_arcs == []
+    assert result.teams == []
+    assert result.volumes == []
 
 
 def test_character_list_empty(session: Comicvine):
-    """Test CharacterList with bad response."""
+    """Test using the character_list endpoint with an invalid search."""
     results = session.character_list({"filter": "name:INVALID"})
     assert len(results) == 0
+
+
+def test_search_character(session: Comicvine):
+    """Test using the search endpoint for a list of Characters."""
+    results = session.search(resource=ResourceType.CHARACTER, query="Kyle Rayner")
+    assert all(isinstance(x, Character) for x in results)

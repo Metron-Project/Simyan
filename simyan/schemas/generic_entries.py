@@ -9,54 +9,59 @@ This module provides the following classes:
 - CreatorEntry
 - ImageEntry
 """
-from typing import Optional
+import re
+from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Extra, Field
 
 
 class GenericEntry(BaseModel):
     """The GenericEntry object contains generic information."""
 
-    api_url: str = Field(alias="api_detail_url")  #: Url to the Comicvine API.
-    id_: int = Field(alias="id")  #: Identifier used in Comicvine.
-    name: Optional[str] = None
-    site_url: Optional[str] = Field(alias="site_detail_url")  #: Url to the Comicvine Website.
+    api_url: str = Field(alias="api_detail_url")  #: Url to the ComicVine API.
+    id_: int = Field(alias="id")  #: Identifier used in ComicVine.
+    name: Optional[str] = Field(default=None)
+    site_url: Optional[str] = Field(
+        default=None, alias="site_detail_url"
+    )  #: Url to the ComicVine Website.
+
+    class Config:
+        anystr_strip_whitespace = True
+        extra = Extra.forbid
 
 
-class CountEntry(BaseModel):
+class CountEntry(GenericEntry):
     """The CountEntry object contains generic information with an added count field."""
 
-    api_url: str = Field(alias="api_detail_url")  #: Url to the Comicvine API.
-    id_: int = Field(alias="id")  #: Identifier used in Comicvine.
     count: int
-    name: Optional[str] = None
-    site_url: Optional[str] = Field(
-        default=None, alias="site_detail_url"
-    )  #: Url to the Comicvine Website.
+
+    class Config:
+        anystr_strip_whitespace = True
+        extra = Extra.forbid
 
 
-class IssueEntry(BaseModel):
+class IssueEntry(GenericEntry):
     """The IssueEntry object contains generic information with an added number field."""
 
-    api_url: str = Field(alias="api_detail_url")  #: Url to the Comicvine API.
-    id_: int = Field(alias="id")  #: Identifier used in Comicvine.
-    name: Optional[str] = None
     number: Optional[str] = Field(default=None, alias="issue_number")
-    site_url: Optional[str] = Field(
-        default=None, alias="site_detail_url"
-    )  #: Url to the Comicvine Website.
+
+    class Config:
+        anystr_strip_whitespace = True
+        extra = Extra.forbid
 
 
-class CreatorEntry(BaseModel):
+class CreatorEntry(GenericEntry):
     """The CreatorEntry object contains generic information with an added roles field."""
 
-    api_url: str = Field(alias="api_detail_url")  #: Url to the Comicvine API.
-    id_: int = Field(alias="id")  #: Identifier used in Comicvine.
     roles: str = Field(alias="role")  #: separated by ``\n``.
-    name: Optional[str] = None
-    site_url: Optional[str] = Field(
-        default=None, alias="site_detail_url"
-    )  #: Url to the Comicvine Website.
+
+    @property
+    def role_list(self) -> List[str]:
+        return re.split(r"[~\r\n]+", self.roles)
+
+    class Config:
+        anystr_strip_whitespace = True
+        extra = Extra.forbid
 
 
 class ImageEntry(BaseModel):
@@ -72,3 +77,7 @@ class ImageEntry(BaseModel):
     tiny: str = Field(alias="tiny_url")  #: Url to image of Tiny size.
     original: str = Field(alias="original_url")  #: Url to image of Original size.
     tags: Optional[str] = Field(default=None, alias="image_tags")
+
+    class Config:
+        anystr_strip_whitespace = True
+        extra = Extra.forbid

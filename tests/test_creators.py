@@ -1,76 +1,89 @@
 """
-The Test Creators module.
+The Creators test module.
 
 This module contains tests for Creator objects.
 """
-from datetime import date
+from datetime import date, datetime
 
 import pytest
 
 from simyan.comicvine import Comicvine
-from simyan.exceptions import APIError
-
-COUNTRY = "United States"
-DATE_OF_BIRTH = date(year=1973, month=1, day=25)
-DATE_OF_DEATH = None
-EMAIL = None
-GENDER = 1
-HOMETOWN = "Detroit, MI"
-ID = 40439
-ISSUE_COUNT = None
-NAME = "Geoff Johns"
-WEBSITE = "http://www.geoffjohns.com"
+from simyan.exceptions import ServiceError
+from simyan.resource_type import ResourceType
+from simyan.schemas.creator import Creator
 
 
 def test_creator(session: Comicvine):
-    """Test for a known creator."""
-    result = session.creator(creator_id=ID)
-    assert result.country == COUNTRY
-    assert result.characters[0].id_ == 148828
-    assert result.date_of_birth == DATE_OF_BIRTH
-    assert result.date_of_death == DATE_OF_DEATH
-    assert result.email == EMAIL
-    assert result.gender == GENDER
-    assert result.hometown == HOMETOWN
-    assert result.id_ == ID
-    assert result.issue_count == ISSUE_COUNT
-    assert result.issues[0].id_ == 916161
-    assert result.name == NAME
+    """Test using the creator endpoint with a valid creator_id."""
+    result = session.creator(creator_id=40439)
+    assert result is not None
+    assert result.creator_id == 40439
+
+    assert result.alias_list == ["Geoffrey Johns"]
+    assert result.api_url == "https://comicvine.gamespot.com/api/person/4040-40439/"
+    assert len(result.characters) == 234
+    assert result.country == "United States"
+    assert result.date_added == datetime(2008, 6, 6, 11, 28, 14)
+    assert result.date_of_birth == date(1973, 1, 25)
+    assert result.date_of_death is None
+    assert result.email is None
+    assert result.gender == 1
+    assert result.hometown == "Detroit, MI"
+    assert result.issue_count is None
+    assert len(result.issues) == 1513
+    assert result.name == "Geoff Johns"
+    assert result.site_url == "https://comicvine.gamespot.com/geoff-johns/4040-40439/"
     assert len(result.story_arcs) == 0
-    assert result.volumes[0].id_ == 5261
-    assert result.website == WEBSITE
+    assert len(result.volumes) == 560
+    assert result.website == "http://www.geoffjohns.com"
 
 
 def test_creator_fail(session: Comicvine):
-    """Test for a non-existent creator."""
-    with pytest.raises(APIError):
+    """Test using the creator endpoint with an invalid creator_id."""
+    with pytest.raises(ServiceError):
         session.creator(creator_id=-1)
+
+
+def test_creator_list(session: Comicvine):
+    """Test using the creator_list endpoint with a valid search."""
+    search_results = session.creator_list({"filter": "name:Geoff Johns"})
+    assert len(search_results) != 0
+    result = [x for x in search_results if x.creator_id == 40439][0]
+    assert result is not None
+
+    assert result.alias_list == ["Geoffrey Johns"]
+    assert result.api_url == "https://comicvine.gamespot.com/api/person/4040-40439/"
+    assert result.characters == []
+    assert result.country == "United States"
+    assert result.date_added == datetime(2008, 6, 6, 11, 28, 14)
+    assert result.date_of_birth == date(1973, 1, 25)
+    assert result.date_of_death is None
+    assert result.email is None
+    assert result.gender == 1
+    assert result.hometown == "Detroit, MI"
+    assert result.issue_count is None
+    assert result.issues == []
+    assert result.name == "Geoff Johns"
+    assert result.site_url == "https://comicvine.gamespot.com/geoff-johns/4040-40439/"
+    assert result.story_arcs == []
+    assert result.volumes == []
+    assert result.website == "http://www.geoffjohns.com"
+
+
+def test_creator_list_empty(session: Comicvine):
+    """Test using the creator_list endpoint with an invalid search."""
+    results = session.creator_list({"filter": "name:INVALID"})
+    assert len(results) == 0
+
+
+def test_search_creator(session: Comicvine):
+    """Test using the search endpoint for a list of Creators."""
+    results = session.search(resource=ResourceType.CREATOR, query="Geoff")
+    assert all(isinstance(x, Creator) for x in results)
 
 
 def test_creator_with_dob(session: Comicvine):
     """Test creators date of birth & death."""
-    kirby = session.creator(5614)
+    kirby = session.creator(creator_id=5614)
     assert kirby.date_of_birth == date(1917, 8, 28)
     assert kirby.date_of_death == date(1994, 2, 6)
-
-
-def test_creator_list(session: Comicvine):
-    """Test the CreatorsList."""
-    search_results = session.creator_list({"filter": f"name:{NAME}"})
-    result = [x for x in search_results if x.id_ == ID][0]
-    assert result.country == COUNTRY
-    assert result.date_of_birth == DATE_OF_BIRTH
-    assert result.date_of_death == DATE_OF_DEATH
-    assert result.email == EMAIL
-    assert result.gender == GENDER
-    assert result.hometown == HOMETOWN
-    assert result.id_ == ID
-    assert result.issue_count == ISSUE_COUNT
-    assert result.name == NAME
-    assert result.website == WEBSITE
-
-
-def test_creator_list_empty(session: Comicvine):
-    """Test CreatorList with bad response."""
-    results = session.creator_list({"filter": "name:INVALID"})
-    assert len(results) == 0
