@@ -16,7 +16,7 @@ from urllib.parse import urlencode
 from pydantic import ValidationError, parse_obj_as
 from ratelimit import limits, sleep_and_retry
 from requests import get
-from requests.exceptions import ConnectionError, HTTPError
+from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 
 from simyan import __version__
 from simyan.exceptions import AuthenticationError, CacheError, ServiceError
@@ -116,6 +116,8 @@ class Comicvine:
             raise ServiceError(err.response.json()["error"])
         except JSONDecodeError:
             raise ServiceError(f"Unable to parse response from `{url}` as Json")
+        except ReadTimeout:
+            raise ServiceError("Server took too long to respond")
 
     def _get_request(
         self, endpoint: str, params: Dict[str, str] = None, skip_cache: bool = False
