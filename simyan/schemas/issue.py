@@ -4,160 +4,104 @@ The Issue module.
 This module provides the following classes:
 
 - Issue
-- IssueResult
 """
-from dataclasses import dataclass, field
+import re
 from datetime import date, datetime
 from typing import List, Optional
 
-from dataclasses_json import Undefined, config, dataclass_json
-from marshmallow import fields
+from pydantic import BaseModel, Extra, Field
 
 from simyan.schemas.generic_entries import CreatorEntry, GenericEntry, ImageEntry
 
 
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Issue:
+class Issue(BaseModel):
     """The Issue object contains information for an issue."""
 
-    api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the Comicvine API.
-    date_added: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )  #: Date and time when the Issue was added to Comicvine.
-    date_last_updated: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )  #: Date and time when the Issue was updated on Comicvine.
-    id_: int = field(metadata=config(field_name="id"))  #: Identifier used in Comicvine.
-    image: ImageEntry  #: Different sized images, posters and thumbnails for the Issue.
-    number: str = field(metadata=config(field_name="issue_number"))  #: The Issue number.
-    site_url: str = field(
-        metadata=config(field_name="site_detail_url")
-    )  #: Url to the Comicvine Website.
-    volume: GenericEntry  #: The volume the Issue is in.
-    aliases: Optional[str] = field(
+    aliases: Optional[str] = Field(
         default=None
     )  #: List of names the Issue has used, separated by ``\n``.
-    cover_date: Optional[date] = field(
-        default=None,
-        metadata=config(
-            encoder=lambda x: x.isoformat() if x else None,
-            decoder=lambda x: date.fromisoformat(x) if x else None,
-        ),
-    )  #: Date on the cover of the Issue.
-    description: Optional[str] = field(default=None)  #: Long description of the Issue.
-    first_appearance_characters: Optional[List[GenericEntry]] = field(
-        default=None
-    )  #: List of characters who first appear in the Issue.
-    first_appearance_concepts: Optional[List[GenericEntry]] = field(
-        default=None
-    )  #: List of concepts which first appear in the Issue.
-    first_appearance_locations: Optional[List[GenericEntry]] = field(
-        default=None
-    )  #: List of locations which first appear in the Issue.
-    first_appearance_objects: Optional[List[GenericEntry]] = field(
-        default=None
-    )  #: List of objects which first appear in the Issue.
-    first_appearance_story_arcs: Optional[List[GenericEntry]] = field(
-        default=None, metadata=config(field_name="first_appearance_storyarcs")
-    )  #: List of story arcs which start in the Issue.
-    first_appearance_teams: Optional[List[GenericEntry]] = field(
-        default=None
-    )  #: List of teams which first appear in the Issue.
-    name: Optional[str] = field(default=None)  #: Name/Title of the Issue.
-    store_date: Optional[date] = field(
-        default=None,
-        metadata=config(
-            encoder=lambda x: x.isoformat() if x else None,
-            decoder=lambda x: date.fromisoformat(x) if x else None,
-        ),
-    )  #: Date the Issue went on sale on stores.
-    summary: Optional[str] = field(
-        default=None, metadata=config(field_name="deck")
-    )  #: Short description of the Issue.
-    characters: List[GenericEntry] = field(
-        default_factory=list, metadata=config(field_name="character_credits")
+    api_url: str = Field(alias="api_detail_url")  #: Url to the Comicvine API.
+    characters: List[GenericEntry] = Field(
+        default_factory=list, alias="character_credits"
     )  #: List of Characters in the Issue.
-    concepts: List[GenericEntry] = field(
-        default_factory=list, metadata=config(field_name="concept_credits")
+    concepts: List[GenericEntry] = Field(
+        default_factory=list, alias="concept_credits"
     )  #: List of Concepts in the Issue.
-    creators: List[CreatorEntry] = field(
-        default_factory=list, metadata=config(field_name="person_credits")
+    cover_date: Optional[date] = Field(default=None)  #: Date on the cover of the Issue.
+    creators: List[CreatorEntry] = Field(
+        default_factory=list, alias="person_credits"
     )  #: List of Creators in the Issue.
-    deaths: List[GenericEntry] = field(
-        default_factory=list, metadata=config(field_name="character_died_in")
+    date_added: datetime  #: Date and time when the Issue was added to Comicvine.
+    date_last_updated: datetime  #: Date and time when the Issue was updated on Comicvine.
+    deaths: List[GenericEntry] = Field(
+        default_factory=list, alias="character_died_in"
     )  #: List of characters who died in the Issue.
-    locations: List[GenericEntry] = field(
-        default_factory=list, metadata=config(field_name="location_credits")
-    )  #: List of Locations in the Issue.
-    objects: List[GenericEntry] = field(
-        default_factory=list, metadata=config(field_name="object_credits")
-    )  #: List of Objects in the Issue.
-    story_arcs: List[GenericEntry] = field(
-        default_factory=list, metadata=config(field_name="story_arc_credits")
-    )  #: List of Story Arcs in the Issue.
-    teams: List[GenericEntry] = field(
-        default_factory=list, metadata=config(field_name="team_credits")
-    )  #: List of Teams in the Issue.
-    teams_disbanded: List[GenericEntry] = field(
-        default_factory=list, metadata=config(field_name="team_disbanded_in")
-    )  #: List of Teams Disbanded in the Issue.
-
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class IssueResult:
-    """The IssueResult object contains information for a issue."""
-
-    api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the Comicvine API.
-    date_added: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )  #: Date and time when the Issue was added to Comicvine.
-    date_last_updated: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )  #: Date and time when the Issue was updated on Comicvine.
-    id_: int = field(metadata=config(field_name="id"))  #: Identifier used in Comicvine.
+    description: Optional[str] = Field(default=None)  #: Long description of the Issue.
+    first_appearance_characters: List[GenericEntry] = Field(
+        default_factory=list
+    )  #: List of characters who first appear in the Issue.
+    first_appearance_concepts: List[GenericEntry] = Field(
+        default_factory=list
+    )  #: List of concepts which first appear in the Issue.
+    first_appearance_locations: List[GenericEntry] = Field(
+        default_factory=list
+    )  #: List of locations which first appear in the Issue.
+    first_appearance_objects: List[GenericEntry] = Field(
+        default_factory=list
+    )  #: List of objects which first appear in the Issue.
+    first_appearance_story_arcs: List[GenericEntry] = Field(
+        default_factory=list, alias="first_appearance_storyarcs"
+    )  #: List of story arcs which start in the Issue.
+    first_appearance_teams: List[GenericEntry] = Field(
+        default_factory=list
+    )  #: List of teams which first appear in the Issue.
+    id_: int = Field(alias="id")  #: Identifier used in Comicvine.
+    issue_id: int = Field(alias="id")  #: Identifier used in Comicvine.
     image: ImageEntry  #: Different sized images, posters and thumbnails for the Issue.
-    number: str = field(metadata=config(field_name="issue_number"))
-    site_url: str = field(
-        metadata=config(field_name="site_detail_url")
-    )  #: Url to the Comicvine Website.
+    locations: List[GenericEntry] = Field(
+        default_factory=list, alias="location_credits"
+    )  #: List of Locations in the Issue.
+    name: Optional[str] = Field(default=None)  #: Name/Title of the Issue.
+    number: str = Field(alias="issue_number")  #: The Issue number.
+    objects: List[GenericEntry] = Field(
+        default_factory=list, alias="object_credits"
+    )  #: List of Objects in the Issue.
+    site_url: str = Field(alias="site_detail_url")  #: Url to the Comicvine Website.
+    store_date: Optional[date] = Field(default=None)  #: Date the Issue went on sale on stores.
+    story_arcs: List[GenericEntry] = Field(
+        default_factory=list, alias="story_arc_credits"
+    )  #: List of Story Arcs in the Issue.
+    summary: Optional[str] = Field(default=None, alias="deck")  #: Short description of the Issue.
+    teams: List[GenericEntry] = Field(
+        default_factory=list, alias="team_credits"
+    )  #: List of Teams in the Issue.
+    teams_disbanded: List[GenericEntry] = Field(
+        default_factory=list, alias="team_disbanded_in"
+    )  #: List of Teams Disbanded in the Issue.
     volume: GenericEntry  #: The volume the Issue is in.
-    aliases: Optional[str] = field(
-        default=None
-    )  #: List of names the Issue has used, separated by ``\n``.
-    cover_date: Optional[date] = field(
-        default=None,
-        metadata=config(
-            encoder=lambda x: x.isoformat() if x else None,
-            decoder=lambda x: date.fromisoformat(x) if x else None,
-        ),
-    )  #: Date on the cover of the Issue.
-    description: Optional[str] = field(default=None)  #: Long description of the Issue.
-    name: Optional[str] = field(default=None)  #: Name/Title of the Issue.
-    store_date: Optional[date] = field(
-        default=None,
-        metadata=config(
-            encoder=lambda x: x.isoformat() if x else None,
-            decoder=lambda x: date.fromisoformat(x) if x else None,
-        ),
-    )  #: Date the Issue went on sale on stores.
-    summary: Optional[str] = field(
-        default=None, metadata=config(field_name="deck")
-    )  #: Short description of the Issue.
+
+    def __init__(self, **data):
+        if "first_appearance_characters" in data and not data["first_appearance_characters"]:
+            data["first_appearance_characters"] = []
+        if "first_appearance_concepts" in data and not data["first_appearance_concepts"]:
+            data["first_appearance_concepts"] = []
+        if "first_appearance_locations" in data and not data["first_appearance_locations"]:
+            data["first_appearance_locations"] = []
+        if "first_appearance_objects" in data and not data["first_appearance_objects"]:
+            data["first_appearance_objects"] = []
+        if "first_appearance_storyarcs" in data and not data["first_appearance_storyarcs"]:
+            data["first_appearance_storyarcs"] = []
+        if "first_appearance_teams" in data and not data["first_appearance_teams"]:
+            data["first_appearance_teams"] = []
+        super().__init__(**data)
+
+    @property
+    def alias_list(self) -> List[str]:
+        """List of names the Issue has used."""
+        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
+
+    class Config:
+        """Any extra fields will be ignored, strings will have start/end whitespace stripped."""
+
+        anystr_strip_whitespace = True
+        extra = Extra.ignore

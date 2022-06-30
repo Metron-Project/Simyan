@@ -8,48 +8,54 @@ This module provides the following classes:
 """
 import platform
 import re
-from collections import OrderedDict
 from enum import Enum
 from json import JSONDecodeError
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Type, TypeVar, Union
 from urllib.parse import urlencode
 
-from marshmallow import ValidationError
+from pydantic import ValidationError, parse_obj_as
 from ratelimit import limits, sleep_and_retry
 from requests import get
 from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 
 from simyan import __version__
-from simyan.exceptions import APIError, AuthenticationError, CacheError
-from simyan.schemas.character import Character, CharacterResult
-from simyan.schemas.creator import Creator, CreatorResult, pre_process_creator
-from simyan.schemas.issue import Issue, IssueResult
-from simyan.schemas.publisher import Publisher, PublisherResult
-from simyan.schemas.story_arc import StoryArc, StoryArcResult
-from simyan.schemas.volume import Volume, VolumeResult, pre_process_volume
+from simyan.exceptions import AuthenticationError, CacheError, ServiceError
+from simyan.schemas.character import Character
+from simyan.schemas.creator import Creator
+from simyan.schemas.issue import Issue
+from simyan.schemas.publisher import Publisher
+from simyan.schemas.story_arc import StoryArc
+from simyan.schemas.volume import Volume
 from simyan.sqlite_cache import SQLiteCache
 
 MINUTE = 60
+T = TypeVar("T")
 
 
 class ComicvineResource(Enum):
-    """Class for Comicvine Resource ids."""
+    """Enum class for Comicvine Resources."""
 
-    PUBLISHER = 4010
-    VOLUME = 4050
-    ISSUE = 4000
-    STORY_ARC = 4045
-    CREATOR = 4040
-    CHARACTER = 4005
+    PUBLISHER = (4010, "publisher", List[Publisher])
+    VOLUME = (4050, "volume", List[Volume])
+    ISSUE = (4000, "issue", List[Issue])
+    STORY_ARC = (4045, "story_arc", List[StoryArc])
+    CREATOR = (4040, "person", List[Creator])
+    CHARACTER = (4005, "character", List[Character])
 
-    def __str__(self):
-        """
-        Generate string version of Resource id.
+    @property
+    def resource_id(self) -> int:
+        """Start of id used by comicvine to create unique ids."""
+        return self.value[0]
 
-        Returns:
-            String version of the ComicvineResource id.
-        """
-        return f"{self.value}"
+    @property
+    def search_resource(self) -> str:
+        """Resource string for filtering searches."""
+        return self.value[1]
+
+    @property
+    def search_response(self) -> Type[T]:
+        """Response type for resource when using a search endpoint."""
+        return self.value[2]
 
 
 class Comicvine:
@@ -91,22 +97,27 @@ class Comicvine:
         Returns:
             Json response from the Comicvine API.
         Raises:
-            APIError: If there is an issue with the request or response from the Comicvine API.
+            ServiceError: If there is an issue with the request or response from the Comicvine API.
         """
         if params is None:
             params = {}
 
         try:
             response = get(url, params=params, headers=self.headers, timeout=self.timeout)
+            response.raise_for_status()
             return response.json()
-        except ConnectionError as ce:
-            raise APIError(f"Unable to connect to `{url}`: {ce}")
-        except HTTPError as he:
-            raise APIError(he.response.text)
+        except ConnectionError:
+            raise ServiceError(f"Unable to connect to `{url}`")
+        except HTTPError as err:
+            if err.response.status_code == 401:
+                raise AuthenticationError("Invalid API Key")
+            elif err.response.status_code == 404:
+                raise ServiceError("Unknown endpoint")
+            raise ServiceError(err.response.json()["error"])
+        except JSONDecodeError:
+            raise ServiceError(f"Unable to parse response from `{url}` as Json")
         except ReadTimeout:
-            raise APIError("Server took too long to respond")
-        except JSONDecodeError as de:
-            raise APIError(f"Invalid response from `{url}`: {de}")
+            raise ServiceError("Server took too long to respond")
 
     def _get_request(
         self, endpoint: str, params: Dict[str, str] = None, skip_cache: bool = False
@@ -120,7 +131,7 @@ class Comicvine:
         Returns:
             Json response from the Comicvine API.
         Raises:
-            APIError: If there is an issue with the request or response from the Comicvine API.
+            ServiceError: If there is an issue with the request or response from the Comicvine API.
             AuthenticationError: If Comicvine returns with an invalid API key response.
             CacheError: If it is unable to retrieve or push to the Cache correctly.
         """
@@ -131,8 +142,7 @@ class Comicvine:
 
         cache_params = ""
         if params:
-            ordered_params = OrderedDict(sorted(params.items(), key=lambda x: x[0]))
-            cache_params = f"?{urlencode(ordered_params)}"
+            cache_params = f"?{urlencode({k: params[k] for k in sorted(params)})}"
 
         url = self.API_URL + endpoint
         cache_key = f"{url}{cache_params}"
@@ -148,9 +158,7 @@ class Comicvine:
 
         response = self._perform_get_request(url=url, params=params)
         if "error" in response and response["error"] != "OK":
-            if response["error"] == "Invalid API Key":
-                raise AuthenticationError(response["error"])
-            raise APIError(response["error"])
+            raise ServiceError(response["error"])
 
         if self.cache and not skip_cache:
             try:
@@ -169,32 +177,32 @@ class Comicvine:
         Returns:
             A Publisher object
         Raises:
-            APIError: If there is an issue with mapping the response to the Publisher object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             result = self._get_request(
-                endpoint=f"/publisher/{ComicvineResource.PUBLISHER}-{publisher_id}"
+                endpoint=f"/publisher/{ComicvineResource.PUBLISHER.resource_id}-{publisher_id}"
             )["results"]
-            return Publisher.schema().load(result)
-        except ValidationError as error:
-            raise APIError(error.messages)
+            return parse_obj_as(Publisher, result)
+        except ValidationError as err:
+            raise ServiceError(err)
 
-    def publisher_list(self, params: Optional[Dict[str, Any]] = None) -> List[PublisherResult]:
+    def publisher_list(self, params: Optional[Dict[str, Any]] = None) -> List[Publisher]:
         """
         Request data for a list of Publishers.
 
         Args:
             params: Parameters to add to the request.
         Returns:
-            A list of PublisherResult objects.
+            A list of Publisher objects.
         Raises:
-            APIError: If there is an issue with mapping the response to the PublisherList object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/publishers", params=params)
-            return PublisherResult.schema().load(results, many=True)
-        except ValidationError as error:
-            raise APIError(error.messages)
+            results = self._retrieve_all_responses(endpoint="/publishers/", params=params)
+            return parse_obj_as(List[Publisher], results)
+        except ValidationError as err:
+            raise ServiceError(err)
 
     def volume(self, volume_id: int) -> Volume:
         """
@@ -205,19 +213,17 @@ class Comicvine:
         Returns:
             A Volume object
         Raises:
-            APIError: If there is an issue with mapping the response to the Volume object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(endpoint=f"/volume/{ComicvineResource.VOLUME}-{volume_id}")[
-                "results"
-            ]
-            return Volume.schema().load(pre_process_volume(result))
-        except ValidationError as error:
-            raise APIError(error.messages)
+            result = self._get_request(
+                endpoint=f"/volume/{ComicvineResource.VOLUME.resource_id}-{volume_id}"
+            )["results"]
+            return parse_obj_as(Volume, result)
+        except ValidationError as err:
+            raise ServiceError(err)
 
-    def volume_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None
-    ) -> List[VolumeResult]:
+    def volume_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> List[Volume]:
         """
         Request data for a list of Volumes.
 
@@ -226,13 +232,13 @@ class Comicvine:
         Returns:
             A list of VolumeResult objects.
         Raises:
-            APIError: If there is an issue with mapping the response to the VolumeList object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/volumes", params=params)
-            return VolumeResult.schema().load([pre_process_volume(x) for x in results], many=True)
-        except ValidationError as error:
-            raise APIError(error.messages)
+            results = self._retrieve_all_responses(endpoint="/volumes/", params=params)
+            return parse_obj_as(List[Volume], results)
+        except ValidationError as err:
+            raise ServiceError(err)
 
     def issue(self, issue_id: int) -> Issue:
         """
@@ -243,17 +249,17 @@ class Comicvine:
         Returns:
             A Issue object
         Raises:
-            APIError: If there is an issue with mapping the response to the Issue object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(endpoint=f"/issue/{ComicvineResource.ISSUE}-{issue_id}")[
-                "results"
-            ]
-            return Issue.schema().load(result)
-        except ValidationError as error:
-            raise APIError(error.messages)
+            result = self._get_request(
+                endpoint=f"/issue/{ComicvineResource.ISSUE.resource_id}-{issue_id}"
+            )["results"]
+            return parse_obj_as(Issue, result)
+        except ValidationError as err:
+            raise ServiceError(err)
 
-    def issue_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> List[IssueResult]:
+    def issue_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> List[Issue]:
         """
         Request data for a list of Issues.
 
@@ -262,13 +268,13 @@ class Comicvine:
         Returns:
             A list of IssueResult objects.
         Raises:
-            APIError: If there is an issue with mapping the response to the IssueList object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/issues", params=params)
-            return IssueResult.schema().load(results, many=True)
-        except ValidationError as error:
-            raise APIError(error.messages)
+            results = self._retrieve_all_responses(endpoint="/issues/", params=params)
+            return parse_obj_as(List[Issue], results)
+        except ValidationError as err:
+            raise ServiceError(err)
 
     def story_arc(self, story_arc_id: int) -> StoryArc:
         """
@@ -279,19 +285,17 @@ class Comicvine:
         Returns:
             A StoryArc object
         Raises:
-            APIError: If there is an issue with mapping the response to the StoryArc object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             result = self._get_request(
-                endpoint=f"/story_arc/{ComicvineResource.STORY_ARC}-{story_arc_id}"
+                endpoint=f"/story_arc/{ComicvineResource.STORY_ARC.resource_id}-{story_arc_id}"
             )["results"]
-            return StoryArc.schema().load(result)
-        except ValidationError as error:
-            raise APIError(error.messages)
+            return parse_obj_as(StoryArc, result)
+        except ValidationError as err:
+            raise ServiceError(err)
 
-    def story_arc_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None
-    ) -> List[StoryArcResult]:
+    def story_arc_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> List[StoryArc]:
         """
         Request data for a list of Story Arcs.
 
@@ -300,13 +304,13 @@ class Comicvine:
         Returns:
             A list of StoryArcResult objects.
         Raises:
-            APIError: If there is an issue with mapping the response to the StoryArcList object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/story_arcs", params=params)
-            return StoryArcResult.schema().load(results, many=True)
-        except ValidationError as error:
-            raise APIError(error.messages)
+            results = self._retrieve_all_responses(endpoint="/story_arcs/", params=params)
+            return parse_obj_as(List[StoryArc], results)
+        except ValidationError as err:
+            raise ServiceError(err)
 
     def creator(self, creator_id: int) -> Creator:
         """
@@ -317,20 +321,17 @@ class Comicvine:
         Returns:
             A Creator object
         Raises:
-            APIError: If there is an issue with mapping the response to the Creator object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             result = self._get_request(
-                endpoint=f"/person/{ComicvineResource.CREATOR}-{creator_id}"
+                endpoint=f"/person/{ComicvineResource.CREATOR.resource_id}-{creator_id}"
             )["results"]
-            # print(pre_process_creator(result))
-            return Creator.schema().load(pre_process_creator(result))
-        except ValidationError as error:
-            raise APIError(error.messages)
+            return parse_obj_as(Creator, result)
+        except ValidationError as err:
+            raise ServiceError(err)
 
-    def creator_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None
-    ) -> List[CreatorResult]:
+    def creator_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> List[Creator]:
         """
         Request data for a list of Creators.
 
@@ -339,13 +340,13 @@ class Comicvine:
         Returns:
             A list of CreatorResult objects.
         Raises:
-            APIError: If there is an issue with mapping the response to the CreatorList object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/people", params=params)
-            return CreatorResult.schema().load([pre_process_creator(x) for x in results], many=True)
-        except ValidationError as error:
-            raise APIError(error.messages)
+            results = self._retrieve_all_responses(endpoint="/people/", params=params)
+            return parse_obj_as(List[Creator], results)
+        except ValidationError as err:
+            raise ServiceError(err)
 
     def character(self, character_id: int) -> Character:
         """
@@ -356,19 +357,19 @@ class Comicvine:
         Returns:
             A Character object
         Raises:
-            APIError: If there is an issue with mapping the response to the Character object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             result = self._get_request(
-                endpoint=f"/character/{ComicvineResource.CHARACTER}-{character_id}"
+                endpoint=f"/character/{ComicvineResource.CHARACTER.resource_id}-{character_id}"
             )["results"]
-            return Character.schema().load(result)
-        except ValidationError as error:
-            raise APIError(error.messages)
+            return parse_obj_as(Character, result)
+        except ValidationError as err:
+            raise ServiceError(err)
 
     def character_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None
-    ) -> List[CharacterResult]:
+    ) -> List[Character]:
         """
         Request data for a list of Characters.
 
@@ -377,13 +378,41 @@ class Comicvine:
         Returns:
             A list of CharacterResult objects.
         Raises:
-            APIError: If there is an issue with mapping the response to the CharacterList object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/characters", params=params)
-            return CharacterResult.schema().load(results, many=True)
-        except ValidationError as error:
-            raise APIError(error.messages)
+            results = self._retrieve_all_responses(endpoint="/characters/", params=params)
+            return parse_obj_as(List[Character], results)
+        except ValidationError as err:
+            raise ServiceError(err)
+
+    def search(
+        self, resource: ComicvineResource, query: str
+    ) -> Union[
+        List[Publisher], List[Volume], List[Issue], List[StoryArc], List[Creator], List[Character]
+    ]:
+        """
+        Request a list of search results filtered by provided resource.
+
+        Args:
+            resource: Filter which type of resource to return.
+            query: Search query string.
+        Returns:
+            A list of results, mapped to the given resource.
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        params = {"query": query, "resources": resource.search_resource, "page": 1}
+        response = self._get_request(endpoint="/search/", params=params)
+        results = response["results"]
+        while response["results"] and len(results) < response["number_of_total_results"]:
+            params["page"] += 1
+            response = self._get_request(endpoint="/search/", params=params)
+            results.extend(response["results"])
+        try:
+            return parse_obj_as(resource.search_response, results)
+        except ValidationError as err:
+            raise ServiceError(err)
 
     def _retrieve_all_responses(
         self, endpoint: str, params: Optional[Dict[str, Any]] = None
@@ -400,12 +429,9 @@ class Comicvine:
         if params is None:
             params = {}
         response = self._get_request(endpoint=endpoint, params=params)
-        result = response["results"]
-        while (
-            response["number_of_total_results"]
-            > response["offset"] + response["number_of_page_results"]
-        ):
-            params["offset"] = response["offset"] + response["number_of_page_results"]
+        results = response["results"]
+        while response["results"] and len(results) < response["number_of_total_results"]:
+            params["offset"] = len(results)
             response = self._get_request(endpoint=endpoint, params=params)
-            result.extend(response["results"])
-        return result
+            results.extend(response["results"])
+        return results

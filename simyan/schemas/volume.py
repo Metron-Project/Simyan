@@ -4,122 +4,60 @@ The Volume module.
 This module provides the following classes:
 
 - Volume
-- VolumeResult
 """
-from dataclasses import dataclass, field
+import re
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
-from dataclasses_json import Undefined, config, dataclass_json
-from marshmallow import fields
+from pydantic import BaseModel, Extra, Field
 
 from simyan.schemas.generic_entries import CountEntry, GenericEntry, ImageEntry, IssueEntry
 
 
-def pre_process_volume(entry: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Handle non-int values for start_year.
-
-    Args:
-        entry: Data from the Comicvine response
-
-    Returns:
-        Comicvine response with the start year either None or Int.
-    """
-    try:
-        entry["start_year"] = int(entry["start_year"] or "")
-    except ValueError:
-        entry["start_year"] = None
-    return entry
-
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class Volume:
+class Volume(BaseModel):
     """The Volume object contains information for a volume."""
 
-    api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the Comicvine API.
-    date_added: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )  #: Date and time when the Volume was added to Comicvine.
-    date_last_updated: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )  #: Date and time when the Volume was updated on Comicvine.
-    id_: int = field(metadata=config(field_name="id"))  #: Identifier used in Comicvine.
-    image: ImageEntry  #: Different sized images, posters and thumbnails for the Volume.
-    issue_count: int = field(
-        metadata=config(field_name="count_of_issues")
-    )  #: Number of issues in the Volume.
-    name: str  #: Name/Title of the Volume.
-    site_url: str = field(
-        metadata=config(field_name="site_detail_url")
-    )  #: Url to the Comicvine Website.
-    aliases: Optional[str] = field(
+    aliases: Optional[str] = Field(
         default=None
     )  #: List of names the Volume has used, separated by ``\n``.
-    description: Optional[str] = field(default=None)  #: Long description of the Volume.
-    first_issue: Optional[IssueEntry] = field(default=None)  #: First issue of the Volume.
-    last_issue: Optional[IssueEntry] = field(default=None)  #: Last issue of the Volume.
-    publisher: Optional[GenericEntry] = field(default=None)  #: The publisher of the Volume.
-    start_year: Optional[int] = field(default=None)  #: The year the Volume started.
-    summary: Optional[str] = field(
-        default=None, metadata=config(field_name="deck")
-    )  #: Short description of the Volume.
-    characters: List[CountEntry] = field(default_factory=list)  #: List of characters in the Volume.
-    concepts: List[CountEntry] = field(default_factory=list)  #: List of concepts in the Volume.
-    creators: List[CountEntry] = field(
-        default_factory=list, metadata=config(field_name="people")
+    api_url: str = Field(alias="api_detail_url")  #: Url to the Comicvine API.
+    characters: List[CountEntry] = Field(default_factory=list)  #: List of characters in the Volume.
+    concepts: List[CountEntry] = Field(default_factory=list)  #: List of concepts in the Volume.
+    creators: List[CountEntry] = Field(
+        default_factory=list, alias="people"
     )  #: List of creators in the Volume.
-    issues: List[IssueEntry] = field(default_factory=list)  #: List of issues in the Volume.
-    locations: List[CountEntry] = field(default_factory=list)  #: List of locations in the Volume.
-    objects: List[CountEntry] = field(default_factory=list)  #: List of objects in the Volume.
-
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass
-class VolumeResult:
-    """The VolumeResult object contains information for a volume."""
-
-    api_url: str = field(metadata=config(field_name="api_detail_url"))  #: Url to the Comicvine API.
-    date_added: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )  #: Date and time when the Volume was added to Comicvine.
-    date_last_updated: datetime = field(
-        metadata=config(
-            encoder=datetime.isoformat,
-            decoder=datetime.fromisoformat,
-            mm_field=fields.DateTime(format="iso"),
-        )
-    )  #: Date and time when the Volume was updated on Comicvine.
-    id_: int = field(metadata=config(field_name="id"))  #: Identifier used in Comicvine.
+    date_added: datetime  #: Date and time when the Volume was added to Comicvine.
+    date_last_updated: datetime  #: Date and time when the Volume was updated on Comicvine.
+    description: Optional[str] = Field(default=None)  #: Long description of the Volume.
+    first_issue: Optional[IssueEntry] = Field(default=None)  #: First issue of the Volume.
+    id_: int = Field(alias="id")  #: Identifier used in Comicvine.
+    volume_id: int = Field(alias="id")  #: Identifier used in Comicvine.
     image: ImageEntry  #: Different sized images, posters and thumbnails for the Volume.
-    issue_count: int = field(
-        metadata=config(field_name="count_of_issues")
-    )  #: Number of issues in the Volume.
+    issue_count: int = Field(alias="count_of_issues")  #: Number of issues in the Volume.
+    issues: List[IssueEntry] = Field(default_factory=list)  #: List of issues in the Volume.
+    last_issue: Optional[IssueEntry] = Field(default=None)  #: Last issue of the Volume.
+    locations: List[CountEntry] = Field(default_factory=list)  #: List of locations in the Volume.
     name: str  #: Name/Title of the Volume.
-    site_url: str = field(
-        metadata=config(field_name="site_detail_url")
-    )  #: Url to the Comicvine Website.
-    aliases: Optional[str] = field(
-        default=None
-    )  #: List of names the Volume has used, separated by ``\n``.
-    description: Optional[str] = field(default=None)  #: Long description of the Volume.
-    first_issue: Optional[IssueEntry] = field(default=None)  #: First issue of the Volume.
-    last_issue: Optional[IssueEntry] = field(default=None)  #: Last issue of the Volume.
-    publisher: Optional[GenericEntry] = field(default=None)  #: The publisher of the Volume.
-    start_year: Optional[int] = field(default=None)  #: The year the Volume started.
-    summary: Optional[str] = field(
-        default=None, metadata=config(field_name="deck")
-    )  #: Short description of the Volume.
+    objects: List[CountEntry] = Field(default_factory=list)  #: List of objects in the Volume.
+    publisher: Optional[GenericEntry] = Field(default=None)  #: The publisher of the Volume.
+    site_url: str = Field(alias="site_detail_url")  #: Url to the Comicvine Website.
+    start_year: Optional[int] = Field(default=None)  #: The year the Volume started.
+    summary: Optional[str] = Field(default=None, alias="deck")  #: Short description of the Volume.
+
+    def __init__(self, **data):
+        try:
+            data["start_year"] = int(data["start_year"] or "")
+        except ValueError:
+            data["start_year"] = None
+        super().__init__(**data)
+
+    @property
+    def alias_list(self) -> List[str]:
+        """List of names the Volume has used."""
+        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
+
+    class Config:
+        """Any extra fields will be ignored, strings will have start/end whitespace stripped."""
+
+        anystr_strip_whitespace = True
+        extra = Extra.ignore

@@ -27,7 +27,7 @@ autodoc_default_options = {
     "members": True,
     "undoc-members": True,
     "show-inheritance": True,
-    "exclude-members": "dataclass_json_config,from_dict,from_json,schema,to_dict,to_json",
+    "exclude-members": "",
 }
 autodoc_inherit_docstrings = False
 autodoc_member_order = "groupwise"

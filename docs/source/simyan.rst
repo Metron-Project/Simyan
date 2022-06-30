@@ -18,15 +18,15 @@ Module contents
 Submodules
 ----------
 
-simyan.exceptions module
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: simyan.exceptions
-
 simyan.comicvine module
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: simyan.comicvine
+
+simyan.exceptions module
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: simyan.exceptions
 
 simyan.sqlite\_cache module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
