@@ -28,11 +28,6 @@ simyan.exceptions module
 
 .. automodule:: simyan.exceptions
 
-simyan.resource_type module
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: simyan.resource_type
-
 simyan.sqlite\_cache module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

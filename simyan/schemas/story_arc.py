@@ -43,8 +43,11 @@ class StoryArc(BaseModel):
 
     @property
     def alias_list(self) -> List[str]:
+        """List of names the Story Arc has used."""
         return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
 
     class Config:
+        """Any extra fields will be ignored, strings will have start/end whitespace stripped."""
+
         anystr_strip_whitespace = True
         extra = Extra.ignore

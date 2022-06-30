@@ -26,6 +26,8 @@ class GenericEntry(BaseModel):
     )  #: Url to the ComicVine Website.
 
     class Config:
+        """Any extra fields will raise an error, strings will have start/end whitespace stripped."""
+
         anystr_strip_whitespace = True
         extra = Extra.forbid
 
@@ -36,6 +38,8 @@ class CountEntry(GenericEntry):
     count: int
 
     class Config:
+        """Any extra fields will raise an error, strings will have start/end whitespace stripped."""
+
         anystr_strip_whitespace = True
         extra = Extra.forbid
 
@@ -46,6 +50,8 @@ class IssueEntry(GenericEntry):
     number: Optional[str] = Field(default=None, alias="issue_number")
 
     class Config:
+        """Any extra fields will raise an error, strings will have start/end whitespace stripped."""
+
         anystr_strip_whitespace = True
         extra = Extra.forbid
 
@@ -57,9 +63,12 @@ class CreatorEntry(GenericEntry):
 
     @property
     def role_list(self) -> List[str]:
-        return re.split(r"[~\r\n]+", self.roles)
+        """List of roles the Creator has used."""
+        return re.split(r"[~\r\n]+", self.roles) if self.roles else []
 
     class Config:
+        """Any extra fields will raise an error, strings will have start/end whitespace stripped."""
+
         anystr_strip_whitespace = True
         extra = Extra.forbid
 
@@ -79,5 +88,7 @@ class ImageEntry(BaseModel):
     tags: Optional[str] = Field(default=None, alias="image_tags")
 
     class Config:
+        """Any extra fields will raise an error, strings will have start/end whitespace stripped."""
+
         anystr_strip_whitespace = True
         extra = Extra.forbid

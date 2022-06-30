@@ -7,8 +7,9 @@ from datetime import datetime
 
 import pytest
 
-from simyan.comicvine import Comicvine
+from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
+from simyan.schemas.story_arc import StoryArc
 
 
 def test_story_arc(session: Comicvine):
@@ -56,3 +57,9 @@ def test_story_arc_list_empty(session: Comicvine):
     """Test using the story_arc_list endpoint with an invalid search."""
     results = session.story_arc_list({"filter": "name:INVALID"})
     assert len(results) == 0
+
+
+def test_search_character(session: Comicvine):
+    """Test using the search endpoint for a list of Story Arcs."""
+    results = session.search(resource=ComicvineResource.STORY_ARC, query="Blackest Night")
+    assert all(isinstance(x, StoryArc) for x in results)

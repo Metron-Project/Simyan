@@ -7,18 +7,9 @@ from datetime import datetime
 
 import pytest
 
-from simyan.comicvine import Comicvine
+from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.resource_type import ResourceType
 from simyan.schemas.volume import Volume
-
-FIRST_ISSUE_ID = 111265
-ID = 18216
-ISSUE_COUNT = 67
-LAST_ISSUE_ID = 278617
-NAME = "Green Lantern"
-PUBLISHER_ID = 10
-START_YEAR = 2005
 
 
 def test_volume(session: Comicvine):
@@ -53,7 +44,7 @@ def test_volume_fail(session: Comicvine):
 
 def test_volume_list(session: Comicvine):
     """Test using the volume_list endpoint with a valid search."""
-    search_results = session.volume_list({"filter": f"name:{NAME}"})
+    search_results = session.volume_list({"filter": "name:Green Lantern"})
     assert len(search_results) != 0
     result = [x for x in search_results if x.volume_id == 18216][0]
     assert result is not None
@@ -84,7 +75,7 @@ def test_volume_list_empty(session: Comicvine):
 
 def test_search_volume(session: Comicvine):
     """Test using the search endpoint for a list of Volumes."""
-    results = session.search(resource=ResourceType.VOLUME, query="Lantern")
+    results = session.search(resource=ComicvineResource.VOLUME, query="Lantern")
     assert all(isinstance(x, Volume) for x in results)
 
 

@@ -7,8 +7,9 @@ from datetime import datetime
 
 import pytest
 
-from simyan.comicvine import Comicvine
+from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
+from simyan.schemas.publisher import Publisher
 
 
 def test_publisher(session: Comicvine):
@@ -86,3 +87,9 @@ def test_publisher_list_empty(session: Comicvine):
     """Test using the publisher_list endpoint with an invalid search."""
     results = session.publisher_list({"filter": "name:INVALID"})
     assert len(results) == 0
+
+
+def test_search_character(session: Comicvine):
+    """Test using the search endpoint for a list of Publishers."""
+    results = session.search(resource=ComicvineResource.PUBLISHER, query="DC")
+    assert all(isinstance(x, Publisher) for x in results)

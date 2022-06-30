@@ -10,7 +10,7 @@ import platform
 import re
 from enum import Enum
 from json import JSONDecodeError
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Type, TypeVar, Union
 from urllib.parse import urlencode
 
 from pydantic import ValidationError, parse_obj_as
@@ -20,7 +20,6 @@ from requests.exceptions import ConnectionError, HTTPError
 
 from simyan import __version__
 from simyan.exceptions import AuthenticationError, CacheError, ServiceError
-from simyan.resource_type import ResourceType
 from simyan.schemas.character import Character
 from simyan.schemas.creator import Creator
 from simyan.schemas.issue import Issue
@@ -30,26 +29,33 @@ from simyan.schemas.volume import Volume
 from simyan.sqlite_cache import SQLiteCache
 
 MINUTE = 60
+T = TypeVar("T")
 
 
 class ComicvineResource(Enum):
-    """Class for Comicvine Resource ids."""
+    """Enum class for Comicvine Resources."""
 
-    PUBLISHER = 4010
-    VOLUME = 4050
-    ISSUE = 4000
-    STORY_ARC = 4045
-    CREATOR = 4040
-    CHARACTER = 4005
+    PUBLISHER = (4010, "publisher", List[Publisher])
+    VOLUME = (4050, "volume", List[Volume])
+    ISSUE = (4000, "issue", List[Issue])
+    STORY_ARC = (4045, "story_arc", List[StoryArc])
+    CREATOR = (4040, "person", List[Creator])
+    CHARACTER = (4005, "character", List[Character])
 
-    def __str__(self):
-        """
-        Generate string version of Resource id.
+    @property
+    def resource_id(self) -> int:
+        """Start of id used by comicvine to create unique ids."""
+        return self.value[0]
 
-        Returns:
-            String version of the ComicvineResource id.
-        """
-        return f"{self.value}"
+    @property
+    def search_resource(self) -> str:
+        """Resource string for filtering searches."""
+        return self.value[1]
+
+    @property
+    def search_response(self) -> Type[T]:
+        """Response type for resource when using a search endpoint."""
+        return self.value[2]
 
 
 class Comicvine:
@@ -169,11 +175,11 @@ class Comicvine:
         Returns:
             A Publisher object
         Raises:
-            ServiceError: If there is an issue with mapping the response to the Publisher object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             result = self._get_request(
-                endpoint=f"/publisher/{ComicvineResource.PUBLISHER}-{publisher_id}"
+                endpoint=f"/publisher/{ComicvineResource.PUBLISHER.resource_id}-{publisher_id}"
             )["results"]
             return parse_obj_as(Publisher, result)
         except ValidationError as err:
@@ -188,7 +194,7 @@ class Comicvine:
         Returns:
             A list of Publisher objects.
         Raises:
-            ServiceError: If there is an issue with mapping the response to a List of Publisher objects.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             results = self._retrieve_all_responses(endpoint="/publishers/", params=params)
@@ -205,12 +211,12 @@ class Comicvine:
         Returns:
             A Volume object
         Raises:
-            ServiceError: If there is an issue with mapping the response to the Volume object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(endpoint=f"/volume/{ComicvineResource.VOLUME}-{volume_id}")[
-                "results"
-            ]
+            result = self._get_request(
+                endpoint=f"/volume/{ComicvineResource.VOLUME.resource_id}-{volume_id}"
+            )["results"]
             return parse_obj_as(Volume, result)
         except ValidationError as err:
             raise ServiceError(err)
@@ -224,7 +230,7 @@ class Comicvine:
         Returns:
             A list of VolumeResult objects.
         Raises:
-            ServiceError: If there is an issue with mapping the response to a List of Volume objects.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             results = self._retrieve_all_responses(endpoint="/volumes/", params=params)
@@ -241,12 +247,12 @@ class Comicvine:
         Returns:
             A Issue object
         Raises:
-            ServiceError: If there is an issue with mapping the response to the Issue object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(endpoint=f"/issue/{ComicvineResource.ISSUE}-{issue_id}")[
-                "results"
-            ]
+            result = self._get_request(
+                endpoint=f"/issue/{ComicvineResource.ISSUE.resource_id}-{issue_id}"
+            )["results"]
             return parse_obj_as(Issue, result)
         except ValidationError as err:
             raise ServiceError(err)
@@ -260,7 +266,7 @@ class Comicvine:
         Returns:
             A list of IssueResult objects.
         Raises:
-            ServiceError: If there is an issue with mapping the response to a List of Issue objects.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             results = self._retrieve_all_responses(endpoint="/issues/", params=params)
@@ -277,11 +283,11 @@ class Comicvine:
         Returns:
             A StoryArc object
         Raises:
-            ServiceError: If there is an issue with mapping the response to the StoryArc object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             result = self._get_request(
-                endpoint=f"/story_arc/{ComicvineResource.STORY_ARC}-{story_arc_id}"
+                endpoint=f"/story_arc/{ComicvineResource.STORY_ARC.resource_id}-{story_arc_id}"
             )["results"]
             return parse_obj_as(StoryArc, result)
         except ValidationError as err:
@@ -296,7 +302,7 @@ class Comicvine:
         Returns:
             A list of StoryArcResult objects.
         Raises:
-            ServiceError: If there is an issue with mapping the response to a List of StoryArc objects.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             results = self._retrieve_all_responses(endpoint="/story_arcs/", params=params)
@@ -313,11 +319,11 @@ class Comicvine:
         Returns:
             A Creator object
         Raises:
-            ServiceError: If there is an issue with mapping the response to the Creator object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             result = self._get_request(
-                endpoint=f"/person/{ComicvineResource.CREATOR}-{creator_id}"
+                endpoint=f"/person/{ComicvineResource.CREATOR.resource_id}-{creator_id}"
             )["results"]
             return parse_obj_as(Creator, result)
         except ValidationError as err:
@@ -332,7 +338,7 @@ class Comicvine:
         Returns:
             A list of CreatorResult objects.
         Raises:
-            ServiceError: If there is an issue with mapping the response to a List of Creator objects.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             results = self._retrieve_all_responses(endpoint="/people/", params=params)
@@ -349,11 +355,11 @@ class Comicvine:
         Returns:
             A Character object
         Raises:
-            ServiceError: If there is an issue with mapping the response to the Character object.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             result = self._get_request(
-                endpoint=f"/character/{ComicvineResource.CHARACTER}-{character_id}"
+                endpoint=f"/character/{ComicvineResource.CHARACTER.resource_id}-{character_id}"
             )["results"]
             return parse_obj_as(Character, result)
         except ValidationError as err:
@@ -370,7 +376,7 @@ class Comicvine:
         Returns:
             A list of CharacterResult objects.
         Raises:
-            ServiceError: If there is an issue with mapping the response to a List of Character objects.
+            ServiceError: If there is an issue with validating the response.
         """
         try:
             results = self._retrieve_all_responses(endpoint="/characters/", params=params)
@@ -379,9 +385,22 @@ class Comicvine:
             raise ServiceError(err)
 
     def search(
-        self, resource: ResourceType, query: str
-    ) -> Union[List[Character], List[Issue], List[Volume], List[Creator]]:
-        params = {"query": query, "resources": resource.value[0], "page": 1}
+        self, resource: ComicvineResource, query: str
+    ) -> Union[
+        List[Publisher], List[Volume], List[Issue], List[StoryArc], List[Creator], List[Character]
+    ]:
+        """
+        Request a list of search results filtered by provided resource.
+
+        Args:
+            resource: Filter which type of resource to return.
+            query: Search query string.
+        Returns:
+            A list of results, mapped to the given resource.
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        params = {"query": query, "resources": resource.search_resource, "page": 1}
         response = self._get_request(endpoint="/search/", params=params)
         results = response["results"]
         while response["results"] and len(results) < response["number_of_total_results"]:
@@ -389,7 +408,7 @@ class Comicvine:
             response = self._get_request(endpoint="/search/", params=params)
             results.extend(response["results"])
         try:
-            return parse_obj_as(resource.value[1], results)
+            return parse_obj_as(resource.search_response, results)
         except ValidationError as err:
             raise ServiceError(err)
 

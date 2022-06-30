@@ -7,9 +7,8 @@ from datetime import date, datetime
 
 import pytest
 
-from simyan.comicvine import Comicvine
+from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.resource_type import ResourceType
 from simyan.schemas.creator import Creator
 
 
@@ -78,7 +77,7 @@ def test_creator_list_empty(session: Comicvine):
 
 def test_search_creator(session: Comicvine):
     """Test using the search endpoint for a list of Creators."""
-    results = session.search(resource=ResourceType.CREATOR, query="Geoff")
+    results = session.search(resource=ComicvineResource.CREATOR, query="Geoff")
     assert all(isinstance(x, Creator) for x in results)
 
 

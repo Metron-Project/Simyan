@@ -34,8 +34,8 @@ keywords=["comics", "comic", "metadata"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-pydantic = {extras = ["dotenv"], version = "^1.9.1"}
-requests = "^2.28.0"
+pydantic = "^1.9.1"
+requests = "^2.28.1"
 ratelimit = "^2.2.1"
 
 # Optional dependencies
@@ -46,7 +46,7 @@ sphinx-rtd-theme = {version = "^1.0.0", optional = true}
 pre-commit = "^2.19.0"
 pytest = "^7.1.2"
 pytest-cov = "^3.0.0"
-tox = "^3.25.0"
+tox = "^3.25.1"
 tox-pyenv = "^1.1.0"
 
 [build-system]

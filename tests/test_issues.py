@@ -7,9 +7,8 @@ from datetime import date, datetime
 
 import pytest
 
-from simyan.comicvine import Comicvine
+from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.resource_type import ResourceType
 from simyan.schemas.issue import Issue
 
 
@@ -92,7 +91,7 @@ def test_issue_list_empty(session: Comicvine):
 
 def test_search_issue(session: Comicvine):
     """Test using the search endpoint for a list of Issues."""
-    results = session.search(resource=ResourceType.ISSUE, query="Lantern")
+    results = session.search(resource=ComicvineResource.ISSUE, query="Lantern")
     assert all(isinstance(x, Issue) for x in results)
 
 
