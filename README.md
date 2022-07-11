@@ -9,11 +9,11 @@
 [![Flake8](https://img.shields.io/badge/Flake8-Enabled-informational?style=flat-square)](https://github.com/PyCQA/flake8)
 [![Pre-Commit](https://img.shields.io/badge/Pre--Commit-Enabled-informational?logo=pre-commit&style=flat-square)](https://github.com/pre-commit/pre-commit)
 
-[![Github - Contributors](https://img.shields.io/github/contributors/Buried-In-Code/Simyan.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Buried-In-Code/Simyan/graphs/contributors)
+[![Github - Contributors](https://img.shields.io/github/contributors/Metron-Project/Simyan.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Metron-Project/Simyan/graphs/contributors)
 
 [![Read the Docs](https://img.shields.io/readthedocs/simyan?label=Read-the-Docs&logo=Read-the-Docs&style=flat-square)](https://simyan.readthedocs.io/en/latest/?badge=latest)
-[![Github Action - Code Analysis](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Code%20Analysis?logo=Github-Actions&label=Code-Analysis&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/code-analysis.yaml)
-[![Github Action - Testing](https://img.shields.io/github/workflow/status/Buried-In-Code/Simyan/Testing?logo=Github-Actions&label=Tests&style=flat-square)](https://github.com/Buried-In-Code/Simyan/actions/workflows/testing.yaml)
+[![Github Action - Code Analysis](https://img.shields.io/github/workflow/status/Metron-Project/Simyan/Code%20Analysis?logo=Github-Actions&label=Code-Analysis&style=flat-square)](https://github.com/Metron-Project/Simyan/actions/workflows/code-analysis.yaml)
+[![Github Action - Testing](https://img.shields.io/github/workflow/status/Metron-Project/Simyan/Testing?logo=Github-Actions&label=Tests&style=flat-square)](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml)
 
 A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvine.gamespot.com/api/) API.
 
@@ -51,6 +51,4 @@ print(result.summary)
 
 ## Socials
 
-Big thanks to [Mokkari](https://github.com/bpepple/mokkari) for the inspiration and template for this project.
-
-[![Discord | The-DEV-Environment](https://img.shields.io/discord/618581423070117932?color=7289DA&label=The-DEV-Environment&logo=Discord&style=for-the-badge)](https://discord.gg/nqGMeGg)
+Big thanks to [Mokkari](https://github.com/Metron-Project/mokkari) for the inspiration and template for this project.
