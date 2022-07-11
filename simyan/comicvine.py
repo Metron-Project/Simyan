@@ -139,8 +139,6 @@ class Comicvine:
             params = {}
         params["api_key"] = self.api_key
         params["format"] = "json"
-        if "limit" not in params:
-            params["limit"] = 100
 
         cache_params = ""
         if params:
@@ -404,7 +402,7 @@ class Comicvine:
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
-        params = {"query": query, "resources": resource.search_resource, "page": 1}
+        params = {"query": query, "resources": resource.search_resource, "page": 1, "limit": 100}
         response = self._get_request(endpoint="/search/", params=params)
         results = response["results"]
         while response["results"] and len(results) < response["number_of_total_results"]:
@@ -430,6 +428,8 @@ class Comicvine:
         """
         if params is None:
             params = {}
+        if "limit" not in params:
+            params["limit"] = 100
         response = self._get_request(endpoint=endpoint, params=params)
         results = response["results"]
         while response["results"] and len(results) < response["number_of_total_results"]:

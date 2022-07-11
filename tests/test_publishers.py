@@ -32,7 +32,7 @@ def test_publisher(session: Comicvine):
         "National Comics Publications",
     ]
     assert result.api_url == "https://comicvine.gamespot.com/api/publisher/4010-10/"
-    assert len(result.characters) == 19637
+    assert len(result.characters) == 19639
     assert result.date_added == datetime(2008, 6, 6, 11, 8)
     assert result.location_address == "4000 Warner Blvd"
     assert result.location_city == "Burbank"
