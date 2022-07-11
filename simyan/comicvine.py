@@ -139,6 +139,8 @@ class Comicvine:
             params = {}
         params["api_key"] = self.api_key
         params["format"] = "json"
+        if "limit" not in params:
+            params["limit"] = 100
 
         cache_params = ""
         if params:

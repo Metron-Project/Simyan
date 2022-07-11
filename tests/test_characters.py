@@ -38,8 +38,8 @@ def test_character(session: Comicvine):
     assert len(result.friendly_teams) == 16
     assert len(result.friends) == 232
     assert result.gender == 1
-    assert result.issue_count == 1561
-    assert len(result.issues) == 1561
+    assert result.issue_count == 1565
+    assert len(result.issues) == 1565
     assert result.name == "Kyle Rayner"
     assert result.origin.id_ == 4
     assert len(result.powers) == 28
@@ -84,7 +84,7 @@ def test_character_list(session: Comicvine):
     assert result.friendly_teams == []
     assert result.friends == []
     assert result.gender == 1
-    assert result.issue_count == 1561
+    assert result.issue_count == 1565
     assert result.issues == []
     assert result.name == "Kyle Rayner"
     assert result.origin.id_ == 4
