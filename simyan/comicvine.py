@@ -397,6 +397,7 @@ class Comicvine:
         Args:
             resource: Filter which type of resource to return.
             query: Search query string.
+            max_results: Limits the amount of results looked up and returned.
         Returns:
             A list of results, mapped to the given resource.
         Raises:
