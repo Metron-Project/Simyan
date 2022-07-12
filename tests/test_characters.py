@@ -107,3 +107,12 @@ def test_search_character(session: Comicvine):
     """Test using the search endpoint for a list of Characters."""
     results = session.search(resource=ComicvineResource.CHARACTER, query="Kyle Rayner")
     assert all(isinstance(x, Character) for x in results)
+
+
+def test_search_character_max_results(session: Comicvine):
+    """Test search endpoint with max_results."""
+    results = session.search(
+        resource=ComicvineResource.CHARACTER, query="Kyle Rayner", max_results=10
+    )
+    assert all(isinstance(x, Character) for x in results)
+    assert len(results) == 10

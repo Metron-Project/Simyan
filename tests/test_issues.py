@@ -95,6 +95,13 @@ def test_search_issue(session: Comicvine):
     assert all(isinstance(x, Issue) for x in results)
 
 
+def test_search_issue_max_results(session: Comicvine):
+    """Test search endpoint with max_results."""
+    results = session.search(resource=ComicvineResource.ISSUE, query="Lantern", max_results=10)
+    assert all(isinstance(x, Issue) for x in results)
+    assert len(results) == 10
+
+
 def test_issue_bad_cover_date(session: Comicvine):
     """Test for issue with a cover date."""
     xmen_2 = session.issue(issue_id=6787)

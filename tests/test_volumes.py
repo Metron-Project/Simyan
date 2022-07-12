@@ -79,6 +79,13 @@ def test_search_volume(session: Comicvine):
     assert all(isinstance(x, Volume) for x in results)
 
 
+def test_search_volume_max_results(session: Comicvine):
+    """Test search endpoint with max_results."""
+    results = session.search(resource=ComicvineResource.VOLUME, query="Lantern", max_results=10)
+    assert all(isinstance(x, Volume) for x in results)
+    assert len(results) == 10
+
+
 def test_volume_invalid_start_year(session: Comicvine):
     """Test volume endpoint to return result with an invalid start year."""
     result = session.volume(volume_id=106032)

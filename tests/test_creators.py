@@ -81,6 +81,13 @@ def test_search_creator(session: Comicvine):
     assert all(isinstance(x, Creator) for x in results)
 
 
+def test_search_creator_max_results(session: Comicvine):
+    """Test search endpoint with max_results."""
+    results = session.search(resource=ComicvineResource.CREATOR, query="Geoff", max_results=10)
+    assert all(isinstance(x, Creator) for x in results)
+    assert len(results) == 10
+
+
 def test_creator_with_dob(session: Comicvine):
     """Test creators date of birth & death."""
     kirby = session.creator(creator_id=5614)

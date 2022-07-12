@@ -387,7 +387,7 @@ class Comicvine:
             raise ServiceError(err)
 
     def search(
-        self, resource: ComicvineResource, query: str
+        self, resource: ComicvineResource, query: str, max_results: int = 500
     ) -> Union[
         List[Publisher], List[Volume], List[Issue], List[StoryArc], List[Creator], List[Character]
     ]:
@@ -405,12 +405,16 @@ class Comicvine:
         params = {"query": query, "resources": resource.search_resource, "page": 1, "limit": 100}
         response = self._get_request(endpoint="/search/", params=params)
         results = response["results"]
-        while response["results"] and len(results) < response["number_of_total_results"]:
+        while (
+            response["results"]
+            and len(results) < response["number_of_total_results"]
+            and len(results) < max_results
+        ):
             params["page"] += 1
             response = self._get_request(endpoint="/search/", params=params)
             results.extend(response["results"])
         try:
-            return parse_obj_as(resource.search_response, results)
+            return parse_obj_as(resource.search_response, results[:max_results])
         except ValidationError as err:
             raise ServiceError(err)
 
