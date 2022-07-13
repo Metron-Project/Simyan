@@ -75,6 +75,12 @@ def test_creator_list_empty(session: Comicvine):
     assert len(results) == 0
 
 
+def test_creator_list_max_results(session: Comicvine):
+    """Test creator_list endpoint with max_results."""
+    results = session.creator_list({"filter": "name:Geoff"}, max_results=10)
+    assert len(results) == 10
+
+
 def test_search_creator(session: Comicvine):
     """Test using the search endpoint for a list of Creators."""
     results = session.search(resource=ComicvineResource.CREATOR, query="Geoff")

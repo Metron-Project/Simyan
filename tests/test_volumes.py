@@ -73,6 +73,12 @@ def test_volume_list_empty(session: Comicvine):
     assert len(results) == 0
 
 
+def test_volume_list_max_results(session: Comicvine):
+    """Test volume_list endpoint with max_results."""
+    results = session.volume_list({"filter": "name:Green Lantern"}, max_results=10)
+    assert len(results) == 10
+
+
 def test_search_volume(session: Comicvine):
     """Test using the search endpoint for a list of Volumes."""
     results = session.search(resource=ComicvineResource.VOLUME, query="Lantern")

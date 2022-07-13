@@ -103,6 +103,12 @@ def test_character_list_empty(session: Comicvine):
     assert len(results) == 0
 
 
+def test_character_list_max_results(session: Comicvine):
+    """Test character_list endpoint with max_results."""
+    results = session.character_list({"filter": "name:Kyle"}, max_results=10)
+    assert len(results) == 10
+
+
 def test_search_character(session: Comicvine):
     """Test using the search endpoint for a list of Characters."""
     results = session.search(resource=ComicvineResource.CHARACTER, query="Kyle Rayner")

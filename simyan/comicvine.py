@@ -187,19 +187,24 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err)
 
-    def publisher_list(self, params: Optional[Dict[str, Any]] = None) -> List[Publisher]:
+    def publisher_list(
+        self, params: Optional[Dict[str, Any]] = None, max_results: int = 500
+    ) -> List[Publisher]:
         """
         Request data for a list of Publishers.
 
         Args:
             params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
         Returns:
             A list of Publisher objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/publishers/", params=params)
+            results = self._retrieve_offset_results(
+                endpoint="/publishers/", params=params, max_results=max_results
+            )
             return parse_obj_as(List[Publisher], results)
         except ValidationError as err:
             raise ServiceError(err)
@@ -223,19 +228,24 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err)
 
-    def volume_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> List[Volume]:
+    def volume_list(
+        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+    ) -> List[Volume]:
         """
         Request data for a list of Volumes.
 
         Args:
             params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
         Returns:
             A list of VolumeResult objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/volumes/", params=params)
+            results = self._retrieve_offset_results(
+                endpoint="/volumes/", params=params, max_results=max_results
+            )
             return parse_obj_as(List[Volume], results)
         except ValidationError as err:
             raise ServiceError(err)
@@ -259,19 +269,24 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err)
 
-    def issue_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> List[Issue]:
+    def issue_list(
+        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+    ) -> List[Issue]:
         """
         Request data for a list of Issues.
 
         Args:
             params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
         Returns:
             A list of IssueResult objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/issues/", params=params)
+            results = self._retrieve_offset_results(
+                endpoint="/issues/", params=params, max_results=max_results
+            )
             return parse_obj_as(List[Issue], results)
         except ValidationError as err:
             raise ServiceError(err)
@@ -295,19 +310,24 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err)
 
-    def story_arc_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> List[StoryArc]:
+    def story_arc_list(
+        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+    ) -> List[StoryArc]:
         """
         Request data for a list of Story Arcs.
 
         Args:
             params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
         Returns:
             A list of StoryArcResult objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/story_arcs/", params=params)
+            results = self._retrieve_offset_results(
+                endpoint="/story_arcs/", params=params, max_results=max_results
+            )
             return parse_obj_as(List[StoryArc], results)
         except ValidationError as err:
             raise ServiceError(err)
@@ -331,19 +351,24 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err)
 
-    def creator_list(self, params: Optional[Dict[str, Union[str, int]]] = None) -> List[Creator]:
+    def creator_list(
+        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+    ) -> List[Creator]:
         """
         Request data for a list of Creators.
 
         Args:
             params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
         Returns:
             A list of CreatorResult objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/people/", params=params)
+            results = self._retrieve_offset_results(
+                endpoint="/people/", params=params, max_results=max_results
+            )
             return parse_obj_as(List[Creator], results)
         except ValidationError as err:
             raise ServiceError(err)
@@ -368,20 +393,23 @@ class Comicvine:
             raise ServiceError(err)
 
     def character_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None
+        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
     ) -> List[Character]:
         """
         Request data for a list of Characters.
 
         Args:
             params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
         Returns:
             A list of CharacterResult objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._retrieve_all_responses(endpoint="/characters/", params=params)
+            results = self._retrieve_offset_results(
+                endpoint="/characters/", params=params, max_results=max_results
+            )
             return parse_obj_as(List[Character], results)
         except ValidationError as err:
             raise ServiceError(err)
@@ -403,24 +431,18 @@ class Comicvine:
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
-        params = {"query": query, "resources": resource.search_resource, "page": 1, "limit": 100}
-        response = self._get_request(endpoint="/search/", params=params)
-        results = response["results"]
-        while (
-            response["results"]
-            and len(results) < response["number_of_total_results"]
-            and len(results) < max_results
-        ):
-            params["page"] += 1
-            response = self._get_request(endpoint="/search/", params=params)
-            results.extend(response["results"])
         try:
-            return parse_obj_as(resource.search_response, results[:max_results])
+            results = self._retrieve_page_results(
+                endpoint="/search/",
+                params={"query": query, "resources": resource.search_resource},
+                max_results=max_results,
+            )
+            return parse_obj_as(resource.search_response, results)
         except ValidationError as err:
             raise ServiceError(err)
 
-    def _retrieve_all_responses(
-        self, endpoint: str, params: Optional[Dict[str, Any]] = None
+    def _retrieve_page_results(
+        self, endpoint: str, params: Optional[Dict[str, Any]] = None, max_results: int = 500
     ) -> List[Dict[str, Any]]:
         """
         Get responses until all the results are collected.
@@ -428,6 +450,38 @@ class Comicvine:
         Args:
             endpoint: The endpoint to request information from.
             params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+        Returns:
+            A list of Json response results.
+        """
+        if params is None:
+            params = {}
+        if "page" not in params:
+            params["page"] = 1
+        if "limit" not in params:
+            params["limit"] = 100
+        response = self._get_request(endpoint=endpoint, params=params)
+        results = response["results"]
+        while (
+            response["results"]
+            and len(results) < response["number_of_total_results"]
+            and len(results) < max_results
+        ):
+            params["page"] += 1
+            response = self._get_request(endpoint=endpoint, params=params)
+            results.extend(response["results"])
+        return results[:max_results]
+
+    def _retrieve_offset_results(
+        self, endpoint: str, params: Optional[Dict[str, Any]] = None, max_results: int = 500
+    ) -> List[Dict[str, Any]]:
+        """
+        Get responses until all the results are collected.
+
+        Args:
+            endpoint: The endpoint to request information from.
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
         Returns:
             A list of Json response results.
         """
@@ -437,8 +491,12 @@ class Comicvine:
             params["limit"] = 100
         response = self._get_request(endpoint=endpoint, params=params)
         results = response["results"]
-        while response["results"] and len(results) < response["number_of_total_results"]:
+        while (
+            response["results"]
+            and len(results) < response["number_of_total_results"]
+            and len(results) < max_results
+        ):
             params["offset"] = len(results)
             response = self._get_request(endpoint=endpoint, params=params)
             results.extend(response["results"])
-        return results
+        return results[:max_results]
