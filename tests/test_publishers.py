@@ -32,7 +32,7 @@ def test_publisher(session: Comicvine):
         "National Comics Publications",
     ]
     assert result.api_url == "https://comicvine.gamespot.com/api/publisher/4010-10/"
-    assert len(result.characters) == 19631
+    assert len(result.characters) == 19641
     assert result.date_added == datetime(2008, 6, 6, 11, 8)
     assert result.location_address == "4000 Warner Blvd"
     assert result.location_city == "Burbank"
@@ -40,8 +40,8 @@ def test_publisher(session: Comicvine):
     assert result.name == "DC Comics"
     assert result.site_url == "https://comicvine.gamespot.com/dc-comics/4010-10/"
     assert len(result.story_arcs) == 1281
-    assert len(result.teams) == 1529
-    assert len(result.volumes) == 7101
+    assert len(result.teams) == 1530
+    assert len(result.volumes) == 7105
 
 
 def test_publisher_fail(session: Comicvine):
@@ -89,7 +89,20 @@ def test_publisher_list_empty(session: Comicvine):
     assert len(results) == 0
 
 
-def test_search_character(session: Comicvine):
+def test_publisher_list_max_results(session: Comicvine):
+    """Test publisher_list endpoint with max_results."""
+    results = session.publisher_list({"filter": "name:Comics"}, max_results=10)
+    assert len(results) == 10
+
+
+def test_search_publisher(session: Comicvine):
     """Test using the search endpoint for a list of Publishers."""
     results = session.search(resource=ComicvineResource.PUBLISHER, query="DC")
     assert all(isinstance(x, Publisher) for x in results)
+
+
+def test_search_publisher_max_results(session: Comicvine):
+    """Test search endpoint with max_results."""
+    results = session.search(resource=ComicvineResource.PUBLISHER, query="DC", max_results=10)
+    assert all(isinstance(x, Publisher) for x in results)
+    assert len(results) == 0

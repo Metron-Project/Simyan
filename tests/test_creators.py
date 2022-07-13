@@ -29,7 +29,7 @@ def test_creator(session: Comicvine):
     assert result.gender == 1
     assert result.hometown == "Detroit, MI"
     assert result.issue_count is None
-    assert len(result.issues) == 1513
+    assert len(result.issues) == 1515
     assert result.name == "Geoff Johns"
     assert result.site_url == "https://comicvine.gamespot.com/geoff-johns/4040-40439/"
     assert len(result.story_arcs) == 0
@@ -75,10 +75,23 @@ def test_creator_list_empty(session: Comicvine):
     assert len(results) == 0
 
 
+def test_creator_list_max_results(session: Comicvine):
+    """Test creator_list endpoint with max_results."""
+    results = session.creator_list({"filter": "name:Geoff"}, max_results=10)
+    assert len(results) == 10
+
+
 def test_search_creator(session: Comicvine):
     """Test using the search endpoint for a list of Creators."""
     results = session.search(resource=ComicvineResource.CREATOR, query="Geoff")
     assert all(isinstance(x, Creator) for x in results)
+
+
+def test_search_creator_max_results(session: Comicvine):
+    """Test search endpoint with max_results."""
+    results = session.search(resource=ComicvineResource.CREATOR, query="Geoff", max_results=10)
+    assert all(isinstance(x, Creator) for x in results)
+    assert len(results) == 10
 
 
 def test_creator_with_dob(session: Comicvine):

@@ -89,10 +89,23 @@ def test_issue_list_empty(session: Comicvine):
     assert len(results) == 0
 
 
+def test_issue_list_max_results(session: Comicvine):
+    """Test issue_list endpoint with max_results."""
+    results = session.issue_list({"filter": "volume:18216"}, max_results=10)
+    assert len(results) == 10
+
+
 def test_search_issue(session: Comicvine):
     """Test using the search endpoint for a list of Issues."""
     results = session.search(resource=ComicvineResource.ISSUE, query="Lantern")
     assert all(isinstance(x, Issue) for x in results)
+
+
+def test_search_issue_max_results(session: Comicvine):
+    """Test search endpoint with max_results."""
+    results = session.search(resource=ComicvineResource.ISSUE, query="Lantern", max_results=10)
+    assert all(isinstance(x, Issue) for x in results)
+    assert len(results) == 10
 
 
 def test_issue_bad_cover_date(session: Comicvine):

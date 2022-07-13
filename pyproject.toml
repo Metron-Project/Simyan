@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "Simyan"
-version = "0.9.0"
+version = "0.9.1"
 description = "A Python wrapper for the Comicvine API."
 license = "GPL-3.0-or-later"
 authors = ["Buried-In-Code <BuriedInCode@tuta.io>"]
 maintainers = ["Buried-In-Code <BuriedInCode@tuta.io>"]
 readme = "README.md"
-repository = "https://github.com/Buried-In-Code/Simyan"
+repository = "https://github.com/Metron-Project/Simyan"
 documentation = "https://simyan.readthedocs.io/en/latest/"
 packages = [
 	{ include = "simyan" }
@@ -43,7 +43,7 @@ sphinxcontrib-napoleon = {version = "^0.7", optional = true}
 sphinx-rtd-theme = {version = "^1.0.0", optional = true}
 
 [tool.poetry.dev-dependencies]
-pre-commit = "^2.19.0"
+pre-commit = "^2.20.0"
 pytest = "^7.1.2"
 pytest-cov = "^3.0.0"
 tox = "^3.25.1"
@@ -54,7 +54,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.urls]
-"Issue Tracker" = "https://github.com/Buried-In-Code/Simyan/issues"
+"Issue Tracker" = "https://github.com/Metron-Project/Simyan/issues"
 
 [tool.poetry.extras]
 docs = ["sphinx-rtd-theme", "sphinxcontrib-napoleon"]

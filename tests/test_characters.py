@@ -38,8 +38,8 @@ def test_character(session: Comicvine):
     assert len(result.friendly_teams) == 16
     assert len(result.friends) == 232
     assert result.gender == 1
-    assert result.issue_count == 1561
-    assert len(result.issues) == 1561
+    assert result.issue_count == 1565
+    assert len(result.issues) == 1565
     assert result.name == "Kyle Rayner"
     assert result.origin.id_ == 4
     assert len(result.powers) == 28
@@ -84,7 +84,7 @@ def test_character_list(session: Comicvine):
     assert result.friendly_teams == []
     assert result.friends == []
     assert result.gender == 1
-    assert result.issue_count == 1561
+    assert result.issue_count == 1565
     assert result.issues == []
     assert result.name == "Kyle Rayner"
     assert result.origin.id_ == 4
@@ -103,7 +103,22 @@ def test_character_list_empty(session: Comicvine):
     assert len(results) == 0
 
 
+def test_character_list_max_results(session: Comicvine):
+    """Test character_list endpoint with max_results."""
+    results = session.character_list({"filter": "name:Kyle"}, max_results=10)
+    assert len(results) == 10
+
+
 def test_search_character(session: Comicvine):
     """Test using the search endpoint for a list of Characters."""
     results = session.search(resource=ComicvineResource.CHARACTER, query="Kyle Rayner")
     assert all(isinstance(x, Character) for x in results)
+
+
+def test_search_character_max_results(session: Comicvine):
+    """Test search endpoint with max_results."""
+    results = session.search(
+        resource=ComicvineResource.CHARACTER, query="Kyle Rayner", max_results=10
+    )
+    assert all(isinstance(x, Character) for x in results)
+    assert len(results) == 10

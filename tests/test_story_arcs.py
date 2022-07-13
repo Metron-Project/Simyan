@@ -59,7 +59,22 @@ def test_story_arc_list_empty(session: Comicvine):
     assert len(results) == 0
 
 
-def test_search_character(session: Comicvine):
+def test_story_arc_list_max_results(session: Comicvine):
+    """Test story_arc_list endpoint with max_results."""
+    results = session.story_arc_list({"filter": "name:Night"}, max_results=10)
+    assert len(results) == 10
+
+
+def test_search_story_arc(session: Comicvine):
     """Test using the search endpoint for a list of Story Arcs."""
     results = session.search(resource=ComicvineResource.STORY_ARC, query="Blackest Night")
     assert all(isinstance(x, StoryArc) for x in results)
+
+
+def test_search_story_arc_max_results(session: Comicvine):
+    """Test search endpoint with max_results."""
+    results = session.search(
+        resource=ComicvineResource.STORY_ARC, query="Blackest Night", max_results=10
+    )
+    assert all(isinstance(x, StoryArc) for x in results)
+    assert len(results) == 0
