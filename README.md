@@ -19,7 +19,7 @@ A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvin
 
 ## Installation
 
-### PyPI
+### Pip
 
 ```bash
 $ pip3 install -U --user simyan
@@ -42,7 +42,7 @@ session = Comicvine(api_key="ComicVine API Key", cache=SQLiteCache())
 # Search for Publisher
 results = session.publisher_list(params={"filter": "name:DC Comics"})
 for publisher in results:
-    print(f"{publisher.id_} | {publisher.name} - {publisher.site_url}")
+    print(f"{publisher.publisher_id} | {publisher.name} - {publisher.site_url}")
 
 # Get details for a Volume
 result = session.volume(volume_id=26266)

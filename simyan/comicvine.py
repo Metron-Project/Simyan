@@ -113,11 +113,13 @@ class Comicvine:
                 raise AuthenticationError("Invalid API Key")
             elif err.response.status_code == 404:
                 raise ServiceError("Unknown endpoint")
+            elif err.response.status_code == 502:
+                raise ServiceError("Service error, retry again in 30s")
             raise ServiceError(err.response.json()["error"])
         except JSONDecodeError:
             raise ServiceError(f"Unable to parse response from `{url}` as Json")
         except ReadTimeout:
-            raise ServiceError("Server took too long to respond")
+            raise ServiceError("Service took too long to respond")
 
     def _get_request(
         self, endpoint: str, params: Dict[str, str] = None, skip_cache: bool = False
