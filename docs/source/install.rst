@@ -12,4 +12,10 @@ To install the latest stable version from the PyPI:
 
 ::
 
-    $ pip3 install -U --user Simyan
+    $ pip3 install -U --user simyan
+
+or via poetry:
+
+::
+
+    $ poetry install simyan
