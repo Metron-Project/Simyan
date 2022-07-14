@@ -35,11 +35,23 @@ def test_story_arc_fail(session: Comicvine):
         session.story_arc(story_arc_id=-1)
 
 
+def test_story_arc_null_first_issue(session: Comicvine):
+    """Test story_arc endpoint to return result with no first_issue."""
+    result = session.story_arc(story_arc_id=56273)
+    assert result.first_issue is None
+
+
+def test_story_arc_null_publisher(session: Comicvine):
+    """Test story_arc endpoint to return result with no publisher."""
+    result = session.story_arc(story_arc_id=56765)
+    assert result.publisher is None
+
+
 def test_story_arc_list(session: Comicvine):
     """Test using the story_arc_list endpoint with a valid search."""
-    search_results = session.story_arc_list({"filter": "name:Blackest Night"})
-    assert len(search_results) != 0
-    result = [x for x in search_results if x.story_arc_id == 55766][0]
+    results = session.story_arc_list({"filter": "name:Blackest Night"})
+    assert len(results) != 0
+    result = [x for x in results if x.story_arc_id == 55766][0]
     assert result is not None
 
     assert result.alias_list == []
@@ -63,6 +75,24 @@ def test_story_arc_list_max_results(session: Comicvine):
     """Test story_arc_list endpoint with max_results."""
     results = session.story_arc_list({"filter": "name:Night"}, max_results=10)
     assert len(results) == 10
+
+
+def test_story_arc_list_null_first_issue(session: Comicvine):
+    """Test story_arc_list endpoint to return result with no first_issue."""
+    results = session.story_arc_list({"filter": "name:Lo, this Monster"})
+    assert len(results) != 0
+    result = [x for x in results if x.story_arc_id == 56273][0]
+    assert result is not None
+    assert result.first_issue is None
+
+
+def test_story_arc_list_null_publisher(session: Comicvine):
+    """Test story_arc_list endpoint to return result with no publisher."""
+    results = session.story_arc_list({"filter": "name:Lo, this Monster"})
+    assert len(results) != 0
+    result = [x for x in results if x.story_arc_id == 56765][0]
+    assert result is not None
+    assert result.publisher is None
 
 
 def test_search_story_arc(session: Comicvine):

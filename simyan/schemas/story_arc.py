@@ -24,8 +24,8 @@ class StoryArc(BaseModel):
     date_added: datetime  #: Date and time when the Story Arc was added to Comicvine.
     date_last_updated: datetime  #: Date and time when the Story Arc was updated on Comicvine.
     description: Optional[str] = Field(default=None)  #: Long description of the Story Arc.
-    first_issue: IssueEntry = Field(
-        alias="first_appeared_in_issue"
+    first_issue: Optional[IssueEntry] = Field(
+        default=None, alias="first_appeared_in_issue"
     )  #: First issue of the Story Arc.
     id_: int = Field(alias="id")  #: Identifier used in Comicvine.
     story_arc_id: int = Field(alias="id")  #: Identifier used in Comicvine.
@@ -35,7 +35,7 @@ class StoryArc(BaseModel):
     )  #: Number of issues in the Story Arc.
     issues: List[GenericEntry] = Field(default_factory=list)  #: List of issues in the Story Arc.
     name: str  #: Name/Title of the Story Arc.
-    publisher: GenericEntry  #: The publisher of the Story Arc.
+    publisher: Optional[GenericEntry] = None  #: The publisher of the Story Arc.
     site_url: str = Field(alias="site_detail_url")  #: Url to the Comicvine Website.
     summary: Optional[str] = Field(
         default=None, alias="deck"
