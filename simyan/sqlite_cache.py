@@ -5,6 +5,7 @@ This module provides the following classes:
 
 - SQLiteCache
 """
+__all__ = ["SQLiteCache"]
 import json
 import sqlite3
 from datetime import date, timedelta

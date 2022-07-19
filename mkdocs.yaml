@@ -1,0 +1,47 @@
+site_name: "Simyan"
+site_url: "https://simyan.readthedocs.io/en/latest/"
+repo_url: "https://github.com/Buried-In-Code/Simyan"
+repo_name: "Github"
+site_description: "A Python wrapper for the Comicvine API."
+site_author: "Jonah Jackson"
+copyright: "GPL-3.0"
+
+theme:
+  name: "readthedocs"
+
+nav:
+  - Home: "index.md"
+  - simyan:
+      - Package: "simyan/__init__.md"
+      - exceptions: "simyan/exceptions.md"
+      - comicvine: "simyan/comicvine.md"
+      - sqlite_cache: "simyan/sqlite_cache.md"
+  - simyan.schemas:
+      - Package: "simyan/schemas/__init__.md"
+      - character: "simyan/schemas/character.md"
+      - creator: "simyan/schemas/creator.md"
+      - generic_entries: "simyan/schemas/generic_entries.md"
+      - issue: "simyan/schemas/issue.md"
+      - publisher: "simyan/schemas/publisher.md"
+      - story_arc: "simyan/schemas/story_arc.md"
+      - volume: "simyan/schemas/volume.md"
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_root_heading: True
+            show_root_full_path: False
+            show_category_heading: True
+            # Docstrings
+            docstring_style: google
+            docstring_section_style: spacy
+            line_length: 100
+            merge_init_into_class: True
+            show_signature_annotations: True
+            # Additional
+            show_source: False
+  - include-markdown

@@ -19,16 +19,20 @@ A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvin
 
 ## Installation
 
-### Pip
+**Simyan** requires >= 3.7.
 
-```bash
+### Installing/Upgrading from PyPI
+
+To install the latest version from PyPI:
+
+```shell
 $ pip3 install -U --user simyan
 ```
 
-### Poetry
+or via poetry:
 
-```bash
-$ poetry add simyan
+```shell
+$ poetry install simyan
 ```
 
 ## Example Usage
@@ -49,6 +53,12 @@ result = session.volume(volume_id=26266)
 print(result.summary)
 ```
 
-## Socials
+## Notes
 
 Big thanks to [Mokkari](https://github.com/Metron-Project/mokkari) for the inspiration and template for this project.
+
+Who or what is Simyan?
+
+> Simyan along with his partner Mokkari, are the diminutive proprietors of the Evil Factory, an evil version of Project Cadmus created by Darkseid and his elite.
+>
+> More details at [Simyan (New Earth)](<https://dc.fandom.com/wiki/Simyan_(New_Earth)>)
