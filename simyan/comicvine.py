@@ -37,20 +37,20 @@ T = TypeVar("T")
 class ComicvineResource(Enum):
     """Enum class for Comicvine Resources."""
 
-    PUBLISHER = (4010, "publisher", List[Publisher])
-    """Details for the Publisher resource on Comicvine."""
-    VOLUME = (4050, "volume", List[Volume])
-    """Details for the Volume resource on Comicvine."""
-    ISSUE = (4000, "issue", List[Issue])
-    """Details for the Issue resource on Comicvine."""
-    STORY_ARC = (4045, "story_arc", List[StoryArc])
-    """Details for the Story Arc resource on Comicvine."""
-    CREATOR = (4040, "person", List[Creator])
-    """Details for the Creator resource on Comicvine."""
     CHARACTER = (4005, "character", List[Character])
     """Details for the Character resource on Comicvine."""
+    CREATOR = (4040, "person", List[Creator])
+    """Details for the Creator resource on Comicvine."""
+    ISSUE = (4000, "issue", List[Issue])
+    """Details for the Issue resource on Comicvine."""
+    PUBLISHER = (4010, "publisher", List[Publisher])
+    """Details for the Publisher resource on Comicvine."""
+    STORY_ARC = (4045, "story_arc", List[StoryArc])
+    """Details for the Story Arc resource on Comicvine."""
     TEAM = (4060, "team", List[Team])
     """Details for the Team resource on Comicvine."""
+    VOLUME = (4050, "volume", List[Volume])
+    """Details for the Volume resource on Comicvine."""
 
     @property
     def resource_id(self) -> int:
