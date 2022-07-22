@@ -30,7 +30,7 @@ classifiers = [
     "Topic :: Internet",
 	"Typing :: Typed"
 ]
-keywords=["comics", "comic", "metadata"]
+keywords = ["comics", "comic", "metadata"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -39,9 +39,9 @@ requests = "^2.28.1"
 ratelimit = "^2.2.1"
 
 # Optional dependencies
-mkdocs = {version = "^1.3.0", optional = true}
+mkdocs = {version = "^1.3.1", optional = true}
 mkdocstrings = {extras = ["python"], version = "^0.19.0", optional = true}
-mkdocs-include-markdown-plugin = {version = "^3.5.2", optional = true}
+mkdocs-include-markdown-plugin = {version = "^3.6.0", optional = true}
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.20.0"
@@ -50,15 +50,15 @@ pytest-cov = "^3.0.0"
 tox = "^3.25.1"
 tox-pyenv = "^1.1.0"
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
 [tool.poetry.urls]
 "Issue Tracker" = "https://github.com/Metron-Project/Simyan/issues"
 
 [tool.poetry.extras]
 docs = ["mkdocs", "mkdocstrings", "mkdocs-include-markdown-plugin"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 100

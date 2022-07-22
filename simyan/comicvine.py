@@ -26,6 +26,7 @@ from simyan.schemas.creator import Creator
 from simyan.schemas.issue import Issue
 from simyan.schemas.publisher import Publisher
 from simyan.schemas.story_arc import StoryArc
+from simyan.schemas.team import Team
 from simyan.schemas.volume import Volume
 from simyan.sqlite_cache import SQLiteCache
 
@@ -48,6 +49,8 @@ class ComicvineResource(Enum):
     """Details for the Creator resource on Comicvine."""
     CHARACTER = (4005, "character", List[Character])
     """Details for the Character resource on Comicvine."""
+    TEAM = (4060, "team", List[Team])
+    """Details for the Team resource on Comicvine."""
 
     @property
     def resource_id(self) -> int:
@@ -247,7 +250,7 @@ class Comicvine:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of VolumeResult objects.
+            A list of Volume objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -288,7 +291,7 @@ class Comicvine:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of IssueResult objects.
+            A list of Issue objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -329,7 +332,7 @@ class Comicvine:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of StoryArcResult objects.
+            A list of StoryArc objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -370,7 +373,7 @@ class Comicvine:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of CreatorResult objects.
+            A list of Creator objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -411,7 +414,7 @@ class Comicvine:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of CharacterResult objects.
+            A list of Character objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -423,10 +426,57 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err)
 
+    def team(self, team_id: int) -> Team:
+        """
+        Request data for a Team based on its id.
+
+        Args:
+            team_id: The Team id.
+        Returns:
+            A Team object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        try:
+            result = self._get_request(
+                endpoint=f"/team/{ComicvineResource.TEAM.resource_id}-{team_id}"
+            )["results"]
+            return parse_obj_as(Team, result)
+        except ValidationError as err:
+            raise ServiceError(err)
+
+    def team_list(
+        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+    ) -> List[Team]:
+        """
+        Request data for a list of Teams.
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+        Returns:
+            A list of Team objects.
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        try:
+            results = self._retrieve_offset_results(
+                endpoint="/teams/", params=params, max_results=max_results
+            )
+            return parse_obj_as(List[Team], results)
+        except ValidationError as err:
+            raise ServiceError(err)
+
     def search(
         self, resource: ComicvineResource, query: str, max_results: int = 500
     ) -> Union[
-        List[Publisher], List[Volume], List[Issue], List[StoryArc], List[Creator], List[Character]
+        List[Publisher],
+        List[Volume],
+        List[Issue],
+        List[StoryArc],
+        List[Creator],
+        List[Character],
+        List[Team],
     ]:
         """
         Request a list of search results filtered by provided resource.
