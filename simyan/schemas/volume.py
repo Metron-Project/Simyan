@@ -21,7 +21,7 @@ class Volume(BaseModel):
     The Volume object contains information for a volume.
 
     Attributes:
-        aliases: List of names used by the Volume, separated by `~\\r\\n`.
+        aliases: List of names used by the Volume, separated by `~\r\n`.
         api_url: Url to the resource in the Comicvine API.
         characters: List of characters in the Volume.
         concepts: List of concepts in the Volume.
@@ -81,6 +81,6 @@ class Volume(BaseModel):
         List of aliases the Volume has used.
 
         Returns:
-            List of aliases, split by `~\\r\\n`
+            List of aliases, split by `~\r\n`
         """
         return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []

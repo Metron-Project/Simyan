@@ -67,7 +67,7 @@ class CreatorEntry(GenericEntry):
     The CreatorEntry object contains generic information with an added roles field.
 
     Attributes:
-        roles: List of roles used by the Creator, separated by `~\\r\\n`
+        roles: List of roles used by the Creator, separated by `~\r\n`
     """
 
     roles: str = Field(alias="role")
@@ -78,7 +78,7 @@ class CreatorEntry(GenericEntry):
         List of roles the Creator has used.
 
         Returns:
-            List of roles, split by `~\\r\\n`
+            List of roles, split by `~\r\n`
         """
         return re.split(r"[~\r\n]+", self.roles) if self.roles else []
 

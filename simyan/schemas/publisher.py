@@ -21,7 +21,7 @@ class Publisher(BaseModel):
     The Publisher object contains information for a publisher.
 
     Attributes:
-        aliases: List of names used by the Publisher, separated by `~\\r\\n`.
+        aliases: List of names used by the Publisher, separated by `~\r\n`.
         api_url: Url to the resource in the Comicvine API.
         characters: List of characters the Publisher created.
         date_added: Date and time when the Publisher was added.
@@ -66,6 +66,6 @@ class Publisher(BaseModel):
         List of aliases the Publisher has used.
 
         Returns:
-            List of aliases, split by `~\\r\\n`
+            List of aliases, split by `~\r\n`
         """
         return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []

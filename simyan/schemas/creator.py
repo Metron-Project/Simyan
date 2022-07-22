@@ -21,7 +21,7 @@ class Creator(BaseModel):
     The Creator object contains information for a creator.
 
     Attributes:
-        aliases: List of names used by the Creator, separated by `~\\r\\n`
+        aliases: List of names used by the Creator, separated by `~\r\n`
         api_url: Url to the resource in the Comicvine API.
         characters: List of characters the Creator has created.
         country: Country of origin.
@@ -83,6 +83,6 @@ class Creator(BaseModel):
         List of aliases the Creator has used.
 
         Returns:
-            List of aliases, split by `~\\r\\n`
+            List of aliases, split by `~\r\n`
         """
         return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []

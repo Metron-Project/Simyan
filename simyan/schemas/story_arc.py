@@ -21,7 +21,7 @@ class StoryArc(BaseModel):
     The StoryArc object contains information for a story arc.
 
     Attributes:
-        aliases: List of names used by the Story Arc, separated by `~\\r\\n`.
+        aliases: List of names used by the Story Arc, separated by `~\r\n`.
         api_url: Url to the resource in the Comicvine API.
         date_added: Date and time when the Story Arc was added.
         date_last_updated: Date and time when the Story Arc was last updated.
@@ -60,6 +60,6 @@ class StoryArc(BaseModel):
         List of aliases the Story Arc has used.
 
         Returns:
-            List of aliases, split by `~\\r\\n`
+            List of aliases, split by `~\r\n`
         """
         return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
