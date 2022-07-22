@@ -21,7 +21,7 @@ class Character(BaseModel):
     The Character object contains information for a character.
 
     Attributes:
-        aliases: List of names used by the Character, separated by `~\\r\\n`.
+        aliases: List of names used by the Character, separated by `~\r\n`.
         api_url: Url to the resource in the Comicvine API.
         creators: List of creators which worked on the Character.
         date_added: Date and time when the Character was added.
@@ -88,6 +88,6 @@ class Character(BaseModel):
         List of aliases the Character has used.
 
         Returns:
-            List of aliases, split by `~\\r\\n`
+            List of aliases, split by `~\r\n`
         """
         return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
