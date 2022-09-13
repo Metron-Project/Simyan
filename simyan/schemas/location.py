@@ -82,14 +82,11 @@ class LocationEntry(BaseModel):
         first_issue: First issue the Location appeared in.
         image: Different sized images, posters and thumbnails for the Location.
         issue_count: Number of issues the Location appears in.
-        issues: List of issues the Location appears in.
         location_id: Identifier used by Comicvine.
         name: Name/Title of the Location.
         site_url: Url to the resource in Comicvine.
         start_year: The year the Location was first used.
-        story_arcs: List of story arcs the Location appears in.
         summary: Short description of the Location.
-        volumes: List of volumes the Location appears in.
     """
 
     aliases: Optional[str] = None
