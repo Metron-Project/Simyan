@@ -1,7 +1,7 @@
 """
 The Locations test module.
 
-This module contains tests for Location objects.
+This module contains tests for Location objects and LocationEntry objects.
 """
 from datetime import datetime
 
@@ -9,7 +9,7 @@ import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.location import Location
+from simyan.schemas.location import LocationEntry
 
 
 def test_location(session: Comicvine):
@@ -48,11 +48,8 @@ def test_location_list(session: Comicvine):
     assert result.issue_count == 26
     assert result.date_added == datetime(2009, 1, 2, 16, 16, 18)
     assert result.first_issue.id_ == 149271
-    assert result.issues == []
     assert result.name == "Odym"
     assert result.site_url == "https://comicvine.gamespot.com/odym/4020-56000/"
-    assert result.story_arcs == []
-    assert result.volumes == []
 
 
 def test_location_list_empty(session: Comicvine):
@@ -70,11 +67,11 @@ def test_location_list_max_results(session: Comicvine):
 def test_search_location(session: Comicvine):
     """Test using the search endpoint for a list of Locations."""
     results = session.search(resource=ComicvineResource.LOCATION, query="Earth")
-    assert all(isinstance(x, Location) for x in results)
+    assert all(isinstance(x, LocationEntry) for x in results)
 
 
 def test_search_location_max_results(session: Comicvine):
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.LOCATION, query="Earth", max_results=10)
-    assert all(isinstance(x, Location) for x in results)
+    assert all(isinstance(x, LocationEntry) for x in results)
     assert len(results) == 10

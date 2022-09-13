@@ -24,7 +24,7 @@ from simyan.exceptions import AuthenticationError, CacheError, ServiceError
 from simyan.schemas.character import Character
 from simyan.schemas.creator import Creator
 from simyan.schemas.issue import Issue
-from simyan.schemas.location import Location
+from simyan.schemas.location import Location, LocationEntry
 from simyan.schemas.publisher import Publisher
 from simyan.schemas.story_arc import StoryArc
 from simyan.schemas.team import Team
@@ -44,7 +44,7 @@ class ComicvineResource(Enum):
     """Details for the Creator resource on Comicvine."""
     ISSUE = (4000, "issue", List[Issue])
     """Details for the Issue resource on Comicvine."""
-    LOCATION = (4020, "location", List[Location])
+    LOCATION = (4020, "location", List[LocationEntry])
     """Details for the Location resource on Comicvine."""
     PUBLISHER = (4010, "publisher", List[Publisher])
     """Details for the Publisher resource on Comicvine."""
@@ -491,7 +491,7 @@ class Comicvine:
 
     def location_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
-    ) -> List[Location]:
+    ) -> List[LocationEntry]:
         """
         Request data for a list of Locations.
 
@@ -499,7 +499,7 @@ class Comicvine:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of Location objects.
+            A list of LocationEntry objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -507,7 +507,7 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/locations/", params=params, max_results=max_results
             )
-            return parse_obj_as(List[Location], results)
+            return parse_obj_as(List[LocationEntry], results)
         except ValidationError as err:
             raise ServiceError(err)
 
@@ -521,7 +521,7 @@ class Comicvine:
         List[Creator],
         List[Character],
         List[Team],
-        List[Location],
+        List[LocationEntry],
     ]:
         """
         Request a list of search results filtered by provided resource.
