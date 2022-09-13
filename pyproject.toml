@@ -1,19 +1,24 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+
+[tool.black]
+line-length = 100
+target-version = ["py37", "py38", "py39", "py310"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.coverage.run]
+source = ["simyan"]
+
+[tool.isort]
+default_section = "THIRDPARTY"
+line_length = 100
+profile = "black"
+
 [tool.poetry]
-name = "Simyan"
-version = "0.10.0"
-description = "A Python wrapper for the Comicvine API."
-license = "GPL-3.0-or-later"
 authors = ["Buried-In-Code <BuriedInCode@tuta.io>"]
-maintainers = ["Buried-In-Code <BuriedInCode@tuta.io>"]
-readme = "README.md"
-repository = "https://github.com/Metron-Project/Simyan"
-documentation = "https://simyan.readthedocs.io/en/latest/"
-packages = [
-	{ include = "simyan" }
-]
-include = [
-    { path = "tests", format = "sdist" }
-]
 classifiers = [
 	"Development Status :: 4 - Beta",
 	"Environment :: Console",
@@ -30,53 +35,43 @@ classifiers = [
     "Topic :: Internet",
 	"Typing :: Typed"
 ]
+description = "A Python wrapper for the Comicvine API."
+documentation = "https://simyan.readthedocs.io/en/latest/"
+include = [
+    { path = "tests", format = "sdist" }
+]
 keywords = ["comics", "comic", "metadata"]
+license = "GPL-3.0-or-later"
+maintainers = ["Buried-In-Code <BuriedInCode@tuta.io>"]
+name = "Simyan"
+packages = [
+	{ include = "simyan" }
+]
+readme = "README.md"
+repository = "https://github.com/Metron-Project/Simyan"
+version = "0.10.0"
 
 [tool.poetry.dependencies]
-python = "^3.7"
-pydantic = "^1.9.1"
-requests = "^2.28.1"
-ratelimit = "^2.2.1"
-
-# Optional dependencies
 mkdocs = {version = "^1.3.1", optional = true}
+mkdocs-include-markdown-plugin = {version = "^3.7.1", optional = true}
 mkdocstrings = {extras = ["python"], version = "^0.19.0", optional = true}
-mkdocs-include-markdown-plugin = {version = "^3.6.0", optional = true}
+pydantic = "^1.10.2"
+python = "^3.7"
+ratelimit = "^2.2.1"
+requests = "^2.28.1"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.20.0"
-pytest = "^7.1.2"
+pytest = "^7.1.3"
 pytest-cov = "^3.0.0"
-tox = "^3.25.1"
+tox = "^3.26.0"
 tox-pyenv = "^1.1.0"
-
-[tool.poetry.urls]
-"Issue Tracker" = "https://github.com/Metron-Project/Simyan/issues"
 
 [tool.poetry.extras]
 docs = ["mkdocs", "mkdocstrings", "mkdocs-include-markdown-plugin"]
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.black]
-line-length = 100
-target-version = ["py37", "py38", "py39", "py310"]
-
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-line_length = 100
-default_section = "THIRDPARTY"
-known_first_party = []
-known_third_party = []
-
-[tool.coverage.run]
-source = ["simyan"]
-
-[tool.coverage.report]
-show_missing = true
+[tool.poetry.urls]
+"Issue Tracker" = "https://github.com/Metron-Project/Simyan/issues"
 
 [tool.pytest.ini_options]
 addopts = ["--cov", "-x"]

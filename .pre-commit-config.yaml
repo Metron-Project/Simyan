@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.37.2
+    rev: v2.37.3
     hooks:
       - id: pyupgrade
         args:
@@ -8,7 +8,7 @@ repos:
           - --py36-plus
           - --py37-plus
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.14
+    rev: 0.7.16
     hooks:
       - id: mdformat
         additional_dependencies:
@@ -24,8 +24,10 @@ repos:
       - id: check-builtin-literals
       - id: check-case-conflict
       - id: check-docstring-first
+#      - id: check-json
       - id: check-merge-conflict
       - id: check-toml
+#      - id: check-xml
       - id: check-yaml
         args:
           - --allow-multiple-documents
@@ -42,12 +44,16 @@ repos:
       - id: trailing-whitespace
         args:
           - --markdown-linebreak-ext=md
+#      - id: pretty-format-json
+#        args:
+#          - --autofix
+#          - --indent=2
   - repo: https://github.com/psf/black
-    rev: 22.6.0
+    rev: 22.8.0
     hooks:
       - id: black
   - repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
+    rev: 5.0.4
     hooks:
       - id: flake8
         additional_dependencies:
@@ -61,6 +67,13 @@ repos:
         args:
           - --filter-files
           - --profile=black
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.20.1
+    hooks:
+      - id: toml-sort
+        args:
+          - --in-place
+          - --all
   - repo: meta
     hooks:
       - id: check-hooks-apply
