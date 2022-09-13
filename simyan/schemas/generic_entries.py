@@ -29,7 +29,7 @@ class GenericEntry(BaseModel):
 
     api_url: str = Field(alias="api_detail_url")
     id_: int = Field(alias="id")
-    name: Optional[str] = Field(default=None)
+    name: Optional[str] = None
     site_url: Optional[str] = Field(default=None, alias="site_detail_url")
 
     class Config:

@@ -14,7 +14,7 @@ from simyan.sqlite_cache import SQLiteCache
 @pytest.fixture(scope="session")
 def comicvine_api_key():
     """Set the ComicVine API key fixture."""
-    return os.getenv("COMICVINE_API_KEY", default="INVALID")
+    return os.getenv("COMICVINE__API_KEY", default="IGNORED")
 
 
 @pytest.fixture(scope="session")

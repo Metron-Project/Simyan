@@ -58,5 +58,5 @@ jobs:
       #----------------------------------------------
       - name: Test with tox
         env:
-          COMICVINE_API_KEY: Testing-Key
+          COMICVINE__API_KEY: IGNORED
         run: poetry run tox -e py
