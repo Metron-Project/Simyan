@@ -25,7 +25,7 @@ from simyan.schemas.character import Character, CharacterEntry
 from simyan.schemas.creator import Creator, CreatorEntry
 from simyan.schemas.issue import Issue, IssueEntry
 from simyan.schemas.location import Location, LocationEntry
-from simyan.schemas.publisher import Publisher
+from simyan.schemas.publisher import Publisher, PublisherEntry
 from simyan.schemas.story_arc import StoryArc
 from simyan.schemas.team import Team
 from simyan.schemas.volume import Volume
@@ -46,7 +46,7 @@ class ComicvineResource(Enum):
     """Details for the Issue resource on Comicvine."""
     LOCATION = (4020, "location", List[LocationEntry])
     """Details for the Location resource on Comicvine."""
-    PUBLISHER = (4010, "publisher", List[Publisher])
+    PUBLISHER = (4010, "publisher", List[PublisherEntry])
     """Details for the Publisher resource on Comicvine."""
     STORY_ARC = (4045, "story_arc", List[StoryArc])
     """Details for the Story Arc resource on Comicvine."""
@@ -204,7 +204,7 @@ class Comicvine:
 
     def publisher_list(
         self, params: Optional[Dict[str, Any]] = None, max_results: int = 500
-    ) -> List[Publisher]:
+    ) -> List[PublisherEntry]:
         """
         Request data for a list of Publishers.
 
@@ -212,7 +212,7 @@ class Comicvine:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of Publisher objects.
+            A list of PublisherEntry objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -220,7 +220,7 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/publishers/", params=params, max_results=max_results
             )
-            return parse_obj_as(List[Publisher], results)
+            return parse_obj_as(List[PublisherEntry], results)
         except ValidationError as err:
             raise ServiceError(err)
 
@@ -514,7 +514,7 @@ class Comicvine:
     def search(
         self, resource: ComicvineResource, query: str, max_results: int = 500
     ) -> Union[
-        List[Publisher],
+        List[PublisherEntry],
         List[Volume],
         List[IssueEntry],
         List[StoryArc],

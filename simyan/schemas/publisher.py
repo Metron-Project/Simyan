@@ -4,8 +4,9 @@ The Publisher module.
 This module provides the following classes:
 
 - Publisher
+- PublisherEntry
 """
-__all__ = ["Publisher"]
+__all__ = ["Publisher", "PublisherEntry"]
 import re
 from datetime import datetime
 from typing import List, Optional
@@ -57,6 +58,51 @@ class Publisher(BaseModel):
     summary: Optional[str] = Field(default=None, alias="deck")
     teams: List[GenericEntry] = Field(default_factory=list)
     volumes: List[GenericEntry] = Field(default_factory=list)
+
+    @property
+    def alias_list(self) -> List[str]:
+        r"""
+        List of aliases the Publisher has used.
+
+        Returns:
+            List of aliases, split by `~\r\n`
+        """
+        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
+
+
+class PublisherEntry(BaseModel):
+    r"""
+    The PublisherEntry object contains information for a publisher.
+
+    Attributes:
+        aliases: List of names used by the PublisherEntry, separated by `~\r\n`.
+        api_url: Url to the resource in the Comicvine API.
+        date_added: Date and time when the PublisherEntry was added.
+        date_last_updated: Date and time when the PublisherEntry was last updated.
+        description: Long description of the PublisherEntry.
+        publisher_id: Identifier used by Comicvine.
+        image: Different sized images, posters and thumbnails for the PublisherEntry.
+        location_address: Address where the PublisherEntry is located.
+        location_city: City where the PublisherEntry is located.
+        location_state: State where the PublisherEntry is located.
+        name: Name/Title of the PublisherEntry.
+        site_url: Url to the resource in Comicvine.
+        summary: Short description of the PublisherEntry.
+    """
+
+    aliases: Optional[str] = None
+    api_url: str = Field(alias="api_detail_url")
+    date_added: datetime
+    date_last_updated: datetime
+    description: Optional[str] = None
+    publisher_id: int = Field(alias="id")
+    image: ImageEntry
+    location_address: Optional[str] = None
+    location_city: Optional[str] = None
+    location_state: Optional[str] = None
+    name: str
+    site_url: str = Field(alias="site_detail_url")
+    summary: Optional[str] = Field(default=None, alias="deck")
 
     @property
     def alias_list(self) -> List[str]:

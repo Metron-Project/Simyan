@@ -1,7 +1,7 @@
 """
 The Publishers test module.
 
-This module contains tests for Publisher objects.
+This module contains tests for Publisher and PublisherEntry objects.
 """
 from datetime import datetime
 
@@ -9,7 +9,7 @@ import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.publisher import Publisher
+from simyan.schemas.publisher import PublisherEntry
 
 
 def test_publisher(session: Comicvine):
@@ -71,16 +71,12 @@ def test_publisher_list(session: Comicvine):
         "National Comics Publications",
     ]
     assert result.api_url == "https://comicvine.gamespot.com/api/publisher/4010-10/"
-    assert result.characters == []
     assert result.date_added == datetime(2008, 6, 6, 11, 8)
     assert result.location_address == "4000 Warner Blvd"
     assert result.location_city == "Burbank"
     assert result.location_state == "California"
     assert result.name == "DC Comics"
     assert result.site_url == "https://comicvine.gamespot.com/dc-comics/4010-10/"
-    assert result.story_arcs == []
-    assert result.teams == []
-    assert result.volumes == []
 
 
 def test_publisher_list_empty(session: Comicvine):
@@ -98,11 +94,11 @@ def test_publisher_list_max_results(session: Comicvine):
 def test_search_publisher(session: Comicvine):
     """Test using the search endpoint for a list of Publishers."""
     results = session.search(resource=ComicvineResource.PUBLISHER, query="DC")
-    assert all(isinstance(x, Publisher) for x in results)
+    assert all(isinstance(x, PublisherEntry) for x in results)
 
 
 def test_search_publisher_max_results(session: Comicvine):
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.PUBLISHER, query="DC", max_results=10)
-    assert all(isinstance(x, Publisher) for x in results)
+    assert all(isinstance(x, PublisherEntry) for x in results)
     assert len(results) == 0
