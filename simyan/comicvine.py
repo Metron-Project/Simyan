@@ -515,7 +515,7 @@ class Comicvine:
         self, resource: ComicvineResource, query: str, max_results: int = 500
     ) -> Union[
         List[PublisherEntry],
-        List[Volume],
+        List[VolumeEntry],
         List[IssueEntry],
         List[StoryArcEntry],
         List[CreatorEntry],
