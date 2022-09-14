@@ -58,7 +58,6 @@ class Creator(BaseModel):
     email: Optional[str] = None
     gender: int
     hometown: Optional[str] = None
-    id_: int = Field(alias="id")
     creator_id: int = Field(alias="id")
     image: ImageEntry
     issue_count: Optional[int] = Field(default=None, alias="count_of_isssue_appearances")

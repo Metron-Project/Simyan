@@ -71,7 +71,6 @@ class Issue(BaseModel):
         default_factory=list, alias="first_appearance_storyarcs"
     )
     first_appearance_teams: List[GenericEntry] = Field(default_factory=list)
-    id_: int = Field(alias="id")
     issue_id: int = Field(alias="id")
     image: ImageEntry
     locations: List[GenericEntry] = Field(default_factory=list, alias="location_credits")

@@ -44,7 +44,6 @@ class StoryArc(BaseModel):
     date_last_updated: datetime
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = Field(default=None, alias="first_appeared_in_issue")
-    id_: int = Field(alias="id")
     story_arc_id: int = Field(alias="id")
     image: ImageEntry
     issue_count: int = Field(alias="count_of_isssue_appearances")

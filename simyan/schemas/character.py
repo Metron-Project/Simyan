@@ -66,7 +66,6 @@ class Character(BaseModel):
     friendly_teams: List[GenericEntry] = Field(default_factory=list, alias="team_friends")
     friends: List[GenericEntry] = Field(default_factory=list, alias="character_friends")
     gender: int
-    id_: int = Field(alias="id")
     character_id: int = Field(alias="id")
     image: ImageEntry
     issue_count: Optional[int] = Field(default=None, alias="count_of_issue_appearances")

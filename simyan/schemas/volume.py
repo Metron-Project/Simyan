@@ -54,7 +54,6 @@ class Volume(BaseModel):
     date_last_updated: datetime
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = None
-    id_: int = Field(alias="id")
     volume_id: int = Field(alias="id")
     image: ImageEntry
     issue_count: int = Field(alias="count_of_issues")

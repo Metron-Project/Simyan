@@ -47,7 +47,6 @@ class Publisher(BaseModel):
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
-    id_: int = Field(alias="id")
     publisher_id: int = Field(alias="id")
     image: ImageEntry
     location_address: Optional[str] = None
