@@ -51,17 +51,11 @@ def test_volume_list(session: Comicvine):
 
     assert result.alias_list == []
     assert result.api_url == "https://comicvine.gamespot.com/api/volume/4050-18216/"
-    assert result.characters == []
-    assert result.concepts == []
-    assert result.creators == []
     assert result.date_added == datetime(2008, 6, 6, 11, 8, 33)
     assert result.first_issue.id_ == 111265
     assert result.issue_count == 67
-    assert result.issues == []
     assert result.last_issue.id_ == 278617
-    assert result.locations == []
     assert result.name == "Green Lantern"
-    assert result.objects == []
     assert result.publisher.id_ == 10
     assert result.site_url == "https://comicvine.gamespot.com/green-lantern/4050-18216/"
     assert result.start_year == 2005
