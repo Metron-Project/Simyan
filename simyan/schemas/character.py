@@ -4,8 +4,9 @@ The Character module.
 This module provides the following classes:
 
 - Character
+- CharacterEntry
 """
-__all__ = ["Character"]
+__all__ = ["Character", "CharacterEntry"]
 import re
 from datetime import date, datetime
 from typing import List, Optional
@@ -35,7 +36,6 @@ class Character(BaseModel):
         friendly_teams: List of friendly teams the Character has.
         friends: List of friends the Character has.
         gender: Character gender.
-        id_: Identifier used by Comicvine. **Deprecated:** Use character_id instead
         character_id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Character.
         issue_count: Number of issues the Character appears in.
@@ -66,7 +66,6 @@ class Character(BaseModel):
     friendly_teams: List[GenericEntry] = Field(default_factory=list, alias="team_friends")
     friends: List[GenericEntry] = Field(default_factory=list, alias="character_friends")
     gender: int
-    id_: int = Field(alias="id")
     character_id: int = Field(alias="id")
     image: ImageEntry
     issue_count: Optional[int] = Field(default=None, alias="count_of_issue_appearances")
@@ -86,6 +85,59 @@ class Character(BaseModel):
     def alias_list(self) -> List[str]:
         r"""
         List of aliases the Character has used.
+
+        Returns:
+            List of aliases, split by `~\r\n`
+        """
+        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
+
+
+class CharacterEntry(BaseModel):
+    r"""
+    The CharacterEntry object contains information for a character.
+
+    Attributes:
+        aliases: List of names used by the CharacterEntry, separated by `~\r\n`.
+        api_url: Url to the resource in the Comicvine API.
+        date_added: Date and time when the CharacterEntry was added.
+        date_last_updated: Date and time when the CharacterEntry was last updated.
+        date_of_birth: Date when the CharacterEntry was born.
+        description: Long description of the CharacterEntry.
+        first_issue: First issue the CharacterEntry appeared in.
+        gender: CharacterEntry gender.
+        character_id: Identifier used by Comicvine.
+        image: Different sized images, posters and thumbnails for the CharacterEntry.
+        issue_count: Number of issues the CharacterEntry appears in.
+        name: Real name or public identity of CharacterEntry.
+        origin: The type of CharacterEntry.
+        publisher: The publisher of the CharacterEntry.
+        real_name: Name of the CharacterEntry.
+        site_url: Url to the resource in Comicvine.
+        summary: Short description of the CharacterEntry.
+    """
+
+    aliases: Optional[str] = None
+    api_url: str = Field(alias="api_detail_url")
+    date_added: datetime
+    date_last_updated: datetime
+    date_of_birth: Optional[date] = Field(default=None, alias="birth")
+    description: Optional[str] = None
+    first_issue: IssueEntry = Field(alias="first_appeared_in_issue")
+    gender: int
+    character_id: int = Field(alias="id")
+    image: ImageEntry
+    issue_count: Optional[int] = Field(default=None, alias="count_of_issue_appearances")
+    name: str
+    origin: Optional[GenericEntry] = None
+    publisher: GenericEntry
+    real_name: Optional[str] = None
+    site_url: str = Field(alias="site_detail_url")
+    summary: Optional[str] = Field(default=None, alias="deck")
+
+    @property
+    def alias_list(self) -> List[str]:
+        r"""
+        List of aliases the CharacterEntry has used.
 
         Returns:
             List of aliases, split by `~\r\n`

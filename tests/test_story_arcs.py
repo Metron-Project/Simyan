@@ -1,7 +1,7 @@
 """
 The Story Arcs test module.
 
-This module contains tests for Story Arc objects.
+This module contains tests for StoryArc and StoryArcEntry objects.
 """
 from datetime import datetime
 
@@ -9,7 +9,7 @@ import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.story_arc import StoryArc
+from simyan.schemas.story_arc import StoryArcEntry
 
 
 def test_story_arc(session: Comicvine):
@@ -59,7 +59,6 @@ def test_story_arc_list(session: Comicvine):
     assert result.date_added == datetime(2008, 12, 6, 21, 29, 2)
     assert result.first_issue.id_ == 155207
     assert result.issue_count == 0
-    assert result.issues == []
     assert result.name == "Blackest Night"
     assert result.publisher.id_ == 10
     assert result.site_url == "https://comicvine.gamespot.com/blackest-night/4045-55766/"
@@ -98,7 +97,7 @@ def test_story_arc_list_null_publisher(session: Comicvine):
 def test_search_story_arc(session: Comicvine):
     """Test using the search endpoint for a list of Story Arcs."""
     results = session.search(resource=ComicvineResource.STORY_ARC, query="Blackest Night")
-    assert all(isinstance(x, StoryArc) for x in results)
+    assert all(isinstance(x, StoryArcEntry) for x in results)
 
 
 def test_search_story_arc_max_results(session: Comicvine):
@@ -106,5 +105,5 @@ def test_search_story_arc_max_results(session: Comicvine):
     results = session.search(
         resource=ComicvineResource.STORY_ARC, query="Blackest Night", max_results=10
     )
-    assert all(isinstance(x, StoryArc) for x in results)
+    assert all(isinstance(x, StoryArcEntry) for x in results)
     assert len(results) == 0

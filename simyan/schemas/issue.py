@@ -4,8 +4,9 @@ The Issue module.
 This module provides the following classes:
 
 - Issue
+- IssueEntry
 """
-__all__ = ["Issue"]
+__all__ = ["Issue", "IssueEntry"]
 import re
 from datetime import date, datetime
 from typing import List, Optional
@@ -13,7 +14,12 @@ from typing import List, Optional
 from pydantic import Field
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import CreatorEntry, GenericEntry, ImageEntry
+from simyan.schemas.generic_entries import (
+    AlternativeImageEntry,
+    CreatorEntry,
+    GenericEntry,
+    ImageEntry,
+)
 
 
 class Issue(BaseModel):
@@ -22,6 +28,7 @@ class Issue(BaseModel):
 
     Attributes:
         aliases: List of names used by the Issue, separated by `~\r\n`.
+        alternative_images: List of different images associated with the Issue.
         api_url: Url to the resource in the Comicvine API.
         characters: List of characters in the Issue.
         concepts: List of concepts in the Issue.
@@ -37,7 +44,6 @@ class Issue(BaseModel):
         first_appearance_objects: List of objects which first appear in the Issue.
         first_appearance_story_arcs: List of story arcs which first appear in the Issue.
         first_appearance_teams: List of teams who first appear in the Issue.
-        id_: Identifier used by Comicvine. **Deprecated:** Use issue_id instead.
         issue_id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Issue.
         locations: List of locations in the Issue.
@@ -54,6 +60,9 @@ class Issue(BaseModel):
     """
 
     aliases: Optional[str] = None
+    alternative_images: List[AlternativeImageEntry] = Field(
+        default_factory=list, alias="associated_images"
+    )
     api_url: str = Field(alias="api_detail_url")
     characters: List[GenericEntry] = Field(default_factory=list, alias="character_credits")
     concepts: List[GenericEntry] = Field(default_factory=list, alias="concept_credits")
@@ -71,7 +80,6 @@ class Issue(BaseModel):
         default_factory=list, alias="first_appearance_storyarcs"
     )
     first_appearance_teams: List[GenericEntry] = Field(default_factory=list)
-    id_: int = Field(alias="id")
     issue_id: int = Field(alias="id")
     image: ImageEntry
     locations: List[GenericEntry] = Field(default_factory=list, alias="location_credits")
@@ -100,6 +108,57 @@ class Issue(BaseModel):
         if "first_appearance_teams" in data and not data["first_appearance_teams"]:
             data["first_appearance_teams"] = []
         super().__init__(**data)
+
+    @property
+    def alias_list(self) -> List[str]:
+        r"""
+        List of aliases the Issue has used.
+
+        Returns:
+            List of aliases, split by `~\r\n`
+        """
+        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
+
+
+class IssueEntry(BaseModel):
+    r"""
+    The IssueEntry object contains information for an issue.
+
+    Attributes:
+        aliases: List of names used by the IssueEntry, separated by `~\r\n`.
+        alternative_images: List of different images associated with the IssueEntry.
+        api_url: Url to the resource in the Comicvine API.
+        cover_date: Date on the cover of the IssueEntry.
+        date_added: Date and time when the IssueEntry was added.
+        date_last_updated: Date and time when the IssueEntry was last updated.
+        description: Long description of the IssueEntry.
+        issue_id: Identifier used by Comicvine.
+        image: Different sized images, posters and thumbnails for the IssueEntry.
+        name: Name/Title of the IssueEntry.
+        number: The IssueEntry number.
+        site_url: Url to the resource in Comicvine.
+        store_date: Date the IssueEntry went on sale on stores.
+        summary: Short description of the IssueEntry.
+        volume: The volume the IssueEntry is in.
+    """
+
+    aliases: Optional[str] = None
+    alternative_images: List[AlternativeImageEntry] = Field(
+        default_factory=list, alias="associated_images"
+    )
+    api_url: str = Field(alias="api_detail_url")
+    cover_date: Optional[date] = None
+    date_added: datetime
+    date_last_updated: datetime
+    description: Optional[str] = None
+    issue_id: int = Field(alias="id")
+    image: ImageEntry
+    name: Optional[str] = None
+    number: str = Field(alias="issue_number")
+    site_url: str = Field(alias="site_detail_url")
+    store_date: Optional[date] = None
+    summary: Optional[str] = Field(default=None, alias="deck")
+    volume: GenericEntry
 
     @property
     def alias_list(self) -> List[str]:

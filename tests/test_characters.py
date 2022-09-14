@@ -1,7 +1,7 @@
 """
 The Characters test module.
 
-This module contains tests for Character objects.
+This module contains tests for Character and CharacterEntry objects.
 """
 from datetime import datetime
 
@@ -9,7 +9,7 @@ import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.character import Character
+from simyan.schemas.character import CharacterEntry
 
 
 def test_character(session: Comicvine):
@@ -74,27 +74,16 @@ def test_character_list(session: Comicvine):
         "Omega Lantern",
     ]
     assert result.api_url == "https://comicvine.gamespot.com/api/character/4005-40431/"
-    assert result.creators == []
     assert result.date_added == datetime(2008, 6, 6, 11, 27, 42)
     assert result.date_of_birth is None
-    assert result.deaths == []
-    assert result.enemies == []
-    assert result.enemy_teams == []
     assert result.first_issue.id_ == 38445
-    assert result.friendly_teams == []
-    assert result.friends == []
     assert result.gender == 1
     assert result.issue_count == 1565
-    assert result.issues == []
     assert result.name == "Kyle Rayner"
     assert result.origin.id_ == 4
-    assert result.powers == []
     assert result.publisher.id_ == 10
     assert result.real_name == "Kyle Rayner"
     assert result.site_url == "https://comicvine.gamespot.com/kyle-rayner/4005-40431/"
-    assert result.story_arcs == []
-    assert result.teams == []
-    assert result.volumes == []
 
 
 def test_character_list_empty(session: Comicvine):
@@ -112,7 +101,7 @@ def test_character_list_max_results(session: Comicvine):
 def test_search_character(session: Comicvine):
     """Test using the search endpoint for a list of Characters."""
     results = session.search(resource=ComicvineResource.CHARACTER, query="Kyle Rayner")
-    assert all(isinstance(x, Character) for x in results)
+    assert all(isinstance(x, CharacterEntry) for x in results)
 
 
 def test_search_character_max_results(session: Comicvine):
@@ -120,5 +109,5 @@ def test_search_character_max_results(session: Comicvine):
     results = session.search(
         resource=ComicvineResource.CHARACTER, query="Kyle Rayner", max_results=10
     )
-    assert all(isinstance(x, Character) for x in results)
+    assert all(isinstance(x, CharacterEntry) for x in results)
     assert len(results) == 10

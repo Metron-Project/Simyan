@@ -1,7 +1,7 @@
 """
 The Volumes test module.
 
-This module contains tests for Volume objects.
+This module contains tests for Volume and VolumeEntry objects.
 """
 from datetime import datetime
 
@@ -9,7 +9,7 @@ import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.volume import Volume
+from simyan.schemas.volume import VolumeEntry
 
 
 def test_volume(session: Comicvine):
@@ -51,17 +51,11 @@ def test_volume_list(session: Comicvine):
 
     assert result.alias_list == []
     assert result.api_url == "https://comicvine.gamespot.com/api/volume/4050-18216/"
-    assert result.characters == []
-    assert result.concepts == []
-    assert result.creators == []
     assert result.date_added == datetime(2008, 6, 6, 11, 8, 33)
     assert result.first_issue.id_ == 111265
     assert result.issue_count == 67
-    assert result.issues == []
     assert result.last_issue.id_ == 278617
-    assert result.locations == []
     assert result.name == "Green Lantern"
-    assert result.objects == []
     assert result.publisher.id_ == 10
     assert result.site_url == "https://comicvine.gamespot.com/green-lantern/4050-18216/"
     assert result.start_year == 2005
@@ -82,13 +76,13 @@ def test_volume_list_max_results(session: Comicvine):
 def test_search_volume(session: Comicvine):
     """Test using the search endpoint for a list of Volumes."""
     results = session.search(resource=ComicvineResource.VOLUME, query="Lantern")
-    assert all(isinstance(x, Volume) for x in results)
+    assert all(isinstance(x, VolumeEntry) for x in results)
 
 
 def test_search_volume_max_results(session: Comicvine):
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.VOLUME, query="Lantern", max_results=10)
-    assert all(isinstance(x, Volume) for x in results)
+    assert all(isinstance(x, VolumeEntry) for x in results)
     assert len(results) == 10
 
 

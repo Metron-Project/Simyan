@@ -1,7 +1,7 @@
 """
 The Issues test module.
 
-This module contains tests for Issue objects.
+This module contains tests for Issue and IssueEntry objects.
 """
 from datetime import date, datetime
 
@@ -9,7 +9,7 @@ import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.issue import Issue
+from simyan.schemas.issue import IssueEntry
 
 
 def test_issue(session: Comicvine):
@@ -19,6 +19,7 @@ def test_issue(session: Comicvine):
     assert result.issue_id == 111265
 
     assert result.alias_list == []
+    assert len(result.alternative_images) == 1
     assert result.api_url == "https://comicvine.gamespot.com/api/issue/4000-111265/"
     assert len(result.characters) == 7
     assert len(result.concepts) == 1
@@ -58,28 +59,14 @@ def test_issue_list(session: Comicvine):
     assert result is not None
 
     assert result.alias_list == []
+    assert len(result.alternative_images) == 1
     assert result.api_url == "https://comicvine.gamespot.com/api/issue/4000-111265/"
-    assert result.characters == []
-    assert result.concepts == []
     assert result.cover_date == date(2005, 7, 1)
-    assert result.creators == []
     assert result.date_added == datetime(2008, 6, 6, 11, 21, 45)
-    assert result.deaths == []
-    assert result.first_appearance_characters == []
-    assert result.first_appearance_concepts == []
-    assert result.first_appearance_locations == []
-    assert result.first_appearance_objects == []
-    assert result.first_appearance_story_arcs == []
-    assert result.first_appearance_teams == []
-    assert result.locations == []
     assert result.name == "Airborne"
     assert result.number == "1"
-    assert result.objects == []
     assert result.site_url == "https://comicvine.gamespot.com/green-lantern-1-airborne/4000-111265/"
     assert result.store_date == date(2005, 5, 18)
-    assert result.story_arcs == []
-    assert result.teams == []
-    assert result.teams_disbanded == []
     assert result.volume.id_ == 18216
 
 
@@ -98,13 +85,13 @@ def test_issue_list_max_results(session: Comicvine):
 def test_search_issue(session: Comicvine):
     """Test using the search endpoint for a list of Issues."""
     results = session.search(resource=ComicvineResource.ISSUE, query="Lantern")
-    assert all(isinstance(x, Issue) for x in results)
+    assert all(isinstance(x, IssueEntry) for x in results)
 
 
 def test_search_issue_max_results(session: Comicvine):
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.ISSUE, query="Lantern", max_results=10)
-    assert all(isinstance(x, Issue) for x in results)
+    assert all(isinstance(x, IssueEntry) for x in results)
     assert len(results) == 10
 
 
@@ -113,7 +100,7 @@ def test_issue_bad_cover_date(session: Comicvine):
     xmen_2 = session.issue(issue_id=6787)
     assert xmen_2.store_date is None
     assert xmen_2.cover_date == date(1963, 11, 1)
-    assert xmen_2.id_ == 6787
+    assert xmen_2.issue_id == 6787
     assert xmen_2.number == "2"
     assert len(xmen_2.creators) == 4
     assert xmen_2.creators[0].name == "Jack Kirby"
@@ -143,7 +130,7 @@ def test_issue_no_description(session: Comicvine):
 def test_issue_list_no_description(session: Comicvine):
     """Test issue_list endpoint to return result that has a null/no description."""
     results = session.issue_list(params={"filter": "volume:18006"})
-    result = [x for x in results if x.id_ == 134272][0]
+    result = [x for x in results if x.issue_id == 134272][0]
     assert result.description is None
 
 
@@ -156,5 +143,5 @@ def test_issue_no_cover_date(session: Comicvine):
 def test_issue_list_no_cover_date(session: Comicvine):
     """Test issue_list endpoint to return result that has a null/no cover_date."""
     results = session.issue_list(params={"filter": "volume:3088"})
-    result = [x for x in results if x.id_ == 325298][0]
+    result = [x for x in results if x.issue_id == 325298][0]
     assert result.cover_date is None

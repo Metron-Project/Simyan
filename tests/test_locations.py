@@ -1,7 +1,7 @@
 """
 The Locations test module.
 
-This module contains tests for Location objects and LocationEntry objects.
+This module contains tests for Location and LocationEntry objects.
 """
 from datetime import datetime
 

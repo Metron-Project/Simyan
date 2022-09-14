@@ -4,8 +4,9 @@ The Volume module.
 This module provides the following classes:
 
 - Volume
+- VolumeEntry
 """
-__all__ = ["Volume"]
+__all__ = ["Volume", "VolumeEntry"]
 import re
 from datetime import datetime
 from typing import List, Optional
@@ -30,7 +31,6 @@ class Volume(BaseModel):
         date_last_updated: Date and time when the Volume was last updated.
         description: Long description of the Volume.
         first_issue: First issue of the Volume.
-        id_: Identifier used by Comicvine. **Deprecated:** Use volume_id instead.
         volume_id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Volume.
         issue_count: Number of issues in the Volume.
@@ -54,7 +54,6 @@ class Volume(BaseModel):
     date_last_updated: datetime
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = None
-    id_: int = Field(alias="id")
     volume_id: int = Field(alias="id")
     image: ImageEntry
     issue_count: int = Field(alias="count_of_issues")
@@ -79,6 +78,62 @@ class Volume(BaseModel):
     def alias_list(self) -> List[str]:
         r"""
         List of aliases the Volume has used.
+
+        Returns:
+            List of aliases, split by `~\r\n`
+        """
+        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
+
+
+class VolumeEntry(BaseModel):
+    r"""
+    The VolumeEntry object contains information for a volume.
+
+    Attributes:
+        aliases: List of names used by the VolumeEntry, separated by `~\r\n`.
+        api_url: Url to the resource in the Comicvine API.
+        date_added: Date and time when the VolumeEntry was added.
+        date_last_updated: Date and time when the VolumeEntry was last updated.
+        description: Long description of the VolumeEntry.
+        first_issue: First issue of the VolumeEntry.
+        volume_id: Identifier used by Comicvine.
+        image: Different sized images, posters and thumbnails for the VolumeEntry.
+        issue_count: Number of issues in the VolumeEntry.
+        last_issue: Last issue of the VolumeEntry.
+        name: Name/Title of the VolumeEntry.
+        publisher: The publisher of the VolumeEntry.
+        site_url: Url to the resource in Comicvine.
+        start_year: The year the VolumeEntry started.
+        summary: Short description of the VolumeEntry.
+    """
+
+    aliases: Optional[str] = None
+    api_url: str = Field(alias="api_detail_url")
+    date_added: datetime
+    date_last_updated: datetime
+    description: Optional[str] = None
+    first_issue: Optional[IssueEntry] = None
+    volume_id: int = Field(alias="id")
+    image: ImageEntry
+    issue_count: int = Field(alias="count_of_issues")
+    last_issue: Optional[IssueEntry] = None
+    name: str
+    publisher: Optional[GenericEntry] = None
+    site_url: str = Field(alias="site_detail_url")
+    start_year: Optional[int] = None
+    summary: Optional[str] = Field(default=None, alias="deck")
+
+    def __init__(self, **data):
+        try:
+            data["start_year"] = int(data["start_year"] or "")
+        except ValueError:
+            data["start_year"] = None
+        super().__init__(**data)
+
+    @property
+    def alias_list(self) -> List[str]:
+        r"""
+        List of aliases the VolumeEntry has used.
 
         Returns:
             List of aliases, split by `~\r\n`

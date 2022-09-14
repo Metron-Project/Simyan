@@ -8,8 +8,16 @@ This module provides the following classes:
 - IssueEntry
 - CreatorEntry
 - ImageEntry
+- AlternativeImageEntry
 """
-__all__ = ["GenericEntry", "CountEntry", "IssueEntry", "CreatorEntry", "ImageEntry"]
+__all__ = [
+    "GenericEntry",
+    "CountEntry",
+    "IssueEntry",
+    "CreatorEntry",
+    "ImageEntry",
+    "AlternativeImageEntry",
+]
 import re
 from typing import List, Optional
 
@@ -35,8 +43,6 @@ class GenericEntry(BaseModel):
     class Config:
         """Any extra fields will raise an error."""
 
-        anystr_strip_whitespace = True
-        allow_population_by_field_name = True
         extra = Extra.forbid
 
 
@@ -45,6 +51,10 @@ class CountEntry(GenericEntry):
     The CountEntry object contains generic information with an added count field.
 
     Attributes:
+        api_url: Url to the resource in the Comicvine API.
+        id_: Identifier used by Comicvine.
+        name:
+        site_url: Url to the resource in Comicvine.
         count:
     """
 
@@ -56,6 +66,10 @@ class IssueEntry(GenericEntry):
     The IssueEntry object contains generic information with an added number field.
 
     Attributes:
+        api_url: Url to the resource in the Comicvine API.
+        id_: Identifier used by Comicvine.
+        name:
+        site_url: Url to the resource in Comicvine.
         number:
     """
 
@@ -67,6 +81,10 @@ class CreatorEntry(GenericEntry):
     The CreatorEntry object contains generic information with an added roles field.
 
     Attributes:
+        api_url: Url to the resource in the Comicvine API.
+        id_: Identifier used by Comicvine.
+        name:
+        site_url: Url to the resource in Comicvine.
         roles: List of roles used by the Creator, separated by `~\r\n`
     """
 
@@ -110,3 +128,30 @@ class ImageEntry(BaseModel):
     tiny: str = Field(alias="tiny_url")
     original: str = Field(alias="original_url")
     tags: Optional[str] = Field(default=None, alias="image_tags")
+
+    class Config:
+        """Any extra fields will raise an error."""
+
+        extra = Extra.forbid
+
+
+class AlternativeImageEntry(BaseModel):
+    """
+    The AlternativeImageEntry object contains image information.
+
+    Attributes:
+        url: Url to image.
+        id_: Id of image.
+        caption: Caption/description of the image.
+        tags:
+    """
+
+    url: str = Field(alias="original_url")
+    id_: int = Field(alias="id")
+    caption: Optional[str] = None
+    tags: Optional[str] = Field(default=None, alias="image_tags")
+
+    class Config:
+        """Any extra fields will raise an error."""
+
+        extra = Extra.forbid
