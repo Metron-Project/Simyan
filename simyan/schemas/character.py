@@ -137,7 +137,7 @@ class CharacterEntry(BaseModel):
     @property
     def alias_list(self) -> List[str]:
         r"""
-        List of aliases the Character has used.
+        List of aliases the CharacterEntry has used.
 
         Returns:
             List of aliases, split by `~\r\n`

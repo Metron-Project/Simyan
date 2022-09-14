@@ -51,6 +51,10 @@ class CountEntry(GenericEntry):
     The CountEntry object contains generic information with an added count field.
 
     Attributes:
+        api_url: Url to the resource in the Comicvine API.
+        id_: Identifier used by Comicvine.
+        name:
+        site_url: Url to the resource in Comicvine.
         count:
     """
 
@@ -62,6 +66,10 @@ class IssueEntry(GenericEntry):
     The IssueEntry object contains generic information with an added number field.
 
     Attributes:
+        api_url: Url to the resource in the Comicvine API.
+        id_: Identifier used by Comicvine.
+        name:
+        site_url: Url to the resource in Comicvine.
         number:
     """
 
@@ -73,6 +81,10 @@ class CreatorEntry(GenericEntry):
     The CreatorEntry object contains generic information with an added roles field.
 
     Attributes:
+        api_url: Url to the resource in the Comicvine API.
+        id_: Identifier used by Comicvine.
+        name:
+        site_url: Url to the resource in Comicvine.
         roles: List of roles used by the Creator, separated by `~\r\n`
     """
 
