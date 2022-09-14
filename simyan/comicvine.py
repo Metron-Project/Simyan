@@ -22,7 +22,7 @@ from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 from simyan import __version__
 from simyan.exceptions import AuthenticationError, CacheError, ServiceError
 from simyan.schemas.character import Character, CharacterEntry
-from simyan.schemas.creator import Creator
+from simyan.schemas.creator import Creator, CreatorEntry
 from simyan.schemas.issue import Issue
 from simyan.schemas.location import Location, LocationEntry
 from simyan.schemas.publisher import Publisher
@@ -40,7 +40,7 @@ class ComicvineResource(Enum):
 
     CHARACTER = (4005, "character", List[CharacterEntry])
     """Details for the Character resource on Comicvine."""
-    CREATOR = (4040, "person", List[Creator])
+    CREATOR = (4040, "person", List[CreatorEntry])
     """Details for the Creator resource on Comicvine."""
     ISSUE = (4000, "issue", List[Issue])
     """Details for the Issue resource on Comicvine."""
@@ -368,7 +368,7 @@ class Comicvine:
 
     def creator_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
-    ) -> List[Creator]:
+    ) -> List[CreatorEntry]:
         """
         Request data for a list of Creators.
 
@@ -384,7 +384,7 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/people/", params=params, max_results=max_results
             )
-            return parse_obj_as(List[Creator], results)
+            return parse_obj_as(List[CreatorEntry], results)
         except ValidationError as err:
             raise ServiceError(err)
 
@@ -518,7 +518,7 @@ class Comicvine:
         List[Volume],
         List[Issue],
         List[StoryArc],
-        List[Creator],
+        List[CreatorEntry],
         List[CharacterEntry],
         List[Team],
         List[LocationEntry],

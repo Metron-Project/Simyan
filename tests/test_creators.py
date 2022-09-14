@@ -1,7 +1,7 @@
 """
 The Creators test module.
 
-This module contains tests for Creator objects.
+This module contains tests for Creator objects and CreatorEntry objects.
 """
 from datetime import date, datetime
 
@@ -9,7 +9,7 @@ import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.creator import Creator
+from simyan.schemas.creator import CreatorEntry
 
 
 def test_creator(session: Comicvine):
@@ -52,7 +52,6 @@ def test_creator_list(session: Comicvine):
 
     assert result.alias_list == ["Geoffrey Johns"]
     assert result.api_url == "https://comicvine.gamespot.com/api/person/4040-40439/"
-    assert result.characters == []
     assert result.country == "United States"
     assert result.date_added == datetime(2008, 6, 6, 11, 28, 14)
     assert result.date_of_birth == date(1973, 1, 25)
@@ -61,11 +60,8 @@ def test_creator_list(session: Comicvine):
     assert result.gender == 1
     assert result.hometown == "Detroit, MI"
     assert result.issue_count is None
-    assert result.issues == []
     assert result.name == "Geoff Johns"
     assert result.site_url == "https://comicvine.gamespot.com/geoff-johns/4040-40439/"
-    assert result.story_arcs == []
-    assert result.volumes == []
     assert result.website == "http://www.geoffjohns.com"
 
 
@@ -84,13 +80,13 @@ def test_creator_list_max_results(session: Comicvine):
 def test_search_creator(session: Comicvine):
     """Test using the search endpoint for a list of Creators."""
     results = session.search(resource=ComicvineResource.CREATOR, query="Geoff")
-    assert all(isinstance(x, Creator) for x in results)
+    assert all(isinstance(x, CreatorEntry) for x in results)
 
 
 def test_search_creator_max_results(session: Comicvine):
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.CREATOR, query="Geoff", max_results=10)
-    assert all(isinstance(x, Creator) for x in results)
+    assert all(isinstance(x, CreatorEntry) for x in results)
     assert len(results) == 10
 
 
