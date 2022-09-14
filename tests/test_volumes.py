@@ -1,7 +1,7 @@
 """
 The Volumes test module.
 
-This module contains tests for Volume objects.
+This module contains tests for Volume and VolumeEntry objects.
 """
 from datetime import datetime
 
@@ -9,7 +9,7 @@ import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.volume import Volume
+from simyan.schemas.volume import VolumeEntry
 
 
 def test_volume(session: Comicvine):
@@ -82,13 +82,13 @@ def test_volume_list_max_results(session: Comicvine):
 def test_search_volume(session: Comicvine):
     """Test using the search endpoint for a list of Volumes."""
     results = session.search(resource=ComicvineResource.VOLUME, query="Lantern")
-    assert all(isinstance(x, Volume) for x in results)
+    assert all(isinstance(x, VolumeEntry) for x in results)
 
 
 def test_search_volume_max_results(session: Comicvine):
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.VOLUME, query="Lantern", max_results=10)
-    assert all(isinstance(x, Volume) for x in results)
+    assert all(isinstance(x, VolumeEntry) for x in results)
     assert len(results) == 10
 
 
