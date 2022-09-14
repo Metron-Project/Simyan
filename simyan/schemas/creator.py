@@ -33,7 +33,6 @@ class Creator(BaseModel):
         email: Email address of the Creator.
         gender: Creator gender.
         hometown: Hometown of the Creator.
-        id_: Identifier used by Comicvine. **Deprecated:** Use creator_id instead.
         creator_id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Creator.
         issue_count: Number of issues the Creator appears in.

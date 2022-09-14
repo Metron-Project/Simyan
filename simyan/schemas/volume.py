@@ -30,7 +30,6 @@ class Volume(BaseModel):
         date_last_updated: Date and time when the Volume was last updated.
         description: Long description of the Volume.
         first_issue: First issue of the Volume.
-        id_: Identifier used by Comicvine. **Deprecated:** Use volume_id instead.
         volume_id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Volume.
         issue_count: Number of issues in the Volume.

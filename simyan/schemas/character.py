@@ -35,7 +35,6 @@ class Character(BaseModel):
         friendly_teams: List of friendly teams the Character has.
         friends: List of friends the Character has.
         gender: Character gender.
-        id_: Identifier used by Comicvine. **Deprecated:** Use character_id instead
         character_id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Character.
         issue_count: Number of issues the Character appears in.

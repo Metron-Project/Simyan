@@ -27,7 +27,6 @@ class StoryArc(BaseModel):
         date_last_updated: Date and time when the Story Arc was last updated.
         description: Long description of the Story Arc.
         first_issue: First issue of the Story Arc.
-        id_: Identifier used by Comicvine. **Deprecated:** Use story_arc_id instead.
         story_arc_id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Story Arc.
         issue_count: Number of issues in the Story Arc.

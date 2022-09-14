@@ -113,7 +113,7 @@ def test_issue_bad_cover_date(session: Comicvine):
     xmen_2 = session.issue(issue_id=6787)
     assert xmen_2.store_date is None
     assert xmen_2.cover_date == date(1963, 11, 1)
-    assert xmen_2.id_ == 6787
+    assert xmen_2.issue_id == 6787
     assert xmen_2.number == "2"
     assert len(xmen_2.creators) == 4
     assert xmen_2.creators[0].name == "Jack Kirby"
@@ -143,7 +143,7 @@ def test_issue_no_description(session: Comicvine):
 def test_issue_list_no_description(session: Comicvine):
     """Test issue_list endpoint to return result that has a null/no description."""
     results = session.issue_list(params={"filter": "volume:18006"})
-    result = [x for x in results if x.id_ == 134272][0]
+    result = [x for x in results if x.issue_id == 134272][0]
     assert result.description is None
 
 
@@ -156,5 +156,5 @@ def test_issue_no_cover_date(session: Comicvine):
 def test_issue_list_no_cover_date(session: Comicvine):
     """Test issue_list endpoint to return result that has a null/no cover_date."""
     results = session.issue_list(params={"filter": "volume:3088"})
-    result = [x for x in results if x.id_ == 325298][0]
+    result = [x for x in results if x.issue_id == 325298][0]
     assert result.cover_date is None

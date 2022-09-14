@@ -27,7 +27,6 @@ class Publisher(BaseModel):
         date_added: Date and time when the Publisher was added.
         date_last_updated: Date and time when the Publisher was last updated.
         description: Long description of the Publisher.
-        id_: Identifier used by Comicvine. **Deprecated:** Use publisher_id instead.
         publisher_id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Publisher.
         location_address: Address where the Publisher is located.

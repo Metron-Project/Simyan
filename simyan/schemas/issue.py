@@ -37,7 +37,6 @@ class Issue(BaseModel):
         first_appearance_objects: List of objects which first appear in the Issue.
         first_appearance_story_arcs: List of story arcs which first appear in the Issue.
         first_appearance_teams: List of teams who first appear in the Issue.
-        id_: Identifier used by Comicvine. **Deprecated:** Use issue_id instead.
         issue_id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Issue.
         locations: List of locations in the Issue.
