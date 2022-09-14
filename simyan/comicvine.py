@@ -26,7 +26,7 @@ from simyan.schemas.creator import Creator, CreatorEntry
 from simyan.schemas.issue import Issue, IssueEntry
 from simyan.schemas.location import Location, LocationEntry
 from simyan.schemas.publisher import Publisher, PublisherEntry
-from simyan.schemas.story_arc import StoryArc
+from simyan.schemas.story_arc import StoryArc, StoryArcEntry
 from simyan.schemas.team import Team
 from simyan.schemas.volume import Volume
 from simyan.sqlite_cache import SQLiteCache
@@ -48,7 +48,7 @@ class ComicvineResource(Enum):
     """Details for the Location resource on Comicvine."""
     PUBLISHER = (4010, "publisher", List[PublisherEntry])
     """Details for the Publisher resource on Comicvine."""
-    STORY_ARC = (4045, "story_arc", List[StoryArc])
+    STORY_ARC = (4045, "story_arc", List[StoryArcEntry])
     """Details for the Story Arc resource on Comicvine."""
     TEAM = (4060, "team", List[Team])
     """Details for the Team resource on Comicvine."""
@@ -206,7 +206,7 @@ class Comicvine:
         self, params: Optional[Dict[str, Any]] = None, max_results: int = 500
     ) -> List[PublisherEntry]:
         """
-        Request data for a list of Publishers.
+        Request data for a list of PublisherEntries.
 
         Args:
             params: Parameters to add to the request.
@@ -247,13 +247,13 @@ class Comicvine:
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
     ) -> List[Volume]:
         """
-        Request data for a list of Volumes.
+        Request data for a list of VolumeEntries.
 
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of Volume objects.
+            A list of VolumeEntry objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -288,7 +288,7 @@ class Comicvine:
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
     ) -> List[IssueEntry]:
         """
-        Request data for a list of Issues.
+        Request data for a list of IssueEntries.
 
         Args:
             params: Parameters to add to the request.
@@ -308,7 +308,7 @@ class Comicvine:
 
     def story_arc(self, story_arc_id: int) -> StoryArc:
         """
-        Request data for a Story Arc based on its id.
+        Request data for a StoryArc based on its id.
 
         Args:
             story_arc_id: The StoryArc id.
@@ -327,15 +327,15 @@ class Comicvine:
 
     def story_arc_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
-    ) -> List[StoryArc]:
+    ) -> List[StoryArcEntry]:
         """
-        Request data for a list of Story Arcs.
+        Request data for a list of StoryArcEntries.
 
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of StoryArc objects.
+            A list of StoryArcEntry objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -343,7 +343,7 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/story_arcs/", params=params, max_results=max_results
             )
-            return parse_obj_as(List[StoryArc], results)
+            return parse_obj_as(List[StoryArcEntry], results)
         except ValidationError as err:
             raise ServiceError(err)
 
@@ -370,7 +370,7 @@ class Comicvine:
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
     ) -> List[CreatorEntry]:
         """
-        Request data for a list of Creators.
+        Request data for a list of CreatorEntries.
 
         Args:
             params: Parameters to add to the request.
@@ -411,7 +411,7 @@ class Comicvine:
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
     ) -> List[CharacterEntry]:
         """
-        Request data for a list of Characters.
+        Request data for a list of CharacterEntries.
 
         Args:
             params: Parameters to add to the request.
@@ -452,13 +452,13 @@ class Comicvine:
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
     ) -> List[Team]:
         """
-        Request data for a list of Teams.
+        Request data for a list of TeamEntries.
 
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of Team objects.
+            A list of TeamEntry objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -493,7 +493,7 @@ class Comicvine:
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
     ) -> List[LocationEntry]:
         """
-        Request data for a list of Locations.
+        Request data for a list of LocationEntries.
 
         Args:
             params: Parameters to add to the request.
@@ -517,7 +517,7 @@ class Comicvine:
         List[PublisherEntry],
         List[Volume],
         List[IssueEntry],
-        List[StoryArc],
+        List[StoryArcEntry],
         List[CreatorEntry],
         List[CharacterEntry],
         List[Team],
