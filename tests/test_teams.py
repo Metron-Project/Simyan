@@ -1,7 +1,7 @@
 """
 The Teams test module.
 
-This module contains tests for Team objects.
+This module contains tests for Team and TeamEntry objects.
 """
 from datetime import datetime
 
@@ -9,7 +9,7 @@ import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.team import Team
+from simyan.schemas.team import TeamEntry
 
 
 def test_team(session: Comicvine):
@@ -51,20 +51,13 @@ def test_team_list(session: Comicvine):
 
     assert result.alias_list == []
     assert result.api_url == "https://comicvine.gamespot.com/api/team/4060-50163/"
-    assert result.enemies == []
-    assert result.friends == []
-    assert result.members == []
     assert result.issue_count == 0
     assert result.member_count == 17
     assert result.date_added == datetime(2008, 6, 6, 11, 27, 45)
-    assert result.issues_disbanded_in == []
     assert result.first_issue.id_ == 119950
-    assert result.issues == []
     assert result.name == "Blue Lantern Corps"
     assert result.publisher.id_ == 10
     assert result.site_url == "https://comicvine.gamespot.com/blue-lantern-corps/4060-50163/"
-    assert result.story_arcs == []
-    assert result.volumes == []
 
 
 def test_team_list_empty(session: Comicvine):
@@ -82,11 +75,11 @@ def test_team_list_max_results(session: Comicvine):
 def test_search_team(session: Comicvine):
     """Test using the search endpoint for a list of Teams."""
     results = session.search(resource=ComicvineResource.TEAM, query="Lantern")
-    assert all(isinstance(x, Team) for x in results)
+    assert all(isinstance(x, TeamEntry) for x in results)
 
 
 def test_search_team_max_results(session: Comicvine):
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.TEAM, query="Lantern", max_results=10)
-    assert all(isinstance(x, Team) for x in results)
+    assert all(isinstance(x, TeamEntry) for x in results)
     assert len(results) == 10

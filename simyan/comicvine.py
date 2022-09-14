@@ -27,7 +27,7 @@ from simyan.schemas.issue import Issue, IssueEntry
 from simyan.schemas.location import Location, LocationEntry
 from simyan.schemas.publisher import Publisher, PublisherEntry
 from simyan.schemas.story_arc import StoryArc, StoryArcEntry
-from simyan.schemas.team import Team
+from simyan.schemas.team import Team, TeamEntry
 from simyan.schemas.volume import Volume
 from simyan.sqlite_cache import SQLiteCache
 
@@ -50,7 +50,7 @@ class ComicvineResource(Enum):
     """Details for the Publisher resource on Comicvine."""
     STORY_ARC = (4045, "story_arc", List[StoryArcEntry])
     """Details for the Story Arc resource on Comicvine."""
-    TEAM = (4060, "team", List[Team])
+    TEAM = (4060, "team", List[TeamEntry])
     """Details for the Team resource on Comicvine."""
     VOLUME = (4050, "volume", List[Volume])
     """Details for the Volume resource on Comicvine."""
@@ -450,7 +450,7 @@ class Comicvine:
 
     def team_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
-    ) -> List[Team]:
+    ) -> List[TeamEntry]:
         """
         Request data for a list of TeamEntries.
 
@@ -466,7 +466,7 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/teams/", params=params, max_results=max_results
             )
-            return parse_obj_as(List[Team], results)
+            return parse_obj_as(List[TeamEntry], results)
         except ValidationError as err:
             raise ServiceError(err)
 
@@ -520,7 +520,7 @@ class Comicvine:
         List[StoryArcEntry],
         List[CreatorEntry],
         List[CharacterEntry],
-        List[Team],
+        List[TeamEntry],
         List[LocationEntry],
     ]:
         """
