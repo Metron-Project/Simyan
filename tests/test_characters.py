@@ -1,7 +1,7 @@
 """
 The Characters test module.
 
-This module contains tests for Character objects and CharacterEntry objects.
+This module contains tests for Character and CharacterEntry objects.
 """
 from datetime import datetime
 

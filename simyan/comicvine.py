@@ -23,7 +23,7 @@ from simyan import __version__
 from simyan.exceptions import AuthenticationError, CacheError, ServiceError
 from simyan.schemas.character import Character, CharacterEntry
 from simyan.schemas.creator import Creator, CreatorEntry
-from simyan.schemas.issue import Issue
+from simyan.schemas.issue import Issue, IssueEntry
 from simyan.schemas.location import Location, LocationEntry
 from simyan.schemas.publisher import Publisher
 from simyan.schemas.story_arc import StoryArc
@@ -42,7 +42,7 @@ class ComicvineResource(Enum):
     """Details for the Character resource on Comicvine."""
     CREATOR = (4040, "person", List[CreatorEntry])
     """Details for the Creator resource on Comicvine."""
-    ISSUE = (4000, "issue", List[Issue])
+    ISSUE = (4000, "issue", List[IssueEntry])
     """Details for the Issue resource on Comicvine."""
     LOCATION = (4020, "location", List[LocationEntry])
     """Details for the Location resource on Comicvine."""
@@ -286,7 +286,7 @@ class Comicvine:
 
     def issue_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
-    ) -> List[Issue]:
+    ) -> List[IssueEntry]:
         """
         Request data for a list of Issues.
 
@@ -294,7 +294,7 @@ class Comicvine:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of Issue objects.
+            A list of IssueEntry objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -302,7 +302,7 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/issues/", params=params, max_results=max_results
             )
-            return parse_obj_as(List[Issue], results)
+            return parse_obj_as(List[IssueEntry], results)
         except ValidationError as err:
             raise ServiceError(err)
 
@@ -376,7 +376,7 @@ class Comicvine:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of Creator objects.
+            A list of CreatorEntry objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -417,7 +417,7 @@ class Comicvine:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
         Returns:
-            A list of Character objects.
+            A list of CharacterEntry objects.
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -516,7 +516,7 @@ class Comicvine:
     ) -> Union[
         List[Publisher],
         List[Volume],
-        List[Issue],
+        List[IssueEntry],
         List[StoryArc],
         List[CreatorEntry],
         List[CharacterEntry],

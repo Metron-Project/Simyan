@@ -1,7 +1,7 @@
 """
 The Creators test module.
 
-This module contains tests for Creator objects and CreatorEntry objects.
+This module contains tests for Creator and CreatorEntry objects.
 """
 from datetime import date, datetime
 
