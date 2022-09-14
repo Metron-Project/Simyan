@@ -22,6 +22,7 @@ nav:
       - creator: simyan/schemas/creator.md
       - generic_entries: simyan/schemas/generic_entries.md
       - issue: simyan/schemas/issue.md
+      - location: simyan/schemas/location.md
       - publisher: simyan/schemas/publisher.md
       - story_arc: simyan/schemas/story_arc.md
       - team: simyan/schemas/team.md

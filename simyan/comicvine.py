@@ -24,6 +24,7 @@ from simyan.exceptions import AuthenticationError, CacheError, ServiceError
 from simyan.schemas.character import Character
 from simyan.schemas.creator import Creator
 from simyan.schemas.issue import Issue
+from simyan.schemas.location import Location, LocationEntry
 from simyan.schemas.publisher import Publisher
 from simyan.schemas.story_arc import StoryArc
 from simyan.schemas.team import Team
@@ -43,6 +44,8 @@ class ComicvineResource(Enum):
     """Details for the Creator resource on Comicvine."""
     ISSUE = (4000, "issue", List[Issue])
     """Details for the Issue resource on Comicvine."""
+    LOCATION = (4020, "location", List[LocationEntry])
+    """Details for the Location resource on Comicvine."""
     PUBLISHER = (4010, "publisher", List[Publisher])
     """Details for the Publisher resource on Comicvine."""
     STORY_ARC = (4045, "story_arc", List[StoryArc])
@@ -467,6 +470,47 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err)
 
+    def location(self, location_id: int) -> Location:
+        """
+        Request data for a Location based on its id.
+
+        Args:
+            location_id: The Location id.
+        Returns:
+            A Location object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        try:
+            result = self._get_request(
+                endpoint=f"/location/{ComicvineResource.LOCATION.resource_id}-{location_id}"
+            )["results"]
+            return parse_obj_as(Location, result)
+        except ValidationError as err:
+            raise ServiceError(err)
+
+    def location_list(
+        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+    ) -> List[LocationEntry]:
+        """
+        Request data for a list of Locations.
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+        Returns:
+            A list of LocationEntry objects.
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        try:
+            results = self._retrieve_offset_results(
+                endpoint="/locations/", params=params, max_results=max_results
+            )
+            return parse_obj_as(List[LocationEntry], results)
+        except ValidationError as err:
+            raise ServiceError(err)
+
     def search(
         self, resource: ComicvineResource, query: str, max_results: int = 500
     ) -> Union[
@@ -477,6 +521,7 @@ class Comicvine:
         List[Creator],
         List[Character],
         List[Team],
+        List[LocationEntry],
     ]:
         """
         Request a list of search results filtered by provided resource.
@@ -515,10 +560,8 @@ class Comicvine:
         """
         if params is None:
             params = {}
-        if "page" not in params:
-            params["page"] = 1
-        if "limit" not in params:
-            params["limit"] = 100
+        params["page"] = 1
+        params["limit"] = 100
         response = self._get_request(endpoint=endpoint, params=params)
         results = response["results"]
         while (
@@ -546,8 +589,7 @@ class Comicvine:
         """
         if params is None:
             params = {}
-        if "limit" not in params:
-            params["limit"] = 100
+        params["limit"] = 100
         response = self._get_request(endpoint=endpoint, params=params)
         results = response["results"]
         while (
