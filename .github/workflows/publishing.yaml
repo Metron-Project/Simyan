@@ -25,26 +25,12 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Setup poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+      - name: Setup PDM
+        run: pip install pdm
       #----------------------------------------------
-      - name: Load cached venv
-        id: cached-venv
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: venv-${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
-      #----------------------------------------------
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
-      - name: Install project
-        run: poetry install --no-interaction
-      #----------------------------------------------
-      - name: Set PyPI Token
-        run: poetry config pypi-token.pypi '${{ secrets.PYPI_TOKEN }}'
-      - name: Publish Project
-        run: poetry publish --build
+      - name: Build project
+        run: pdm build
+      - name: Install twine
+        run: pip install twine
+      - name: Publish project
+        run: twine upload --username __token__ --password ${{ secrets.PYPI_TOKEN }} dist/*
