@@ -1,28 +1,40 @@
 root = true
 
 [*]
-charset = UTF-8
-end_of_line = CRLF
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+max_line_length = 100
+
+[*.bat]
+indent_style = tab
+
+[*.cs]
 indent_size = 4
 indent_style = tab
 insert_final_newline = false
-max_line_length = 100
-tab_width = 4
 
-[{*.bash,*.sh,*.zsh}]
-indent_size = 2
-tab_width = 2
+[*.java]
+indent_size = 4
+indent_style = tab
+insert_final_newline = false
 
-[{*.har,*.json}]
-indent_size = 2
-tab_width = 2
+[*.json]
+insert_final_newline = false
 
-[{*.markdown,*.md}]
-indent_style = space
+[*.md]
+trim_trailing_whitespace = false
 
-[{*.py,*.pyw}]
-indent_style = space
+[*.py]
+indent_size = 4
+
+[{*.xml,*.xsd}]
+indent_size = 4
+indent_style = tab
+insert_final_newline = false
 
 [{*.yaml,*.yml}]
-indent_size = 2
-tab_width = 2
+indent_style = tab

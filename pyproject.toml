@@ -1,6 +1,69 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core>=1.0.0"]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[project]
+authors = [
+	{ name = "BuriedInCode", email = "BuriedInCode@tuta.io" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "Natural Language :: English",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Internet",
+	"Typing :: Typed"
+]
+dependencies = [
+	"pydantic >= 1.10.2",
+	"ratelimit >= 2.2.1",
+	"requests >= 2.28.1"
+]
+description = "A Python wrapper for the Comicvine API."
+dynamic = ["version"]
+keywords = ["comics", "comic", "metadata"]
+license = "GPL-3.0-or-later"
+maintainers = [
+	{ name = "BuriedInCode", email = "BuriedInCode@tuta.io" },
+]
+name = "Simyan"
+readme = "README.md"
+requires-python = ">= 3.7"
+
+[project.optional-dependencies]
+dev = [
+  "pre-commit >= 2.20.0"
+]
+docs = [
+  "mkdocs >= 1.4.2",
+  "mkdocs-include-markdown-plugin >= 3.9.1",
+  "mkdocstrings[python] >= 0.19.0"
+]
+test = [
+  "pytest >= 7.2.0",
+  "pytest-cov >= 4.0.0",
+  "tox >= 3.27.1",
+  "tox-pyenv >= 1.1.0"
+]
+
+[project.urls]
+Documentation = "https://simyan.readthedocs.io/en/latest/"
+Homepage = "https://pypi.org/project/Simyan"
+Issues = "https://github.com/Metron-Project/Simyan/issues"
+Source = "https://github.com/Metron-Project/Simyan"
+
+[tool.bandit]
+recursive = true
+skips = ["B101"]
 
 [tool.black]
 line-length = 100
@@ -12,66 +75,13 @@ show_missing = true
 [tool.coverage.run]
 source = ["simyan"]
 
+[tool.hatch.version]
+path = "simyan/__init__.py"
+
 [tool.isort]
 default_section = "THIRDPARTY"
 line_length = 100
 profile = "black"
-
-[tool.poetry]
-authors = ["Buried-In-Code <BuriedInCode@tuta.io>"]
-classifiers = [
-	"Development Status :: 4 - Beta",
-	"Environment :: Console",
-	"Intended Audience :: Developers",
-	"License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-	"Natural Language :: English",
-	"Operating System :: MacOS",
-    "Operating System :: Microsoft :: Windows",
-	"Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Topic :: Internet",
-	"Typing :: Typed"
-]
-description = "A Python wrapper for the Comicvine API."
-documentation = "https://simyan.readthedocs.io/en/latest/"
-include = [
-    { path = "tests", format = "sdist" }
-]
-keywords = ["comics", "comic", "metadata"]
-license = "GPL-3.0-or-later"
-maintainers = ["Buried-In-Code <BuriedInCode@tuta.io>"]
-name = "Simyan"
-packages = [
-	{ include = "simyan" }
-]
-readme = "README.md"
-repository = "https://github.com/Metron-Project/Simyan"
-version = "0.11.0"
-
-[tool.poetry.dependencies]
-mkdocs = {version = "^1.3.1", optional = true}
-mkdocs-include-markdown-plugin = {version = "^3.7.1", optional = true}
-mkdocstrings = {extras = ["python"], version = "^0.19.0", optional = true}
-pydantic = "^1.10.2"
-python = "^3.7"
-ratelimit = "^2.2.1"
-requests = "^2.28.1"
-
-[tool.poetry.dev-dependencies]
-pre-commit = "^2.20.0"
-pytest = "^7.1.3"
-pytest-cov = "^3.0.0"
-tox = "^3.26.0"
-tox-pyenv = "^1.1.0"
-
-[tool.poetry.extras]
-docs = ["mkdocs", "mkdocstrings", "mkdocs-include-markdown-plugin"]
-
-[tool.poetry.urls]
-"Issue Tracker" = "https://github.com/Metron-Project/Simyan/issues"
 
 [tool.pytest.ini_options]
 addopts = ["--cov", "-x"]
