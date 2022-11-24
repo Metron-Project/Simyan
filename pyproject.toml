@@ -4,7 +4,7 @@ requires = ["hatchling"]
 
 [project]
 authors = [
-	{ name = "BuriedInCode", email = "BuriedInCode@tuta.io" },
+  { name = "BuriedInCode", email = "BuriedInCode@tuta.io" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -20,20 +20,21 @@ classifiers = [
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Topic :: Internet",
-	"Typing :: Typed"
+  "Typing :: Typed"
 ]
 dependencies = [
-	"pydantic >= 1.10.2",
-	"ratelimit >= 2.2.1",
-	"requests >= 2.28.1"
+  "pydantic >= 1.10.2",
+  "ratelimit >= 2.2.1",
+  "requests >= 2.28.1"
 ]
 description = "A Python wrapper for the Comicvine API."
 dynamic = ["version"]
 keywords = ["comics", "comic", "metadata"]
 license = "GPL-3.0-or-later"
 maintainers = [
-	{ name = "BuriedInCode", email = "BuriedInCode@tuta.io" },
+  { name = "BuriedInCode", email = "BuriedInCode@tuta.io" },
 ]
 name = "Simyan"
 readme = "README.md"
@@ -67,7 +68,7 @@ skips = ["B101"]
 
 [tool.black]
 line-length = 100
-target-version = ["py37", "py38", "py39", "py310"]
+target-version = ["py37", "py38", "py39", "py310", "py311"]
 
 [tool.coverage.report]
 show_missing = true
