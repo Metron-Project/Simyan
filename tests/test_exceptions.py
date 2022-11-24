@@ -5,8 +5,8 @@ This module contains tests for Exceptions.
 """
 import pytest
 
+from simyan.comicvine import Comicvine
 from simyan.exceptions import AuthenticationError, ServiceError
-from simyan.service import Comicvine
 
 
 def test_unauthorized():
@@ -22,8 +22,8 @@ def test_not_found(session: Comicvine):
         session._get_request(endpoint="/invalid")
 
 
-def test_timeout(api_key: str):
+def test_timeout(comicvine_api_key: str):
     """Test a TimeoutError for slow responses."""
-    session = Comicvine(api_key=api_key, timeout=0.1, cache=None)
+    session = Comicvine(api_key=comicvine_api_key, timeout=0.1, cache=None)
     with pytest.raises(ServiceError):
         session.publisher(publisher_id=1)

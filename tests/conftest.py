@@ -7,17 +7,19 @@ import os
 
 import pytest
 
-from simyan.service import Comicvine
+from simyan.comicvine import Comicvine
 from simyan.sqlite_cache import SQLiteCache
 
 
 @pytest.fixture(scope="session")
-def api_key() -> str:
+def comicvine_api_key():
     """Set the ComicVine API key fixture."""
     return os.getenv("COMICVINE__API_KEY", default="IGNORED")
 
 
 @pytest.fixture(scope="session")
-def session(api_key: str) -> Comicvine:
+def session(comicvine_api_key) -> Comicvine:
     """Set the Simyan session fixture."""
-    return Comicvine(api_key=api_key, cache=SQLiteCache("tests/cache.sqlite", expiry=None))
+    return Comicvine(
+        api_key=comicvine_api_key, cache=SQLiteCache("tests/cache.sqlite", expiry=None)
+    )

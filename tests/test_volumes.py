@@ -7,9 +7,9 @@ from datetime import datetime
 
 import pytest
 
+from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
 from simyan.schemas.volume import VolumeEntry
-from simyan.service import Comicvine, ComicvineResource
 
 
 def test_volume(session: Comicvine):
