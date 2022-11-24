@@ -20,7 +20,6 @@ classifiers = [
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
   "Topic :: Internet",
 	"Typing :: Typed"
 ]
@@ -68,7 +67,7 @@ skips = ["B101"]
 
 [tool.black]
 line-length = 100
-target-version = ["py37", "py38", "py39", "py310", "py311"]
+target-version = ["py37", "py38", "py39", "py310"]
 
 [tool.coverage.report]
 show_missing = true
