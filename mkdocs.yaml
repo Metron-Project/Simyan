@@ -13,8 +13,9 @@ nav:
   - Home: index.md
   - simyan:
       - Package: simyan/__init__.md
-      - exceptions: simyan/exceptions.md
       - comicvine: simyan/comicvine.md
+      - exceptions: simyan/exceptions.md
+      - service: simyan/service.md
       - sqlite_cache: simyan/sqlite_cache.md
   - simyan.schemas:
       - Package: simyan/schemas/__init__.md

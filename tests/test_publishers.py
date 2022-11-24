@@ -7,9 +7,9 @@ from datetime import datetime
 
 import pytest
 
-from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
 from simyan.schemas.publisher import PublisherEntry
+from simyan.service import Comicvine, ComicvineResource
 
 
 def test_publisher(session: Comicvine):

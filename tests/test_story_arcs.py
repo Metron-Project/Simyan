@@ -7,9 +7,9 @@ from datetime import datetime
 
 import pytest
 
-from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
 from simyan.schemas.story_arc import StoryArcEntry
+from simyan.service import Comicvine, ComicvineResource
 
 
 def test_story_arc(session: Comicvine):
