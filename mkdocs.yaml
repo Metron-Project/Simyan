@@ -35,13 +35,15 @@ plugins:
       handlers:
         python:
           options:
-            show_root_heading: true
-            show_root_full_path: false
-            show_category_heading: true
+            show_root_heading: True
+            show_root_full_path: False
+            show_category_heading: True
+            # Docstrings
             docstring_style: google
             docstring_section_style: spacy
             line_length: 100
-            merge_init_into_class: true
-            show_signature_annotations: true
-            show_source: false
+            merge_init_into_class: True
+            show_signature_annotations: True
+            # Additional
+            show_source: False
   - include-markdown
