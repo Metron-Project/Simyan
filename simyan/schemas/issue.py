@@ -9,7 +9,7 @@ This module provides the following classes:
 __all__ = ["Issue", "IssueEntry"]
 import re
 from datetime import date, datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import Field
 
@@ -94,7 +94,7 @@ class Issue(BaseModel):
     teams_disbanded: List[GenericEntry] = Field(default_factory=list, alias="team_disbanded_in")
     volume: GenericEntry
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any):
         if "first_appearance_characters" in data and not data["first_appearance_characters"]:
             data["first_appearance_characters"] = []
         if "first_appearance_concepts" in data and not data["first_appearance_concepts"]:

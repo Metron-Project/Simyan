@@ -7,8 +7,7 @@ This module provides the following classes:
 """
 __all__ = ["BaseModel"]
 
-from pydantic import BaseModel as PydanticModel
-from pydantic import Extra
+from pydantic import BaseModel as PydanticModel, Extra
 
 
 class BaseModel(PydanticModel):

@@ -9,7 +9,7 @@ This module provides the following classes:
 __all__ = ["Volume", "VolumeEntry"]
 import re
 from datetime import datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import Field
 
@@ -67,7 +67,7 @@ class Volume(BaseModel):
     start_year: Optional[int] = None
     summary: Optional[str] = Field(default=None, alias="deck")
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any):
         try:
             data["start_year"] = int(data["start_year"] or "")
         except ValueError:
@@ -123,7 +123,7 @@ class VolumeEntry(BaseModel):
     start_year: Optional[int] = None
     summary: Optional[str] = Field(default=None, alias="deck")
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any):
         try:
             data["start_year"] = int(data["start_year"] or "")
         except ValueError:

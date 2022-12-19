@@ -123,7 +123,7 @@ class ImageEntry(BaseModel):
     screen: str = Field(alias="screen_url")
     screen_large: str = Field(alias="screen_large_url")
     small: str = Field(alias="small_url")
-    super: str = Field(alias="super_url")
+    super: str = Field(alias="super_url")  # noqa: A003
     thumbnail: str = Field(alias="thumb_url")
     tiny: str = Field(alias="tiny_url")
     original: str = Field(alias="original_url")

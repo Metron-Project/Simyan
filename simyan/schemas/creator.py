@@ -9,7 +9,7 @@ This module provides the following classes:
 __all__ = ["Creator", "CreatorEntry"]
 import re
 from datetime import date, datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import Field
 
@@ -69,7 +69,7 @@ class Creator(BaseModel):
     volumes: List[GenericEntry] = Field(default_factory=list, alias="volume_credits")
     website: Optional[str] = None
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any):
         if "death" in data and data["death"] is not None:
             data["death"] = data["death"]["date"].split()[0]
         if data["birth"]:
@@ -131,7 +131,7 @@ class CreatorEntry(BaseModel):
     summary: Optional[str] = Field(default=None, alias="deck")
     website: Optional[str] = None
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any):
         if "death" in data and data["death"] is not None:
             data["death"] = data["death"]["date"].split()[0]
         if data["birth"]:

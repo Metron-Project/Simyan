@@ -30,11 +30,11 @@ class SQLiteCache:
 
     def __init__(
         self,
-        path: str = get_cache_root() / "cache.sqlite",
+        path: str = None,
         expiry: Optional[int] = 14,
     ):
         self.expiry = expiry
-        self.con = sqlite3.connect(path)
+        self.con = sqlite3.connect(path or get_cache_root() / "cache.sqlite")
         self.cur = self.con.cursor()
         self.cur.execute("CREATE TABLE IF NOT EXISTS queries (query, response, expiry);")
         self.delete()
@@ -71,7 +71,7 @@ class SQLiteCache:
         """
         return self.select(query=key) or None
 
-    def insert(self, query: str, response: str):
+    def insert(self, query: str, response: str) -> None:
         """
         Insert data into the cache database.
 
@@ -89,7 +89,7 @@ class SQLiteCache:
         )
         self.con.commit()
 
-    def store(self, key: str, value: str):
+    def store(self, key: str, value: str) -> None:
         """
         Insert data into the cache database.
 
@@ -97,9 +97,9 @@ class SQLiteCache:
             key: Search string
             value: Data to save
         """
-        return self.insert(query=key, response=value)
+        self.insert(query=key, response=value)
 
-    def delete(self):
+    def delete(self) -> None:
         """Remove all expired data from the cache database."""
         if not self.expiry:
             return
