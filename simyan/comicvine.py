@@ -107,8 +107,10 @@ class Comicvine:
         Args:
             url: The url to request information from.
             params: Parameters to add to the request.
+
         Returns:
             Json response from the Comicvine API.
+
         Raises:
             ServiceError: If there is an issue with the request or response from the Comicvine API.
         """
@@ -119,20 +121,20 @@ class Comicvine:
             response = get(url, params=params, headers=self.headers, timeout=self.timeout)
             response.raise_for_status()
             return response.json()
-        except ConnectionError:
-            raise ServiceError(f"Unable to connect to `{url}`")
+        except ConnectionError as err:
+            raise ServiceError(f"Unable to connect to `{url}`") from err
         except HTTPError as err:
-            if err.response.status_code == 401:
-                raise AuthenticationError("Invalid API Key")
+            if err.response.status_code == 401:  # noqa: RET506
+                raise AuthenticationError("Invalid API Key") from err
             elif err.response.status_code == 404:
-                raise ServiceError("Unknown endpoint")
+                raise ServiceError("Unknown endpoint") from err
             elif err.response.status_code == 502:
-                raise ServiceError("Service error, retry again in 30s")
-            raise ServiceError(err.response.json()["error"])
-        except JSONDecodeError:
-            raise ServiceError(f"Unable to parse response from `{url}` as Json")
-        except ReadTimeout:
-            raise ServiceError("Service took too long to respond")
+                raise ServiceError("Service error, retry again in 30s") from err
+            raise ServiceError(err.response.json()["error"]) from err
+        except JSONDecodeError as err:
+            raise ServiceError(f"Unable to parse response from `{url}` as Json") from err
+        except ReadTimeout as err:
+            raise ServiceError("Service took too long to respond") from err
 
     def _get_request(
         self, endpoint: str, params: Dict[str, str] = None, skip_cache: bool = False
@@ -143,8 +145,10 @@ class Comicvine:
         Args:
             endpoint: The endpoint to request information from.
             params: Parameters to add to the request.
+
         Returns:
             Json response from the Comicvine API.
+
         Raises:
             ServiceError: If there is an issue with the request or response from the Comicvine API.
             AuthenticationError: If Comicvine returns with an invalid API key response.
@@ -155,11 +159,8 @@ class Comicvine:
         params["api_key"] = self.api_key
         params["format"] = "json"
 
-        cache_params = ""
-        if params:
-            cache_params = f"?{urlencode({k: params[k] for k in sorted(params)})}"
-
         url = self.API_URL + endpoint
+        cache_params = f"?{urlencode({k: params[k] for k in sorted(params)})}"
         cache_key = f"{url}{cache_params}"
         cache_key = re.sub(r"(.+api_key=)(.+?)(&.+)", r"\1*****\3", cache_key)
 
@@ -168,8 +169,10 @@ class Comicvine:
                 cached_response = self.cache.get(cache_key)
                 if cached_response is not None:
                     return cached_response
-            except AttributeError as e:
-                raise CacheError(f"Cache object passed in is missing attribute: {repr(e)}")
+            except AttributeError as err:
+                raise CacheError(
+                    f"Cache object passed in is missing attribute: {repr(err)}"
+                ) from err
 
         response = self._perform_get_request(url=url, params=params)
         if "error" in response and response["error"] != "OK":
@@ -178,8 +181,10 @@ class Comicvine:
         if self.cache and not skip_cache:
             try:
                 self.cache.insert(cache_key, response)
-            except AttributeError as e:
-                raise CacheError(f"Cache object passed in is missing attribute: {repr(e)}")
+            except AttributeError as err:
+                raise CacheError(
+                    f"Cache object passed in is missing attribute: {repr(err)}"
+                ) from err
 
         return response
 
@@ -189,6 +194,7 @@ class Comicvine:
 
         Args:
             publisher_id: The Publisher id.
+
         Returns:
             A Publisher object
         Raises:
@@ -200,7 +206,7 @@ class Comicvine:
             )["results"]
             return parse_obj_as(Publisher, result)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def publisher_list(
         self, params: Optional[Dict[str, Any]] = None, max_results: int = 500
@@ -211,8 +217,10 @@ class Comicvine:
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of PublisherEntry objects.
+
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -222,7 +230,7 @@ class Comicvine:
             )
             return parse_obj_as(List[PublisherEntry], results)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def volume(self, volume_id: int) -> Volume:
         """
@@ -230,6 +238,7 @@ class Comicvine:
 
         Args:
             volume_id: The Volume id.
+
         Returns:
             A Volume object
         Raises:
@@ -241,7 +250,7 @@ class Comicvine:
             )["results"]
             return parse_obj_as(Volume, result)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def volume_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
@@ -252,8 +261,10 @@ class Comicvine:
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of VolumeEntry objects.
+
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -263,7 +274,7 @@ class Comicvine:
             )
             return parse_obj_as(List[VolumeEntry], results)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def issue(self, issue_id: int) -> Issue:
         """
@@ -271,6 +282,7 @@ class Comicvine:
 
         Args:
             issue_id: The Issue id.
+
         Returns:
             A Issue object
         Raises:
@@ -282,7 +294,7 @@ class Comicvine:
             )["results"]
             return parse_obj_as(Issue, result)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def issue_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
@@ -293,8 +305,10 @@ class Comicvine:
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of IssueEntry objects.
+
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -304,7 +318,7 @@ class Comicvine:
             )
             return parse_obj_as(List[IssueEntry], results)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def story_arc(self, story_arc_id: int) -> StoryArc:
         """
@@ -312,6 +326,7 @@ class Comicvine:
 
         Args:
             story_arc_id: The StoryArc id.
+
         Returns:
             A StoryArc object
         Raises:
@@ -323,7 +338,7 @@ class Comicvine:
             )["results"]
             return parse_obj_as(StoryArc, result)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def story_arc_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
@@ -334,8 +349,10 @@ class Comicvine:
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of StoryArcEntry objects.
+
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -345,7 +362,7 @@ class Comicvine:
             )
             return parse_obj_as(List[StoryArcEntry], results)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def creator(self, creator_id: int) -> Creator:
         """
@@ -353,6 +370,7 @@ class Comicvine:
 
         Args:
             creator_id: The Creator id.
+
         Returns:
             A Creator object
         Raises:
@@ -364,7 +382,7 @@ class Comicvine:
             )["results"]
             return parse_obj_as(Creator, result)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def creator_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
@@ -375,8 +393,10 @@ class Comicvine:
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of CreatorEntry objects.
+
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -386,7 +406,7 @@ class Comicvine:
             )
             return parse_obj_as(List[CreatorEntry], results)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def character(self, character_id: int) -> Character:
         """
@@ -394,6 +414,7 @@ class Comicvine:
 
         Args:
             character_id: The Character id.
+
         Returns:
             A Character object
         Raises:
@@ -405,7 +426,7 @@ class Comicvine:
             )["results"]
             return parse_obj_as(Character, result)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def character_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
@@ -416,8 +437,10 @@ class Comicvine:
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of CharacterEntry objects.
+
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -427,7 +450,7 @@ class Comicvine:
             )
             return parse_obj_as(List[CharacterEntry], results)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def team(self, team_id: int) -> Team:
         """
@@ -435,6 +458,7 @@ class Comicvine:
 
         Args:
             team_id: The Team id.
+
         Returns:
             A Team object
         Raises:
@@ -446,7 +470,7 @@ class Comicvine:
             )["results"]
             return parse_obj_as(Team, result)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def team_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
@@ -457,8 +481,10 @@ class Comicvine:
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of TeamEntry objects.
+
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -468,7 +494,7 @@ class Comicvine:
             )
             return parse_obj_as(List[TeamEntry], results)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def location(self, location_id: int) -> Location:
         """
@@ -476,6 +502,7 @@ class Comicvine:
 
         Args:
             location_id: The Location id.
+
         Returns:
             A Location object
         Raises:
@@ -487,7 +514,7 @@ class Comicvine:
             )["results"]
             return parse_obj_as(Location, result)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def location_list(
         self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
@@ -498,8 +525,10 @@ class Comicvine:
         Args:
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of LocationEntry objects.
+
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -509,7 +538,7 @@ class Comicvine:
             )
             return parse_obj_as(List[LocationEntry], results)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def search(
         self, resource: ComicvineResource, query: str, max_results: int = 500
@@ -530,8 +559,10 @@ class Comicvine:
             resource: Filter which type of resource to return.
             query: Search query string.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of results, mapped to the given resource.
+
         Raises:
             ServiceError: If there is an issue with validating the response.
         """
@@ -543,7 +574,7 @@ class Comicvine:
             )
             return parse_obj_as(resource.search_response, results)
         except ValidationError as err:
-            raise ServiceError(err)
+            raise ServiceError(err) from err
 
     def _retrieve_page_results(
         self, endpoint: str, params: Optional[Dict[str, Any]] = None, max_results: int = 500
@@ -555,6 +586,7 @@ class Comicvine:
             endpoint: The endpoint to request information from.
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of Json response results.
         """
@@ -584,6 +616,7 @@ class Comicvine:
             endpoint: The endpoint to request information from.
             params: Parameters to add to the request.
             max_results: Limits the amount of results looked up and returned.
+
         Returns:
             A list of Json response results.
         """
