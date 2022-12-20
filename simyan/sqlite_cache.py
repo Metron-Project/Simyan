@@ -37,7 +37,7 @@ class SQLiteCache:
         self.con = sqlite3.connect(path or get_cache_root() / "cache.sqlite")
         self.con.row_factory = sqlite3.Row
 
-        self.con.execute("CREATE TABLE IF NOT EXISTS queries (query, response, expiry);")
+        self.con.execute("CREATE TABLE IF NOT EXISTS queries (query, response, query_date);")
         self.delete()
 
     def select(self, query: str) -> Dict[str, Any]:
@@ -52,7 +52,7 @@ class SQLiteCache:
         if self.expiry:
             expiry = date.today() - timedelta(days=self.expiry)
             cursor = self.con.execute(
-                "SELECT * FROM queries WHERE query = ? and expiry > ?;",
+                "SELECT * FROM queries WHERE query = ? and query_date > ?;",
                 (query, expiry.isoformat()),
             )
         else:
@@ -71,7 +71,7 @@ class SQLiteCache:
             response: Data to save
         """
         self.con.execute(
-            "INSERT INTO queries (query, response, expiry) VALUES (?, ?, ?);",
+            "INSERT INTO queries (query, response, query_date) VALUES (?, ?, ?);",
             (query, json.dumps(response), date.today().isoformat()),
         )
         self.con.commit()
@@ -81,5 +81,5 @@ class SQLiteCache:
         if not self.expiry:
             return
         expiry = date.today() - timedelta(days=self.expiry)
-        self.con.execute("DELETE FROM queries WHERE expiry < ?;", (expiry.isoformat(),))
+        self.con.execute("DELETE FROM queries WHERE query_date < ?;", (expiry.isoformat(),))
         self.con.commit()
