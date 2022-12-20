@@ -50,9 +50,10 @@ class SQLiteCache:
             Empty dict or select results.
         """
         if self.expiry:
+            expiry = date.today() - timedelta(days=self.expiry)
             cursor = self.con.execute(
                 "SELECT * FROM queries WHERE query = ? and expiry > ?;",
-                (query, date.today().isoformat()),
+                (query, expiry.isoformat()),
             )
         else:
             cursor = self.con.execute("SELECT * FROM queries WHERE query = ?;", (query,))
@@ -69,13 +70,9 @@ class SQLiteCache:
             query: Search string
             response: Data to save
         """
-        if self.expiry:
-            expiry = date.today() + timedelta(days=self.expiry)
-        else:
-            expiry = date.today()
         self.con.execute(
             "INSERT INTO queries (query, response, expiry) VALUES (?, ?, ?);",
-            (query, json.dumps(response), expiry.isoformat()),
+            (query, json.dumps(response), date.today().isoformat()),
         )
         self.con.commit()
 
@@ -83,5 +80,6 @@ class SQLiteCache:
         """Remove all expired data from the cache database."""
         if not self.expiry:
             return
-        self.con.execute("DELETE FROM queries WHERE expiry < ?;", (date.today().isoformat(),))
+        expiry = date.today() - timedelta(days=self.expiry)
+        self.con.execute("DELETE FROM queries WHERE expiry < ?;", (expiry.isoformat(),))
         self.con.commit()
