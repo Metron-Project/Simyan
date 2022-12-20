@@ -167,7 +167,7 @@ class Comicvine:
         if self.cache and not skip_cache:
             try:
                 cached_response = self.cache.select(query=cache_key)
-                if cached_response is not None:
+                if cached_response:
                     return cached_response
             except AttributeError as err:
                 raise CacheError(

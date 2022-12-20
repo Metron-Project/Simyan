@@ -22,9 +22,9 @@ def test_team(session: Comicvine):
     assert result.api_url == "https://comicvine.gamespot.com/api/team/4060-50163/"
     assert len(result.enemies) == 5
     assert len(result.friends) == 10
-    assert len(result.members) == 17
+    assert len(result.members) == 18
     assert result.issue_count == 0
-    assert result.member_count == 17
+    assert result.member_count == 18
     assert result.date_added == datetime(2008, 6, 6, 11, 27, 45)
     assert len(result.issues_disbanded_in) == 1
     assert result.first_issue.id_ == 119950
@@ -52,7 +52,7 @@ def test_team_list(session: Comicvine):
     assert result.alias_list == []
     assert result.api_url == "https://comicvine.gamespot.com/api/team/4060-50163/"
     assert result.issue_count == 0
-    assert result.member_count == 17
+    assert result.member_count == 18
     assert result.date_added == datetime(2008, 6, 6, 11, 27, 45)
     assert result.first_issue.id_ == 119950
     assert result.name == "Blue Lantern Corps"
