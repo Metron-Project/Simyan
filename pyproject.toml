@@ -97,7 +97,7 @@ ignore = [
 line-length = 100
 select = [
   "F", "E", "W", "C90", "I", "D", "UP", "N", "YTT", "ANN", "S", "BLE", "B", "A", "C4", "ICN", "Q",
-  "RET", "SIM", "TID", "ARG", "ERA", "PLC", "PLE", "PLR", "PLW", "RUF"
+  "RET", "SIM", "TID", "ARG", "ERA", "PLC", "PLE", "PLR", "PLW", "RUF",
 ]
 target-version = "py37"
 

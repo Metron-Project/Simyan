@@ -166,7 +166,7 @@ class Comicvine:
 
         if self.cache and not skip_cache:
             try:
-                cached_response = self.cache.get(cache_key)
+                cached_response = self.cache.select(query=cache_key)
                 if cached_response is not None:
                     return cached_response
             except AttributeError as err:
@@ -180,7 +180,7 @@ class Comicvine:
 
         if self.cache and not skip_cache:
             try:
-                self.cache.insert(cache_key, response)
+                self.cache.insert(query=cache_key, response=response)
             except AttributeError as err:
                 raise CacheError(
                     f"Cache object passed in is missing attribute: {repr(err)}"
