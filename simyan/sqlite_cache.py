@@ -9,6 +9,7 @@ __all__ = ["SQLiteCache"]
 import json
 import sqlite3
 from datetime import date, timedelta
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 from simyan import get_cache_root
@@ -16,7 +17,7 @@ from simyan import get_cache_root
 
 class SQLiteCache:
     """
-    The SQLiteCache object to cache search results from ComicVine.
+    The SQLiteCache object to cache search results from Comicvine.
 
     Args:
         path: Path to database.
@@ -25,18 +26,18 @@ class SQLiteCache:
     Attributes:
         expiry (Optional[int]): How long to keep cache results.
         con (sqlite3.Connection): Database connection
-        cur (sqlite3.Cursor): Database cursor
     """
 
     def __init__(
         self,
-        path: str = None,
+        path: Path = None,
         expiry: Optional[int] = 14,
     ):
         self.expiry = expiry
         self.con = sqlite3.connect(path or get_cache_root() / "cache.sqlite")
-        self.cur = self.con.cursor()
-        self.cur.execute("CREATE TABLE IF NOT EXISTS queries (query, response, expiry);")
+        self.con.row_factory = sqlite3.Row
+
+        self.con.execute("CREATE TABLE IF NOT EXISTS queries (query, response, query_date);")
         self.delete()
 
     def select(self, query: str) -> Dict[str, Any]:
@@ -49,29 +50,19 @@ class SQLiteCache:
             Empty dict or select results.
         """
         if self.expiry:
-            self.cur.execute(
-                "SELECT response FROM queries WHERE query = ? and expiry > ?;",
-                (query, date.today().isoformat()),
+            expiry = date.today() - timedelta(days=self.expiry)
+            cursor = self.con.execute(
+                "SELECT * FROM queries WHERE query = ? and query_date > ?;",
+                (query, expiry.isoformat()),
             )
         else:
-            self.cur.execute("SELECT response FROM queries WHERE query = ?;", (query,))
-        results = self.cur.fetchone()
+            cursor = self.con.execute("SELECT * FROM queries WHERE query = ?;", (query,))
+        results = cursor.fetchone()
         if results:
-            return json.loads(results[0])
+            return json.loads(results["response"])
         return {}
 
-    def get(self, key: str) -> Optional[Dict[str, Any]]:
-        """
-        Retrieve data from the cache database.
-
-        Args:
-            key: Search string
-        Returns:
-            None or select results.
-        """
-        return self.select(query=key) or None
-
-    def insert(self, query: str, response: str) -> None:
+    def insert(self, query: str, response: Dict[str, Any]) -> None:
         """
         Insert data into the cache database.
 
@@ -79,29 +70,16 @@ class SQLiteCache:
             query: Search string
             response: Data to save
         """
-        if self.expiry:
-            expiry = date.today() + timedelta(days=self.expiry)
-        else:
-            expiry = date.today()
-        self.cur.execute(
-            "INSERT INTO queries (query, response, expiry) VALUES (?, ?, ?);",
-            (query, json.dumps(response), expiry.isoformat()),
+        self.con.execute(
+            "INSERT INTO queries (query, response, query_date) VALUES (?, ?, ?);",
+            (query, json.dumps(response), date.today().isoformat()),
         )
         self.con.commit()
-
-    def store(self, key: str, value: str) -> None:
-        """
-        Insert data into the cache database.
-
-        Args:
-            key: Search string
-            value: Data to save
-        """
-        self.insert(query=key, response=value)
 
     def delete(self) -> None:
         """Remove all expired data from the cache database."""
         if not self.expiry:
             return
-        self.cur.execute("DELETE FROM queries WHERE expiry < ?;", (date.today().isoformat(),))
+        expiry = date.today() - timedelta(days=self.expiry)
+        self.con.execute("DELETE FROM queries WHERE query_date < ?;", (expiry.isoformat(),))
         self.con.commit()
