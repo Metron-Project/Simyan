@@ -62,10 +62,6 @@ Homepage = "https://pypi.org/project/Simyan"
 Issues = "https://github.com/Metron-Project/Simyan/issues"
 Source = "https://github.com/Metron-Project/Simyan"
 
-[tool.bandit]
-recursive = true
-skips = ["B101"]
-
 [tool.black]
 line-length = 100
 target-version = ["py37", "py38", "py39", "py310", "py311"]
@@ -78,11 +74,6 @@ source = ["simyan"]
 
 [tool.hatch.version]
 path = "simyan/__init__.py"
-
-[tool.isort]
-default_section = "THIRDPARTY"
-line_length = 100
-profile = "black"
 
 [tool.pytest.ini_options]
 addopts = ["--cov", "-x"]
