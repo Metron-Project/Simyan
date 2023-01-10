@@ -11,7 +11,7 @@ import re
 from datetime import date, datetime
 from typing import Any, List, Optional
 
-from pydantic import Field
+from pydantic import Field, validator
 
 from simyan.schemas import BaseModel
 from simyan.schemas.generic_entries import (
@@ -61,37 +61,37 @@ class Issue(BaseModel):
 
     aliases: Optional[str] = None
     alternative_images: List[AlternativeImageEntry] = Field(
-        default_factory=list, alias="associated_images"
+        alias="associated_images", default_factory=list
     )
     api_url: str = Field(alias="api_detail_url")
-    characters: List[GenericEntry] = Field(default_factory=list, alias="character_credits")
-    concepts: List[GenericEntry] = Field(default_factory=list, alias="concept_credits")
+    characters: List[GenericEntry] = Field(alias="character_credits", default_factory=list)
+    concepts: List[GenericEntry] = Field(alias="concept_credits", default_factory=list)
     cover_date: Optional[date] = None
-    creators: List[CreatorEntry] = Field(default_factory=list, alias="person_credits")
+    creators: List[CreatorEntry] = Field(alias="person_credits", default_factory=list)
     date_added: datetime
     date_last_updated: datetime
-    deaths: List[GenericEntry] = Field(default_factory=list, alias="character_died_in")
+    deaths: List[GenericEntry] = Field(alias="character_died_in", default_factory=list)
     description: Optional[str] = None
     first_appearance_characters: List[GenericEntry] = Field(default_factory=list)
     first_appearance_concepts: List[GenericEntry] = Field(default_factory=list)
     first_appearance_locations: List[GenericEntry] = Field(default_factory=list)
     first_appearance_objects: List[GenericEntry] = Field(default_factory=list)
     first_appearance_story_arcs: List[GenericEntry] = Field(
-        default_factory=list, alias="first_appearance_storyarcs"
+        alias="first_appearance_storyarcs", default_factory=list
     )
     first_appearance_teams: List[GenericEntry] = Field(default_factory=list)
     issue_id: int = Field(alias="id")
     image: ImageEntry
-    locations: List[GenericEntry] = Field(default_factory=list, alias="location_credits")
+    locations: List[GenericEntry] = Field(alias="location_credits", default_factory=list)
     name: Optional[str] = None
-    number: str = Field(alias="issue_number")
-    objects: List[GenericEntry] = Field(default_factory=list, alias="object_credits")
+    number: Optional[str] = Field(alias="issue_number", default=None)
+    objects: List[GenericEntry] = Field(alias="object_credits", default_factory=list)
     site_url: str = Field(alias="site_detail_url")
     store_date: Optional[date] = None
-    story_arcs: List[GenericEntry] = Field(default_factory=list, alias="story_arc_credits")
-    summary: Optional[str] = Field(default=None, alias="deck")
-    teams: List[GenericEntry] = Field(default_factory=list, alias="team_credits")
-    teams_disbanded: List[GenericEntry] = Field(default_factory=list, alias="team_disbanded_in")
+    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    summary: Optional[str] = Field(alias="deck", default=None)
+    teams: List[GenericEntry] = Field(alias="team_credits", default_factory=list)
+    teams_disbanded: List[GenericEntry] = Field(alias="team_disbanded_in", default_factory=list)
     volume: GenericEntry
 
     def __init__(self, **data: Any):
@@ -108,6 +108,24 @@ class Issue(BaseModel):
         if "first_appearance_teams" in data and not data["first_appearance_teams"]:
             data["first_appearance_teams"] = []
         super().__init__(**data)
+
+    @validator("store_date", "cover_date", pre=True)
+    def validate_date_fields(cls, v: str) -> Optional[date]:
+        """
+        Convert date fields to date or None.
+
+        Args:
+            v: String value of the date fields in isoformat
+
+        Returns:
+            date value of field or None
+        """
+        if v and isinstance(v, str):
+            try:
+                return date.fromisoformat(v)
+            except ValueError:
+                return None
+        return None
 
     @property
     def alias_list(self) -> List[str]:
@@ -144,7 +162,7 @@ class IssueEntry(BaseModel):
 
     aliases: Optional[str] = None
     alternative_images: List[AlternativeImageEntry] = Field(
-        default_factory=list, alias="associated_images"
+        alias="associated_images", default_factory=list
     )
     api_url: str = Field(alias="api_detail_url")
     cover_date: Optional[date] = None
@@ -154,11 +172,29 @@ class IssueEntry(BaseModel):
     issue_id: int = Field(alias="id")
     image: ImageEntry
     name: Optional[str] = None
-    number: str = Field(alias="issue_number")
+    number: Optional[str] = Field(alias="issue_number", default=None)
     site_url: str = Field(alias="site_detail_url")
     store_date: Optional[date] = None
-    summary: Optional[str] = Field(default=None, alias="deck")
+    summary: Optional[str] = Field(alias="deck", default=None)
     volume: GenericEntry
+
+    @validator("store_date", "cover_date", pre=True)
+    def validate_date_fields(cls, v: str) -> Optional[date]:
+        """
+        Convert date fields to date or None.
+
+        Args:
+            v: String value of the date fields in isoformat
+
+        Returns:
+            date value of field or None
+        """
+        if v and isinstance(v, str):
+            try:
+                return date.fromisoformat(v)
+            except ValueError:
+                return None
+        return None
 
     @property
     def alias_list(self) -> List[str]:

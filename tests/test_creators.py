@@ -20,7 +20,7 @@ def test_creator(session: Comicvine):
 
     assert result.alias_list == ["Geoffrey Johns"]
     assert result.api_url == "https://comicvine.gamespot.com/api/person/4040-40439/"
-    assert len(result.characters) == 258
+    assert len(result.characters) == 266
     assert result.country == "United States"
     assert result.date_added == datetime(2008, 6, 6, 11, 28, 14)
     assert result.date_of_birth == date(1973, 1, 25)
@@ -29,7 +29,7 @@ def test_creator(session: Comicvine):
     assert result.gender == 1
     assert result.hometown == "Detroit, MI"
     assert result.issue_count is None
-    assert len(result.issues) == 1536
+    assert len(result.issues) == 1539
     assert result.name == "Geoff Johns"
     assert result.site_url == "https://comicvine.gamespot.com/geoff-johns/4040-40439/"
     assert len(result.story_arcs) == 0

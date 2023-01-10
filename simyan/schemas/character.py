@@ -9,7 +9,7 @@ This module provides the following classes:
 __all__ = ["Character", "CharacterEntry"]
 import re
 from datetime import date, datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import Field
 
@@ -57,29 +57,34 @@ class Character(BaseModel):
     creators: List[GenericEntry] = Field(default_factory=list)
     date_added: datetime
     date_last_updated: datetime
-    date_of_birth: Optional[date] = Field(default=None, alias="birth")
-    deaths: List[GenericEntry] = Field(default_factory=list, alias="issues_died_in")
+    date_of_birth: Optional[date] = Field(alias="birth", default=None)
+    deaths: List[GenericEntry] = Field(alias="issues_died_in", default_factory=list)
     description: Optional[str] = None
-    enemies: List[GenericEntry] = Field(default_factory=list, alias="character_enemies")
-    enemy_teams: List[GenericEntry] = Field(default_factory=list, alias="team_enemies")
-    first_issue: IssueEntry = Field(alias="first_appeared_in_issue")
-    friendly_teams: List[GenericEntry] = Field(default_factory=list, alias="team_friends")
-    friends: List[GenericEntry] = Field(default_factory=list, alias="character_friends")
+    enemies: List[GenericEntry] = Field(alias="character_enemies", default_factory=list)
+    enemy_teams: List[GenericEntry] = Field(alias="team_enemies", default_factory=list)
+    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
+    friendly_teams: List[GenericEntry] = Field(alias="team_friends", default_factory=list)
+    friends: List[GenericEntry] = Field(alias="character_friends", default_factory=list)
     gender: int
     character_id: int = Field(alias="id")
     image: ImageEntry
-    issue_count: Optional[int] = Field(default=None, alias="count_of_issue_appearances")
-    issues: List[GenericEntry] = Field(default_factory=list, alias="issue_credits")
+    issue_count: int = Field(alias="count_of_issue_appearances")
+    issues: List[GenericEntry] = Field(alias="issue_credits", default_factory=list)
     name: str
     origin: Optional[GenericEntry] = None
     powers: List[GenericEntry] = Field(default_factory=list)
-    publisher: GenericEntry
+    publisher: Optional[GenericEntry] = None
     real_name: Optional[str] = None
     site_url: str = Field(alias="site_detail_url")
-    story_arcs: List[GenericEntry] = Field(default_factory=list, alias="story_arc_credits")
-    summary: Optional[str] = Field(default=None, alias="deck")
+    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    summary: Optional[str] = Field(alias="deck", default=None)
     teams: List[GenericEntry] = Field(default_factory=list)
-    volumes: List[GenericEntry] = Field(default_factory=list, alias="volume_credits")
+    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
+
+    def __init__(self, **data: Any):
+        if "birth" in data and data["birth"]:
+            data["birth"] = datetime.strptime(data["birth"], "%b %d, %Y").date()
+        super().__init__(**data)
 
     @property
     def alias_list(self) -> List[str]:
@@ -120,19 +125,24 @@ class CharacterEntry(BaseModel):
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    date_of_birth: Optional[date] = Field(default=None, alias="birth")
+    date_of_birth: Optional[date] = Field(alias="birth", default=None)
     description: Optional[str] = None
-    first_issue: IssueEntry = Field(alias="first_appeared_in_issue")
+    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
     gender: int
     character_id: int = Field(alias="id")
     image: ImageEntry
-    issue_count: Optional[int] = Field(default=None, alias="count_of_issue_appearances")
+    issue_count: int = Field(alias="count_of_issue_appearances")
     name: str
     origin: Optional[GenericEntry] = None
-    publisher: GenericEntry
+    publisher: Optional[GenericEntry] = None
     real_name: Optional[str] = None
     site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(default=None, alias="deck")
+    summary: Optional[str] = Field(alias="deck", default=None)
+
+    def __init__(self, **data: Any):
+        if "birth" in data and data["birth"]:
+            data["birth"] = datetime.strptime(data["birth"], "%b %d, %Y").date()
+        super().__init__(**data)
 
     @property
     def alias_list(self) -> List[str]:

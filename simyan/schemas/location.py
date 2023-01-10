@@ -46,17 +46,17 @@ class Location(BaseModel):
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(default=None, alias="first_appeared_in_issue")
+    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
     image: ImageEntry
-    issue_count: int = Field(alias="count_of_issue_appearances")
-    issues: List[IssueEntry] = Field(default_factory=list, alias="issue_credits")
+    issue_count: Optional[int] = Field(alias="count_of_issue_appearances", default=None)
+    issues: List[IssueEntry] = Field(alias="issue_credits", default_factory=list)
     location_id: int = Field(alias="id")
     name: str
     site_url: str = Field(alias="site_detail_url")
     start_year: Optional[int] = None
-    story_arcs: List[GenericEntry] = Field(default_factory=list, alias="story_arc_credits")
-    summary: Optional[str] = Field(default=None, alias="deck")
-    volumes: List[GenericEntry] = Field(default_factory=list, alias="volume_credits")
+    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    summary: Optional[str] = Field(alias="deck", default=None)
+    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
 
     @property
     def alias_list(self) -> List[str]:
@@ -94,14 +94,14 @@ class LocationEntry(BaseModel):
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(default=None, alias="first_appeared_in_issue")
+    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
     image: ImageEntry
-    issue_count: int = Field(alias="count_of_issue_appearances")
+    issue_count: Optional[int] = Field(alias="count_of_issue_appearances", default=None)
     location_id: int = Field(alias="id")
     name: str
     site_url: str = Field(alias="site_detail_url")
     start_year: Optional[int] = None
-    summary: Optional[str] = Field(default=None, alias="deck")
+    summary: Optional[str] = Field(alias="deck", default=None)
 
     @property
     def alias_list(self) -> List[str]:

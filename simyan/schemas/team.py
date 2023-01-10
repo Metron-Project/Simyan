@@ -51,7 +51,7 @@ class Team(BaseModel):
     date_last_updated: datetime
     description: Optional[str] = None
     enemies: List[GenericEntry] = Field(alias="character_enemies", default_factory=list)
-    first_issue: IssueEntry = Field(alias="first_appeared_in_issue")
+    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
     friends: List[GenericEntry] = Field(alias="character_friends", default_factory=list)
     image: ImageEntry
     issue_count: int = Field(alias="count_of_isssue_appearances")
@@ -62,7 +62,7 @@ class Team(BaseModel):
     member_count: int = Field(alias="count_of_team_members")
     members: List[GenericEntry] = Field(alias="characters", default_factory=list)
     name: str
-    publisher: GenericEntry
+    publisher: Optional[GenericEntry] = None
     site_url: str = Field(alias="site_detail_url")
     story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
     summary: Optional[str] = Field(alias="deck", default=None)
@@ -106,12 +106,12 @@ class TeamEntry(BaseModel):
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
-    first_issue: IssueEntry = Field(alias="first_appeared_in_issue")
+    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
     image: ImageEntry
     issue_count: int = Field(alias="count_of_isssue_appearances")
     member_count: int = Field(alias="count_of_team_members")
     name: str
-    publisher: GenericEntry
+    publisher: Optional[GenericEntry] = None
     site_url: str = Field(alias="site_detail_url")
     summary: Optional[str] = Field(alias="deck", default=None)
     team_id: int = Field(alias="id")

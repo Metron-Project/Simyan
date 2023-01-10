@@ -43,7 +43,7 @@ class StoryArc(BaseModel):
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(default=None, alias="first_appeared_in_issue")
+    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
     story_arc_id: int = Field(alias="id")
     image: ImageEntry
     issue_count: int = Field(alias="count_of_isssue_appearances")
@@ -51,7 +51,7 @@ class StoryArc(BaseModel):
     name: str
     publisher: Optional[GenericEntry] = None
     site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(default=None, alias="deck")
+    summary: Optional[str] = Field(alias="deck", default=None)
 
     @property
     def alias_list(self) -> List[str]:
@@ -89,14 +89,14 @@ class StoryArcEntry(BaseModel):
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(default=None, alias="first_appeared_in_issue")
+    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
     story_arc_id: int = Field(alias="id")
     image: ImageEntry
     issue_count: int = Field(alias="count_of_isssue_appearances")
     name: str
     publisher: Optional[GenericEntry] = None
     site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(default=None, alias="deck")
+    summary: Optional[str] = Field(alias="deck", default=None)
 
     @property
     def alias_list(self) -> List[str]:

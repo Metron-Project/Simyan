@@ -32,7 +32,7 @@ def test_publisher(session: Comicvine):
         "National Comics Publications",
     ]
     assert result.api_url == "https://comicvine.gamespot.com/api/publisher/4010-10/"
-    assert len(result.characters) == 19937
+    assert len(result.characters) == 20020
     assert result.date_added == datetime(2008, 6, 6, 11, 8)
     assert result.location_address == "4000 Warner Blvd"
     assert result.location_city == "Burbank"
@@ -40,8 +40,8 @@ def test_publisher(session: Comicvine):
     assert result.name == "DC Comics"
     assert result.site_url == "https://comicvine.gamespot.com/dc-comics/4010-10/"
     assert len(result.story_arcs) == 1293
-    assert len(result.teams) == 1554
-    assert len(result.volumes) == 7271
+    assert len(result.teams) == 1558
+    assert len(result.volumes) == 7287
 
 
 def test_publisher_fail(session: Comicvine):

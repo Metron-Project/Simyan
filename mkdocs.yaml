@@ -19,6 +19,7 @@ nav:
   - simyan.schemas:
       - Package: simyan/schemas/__init__.md
       - character: simyan/schemas/character.md
+      - concept: simyan/schemas/concept.md
       - creator: simyan/schemas/creator.md
       - generic_entries: simyan/schemas/generic_entries.md
       - issue: simyan/schemas/issue.md
