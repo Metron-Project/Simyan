@@ -48,31 +48,31 @@ class Creator(BaseModel):
 
     aliases: Optional[str] = None
     api_url: str = Field(alias="api_detail_url")
-    characters: List[GenericEntry] = Field(default_factory=list, alias="created_characters")
+    characters: List[GenericEntry] = Field(alias="created_characters", default_factory=list)
     country: Optional[str] = None
     date_added: datetime
     date_last_updated: datetime
-    date_of_birth: Optional[date] = Field(default=None, alias="birth")
-    date_of_death: Optional[date] = Field(default=None, alias="death")
+    date_of_birth: Optional[date] = Field(alias="birth", default=None)
+    date_of_death: Optional[date] = Field(alias="death", default=None)
     description: Optional[str] = None
     email: Optional[str] = None
     gender: int
     hometown: Optional[str] = None
     creator_id: int = Field(alias="id")
     image: ImageEntry
-    issue_count: Optional[int] = Field(default=None, alias="count_of_isssue_appearances")
+    issue_count: Optional[int] = Field(alias="count_of_isssue_appearances", default=None)
     issues: List[GenericEntry] = Field(default_factory=list)
     name: str
     site_url: str = Field(alias="site_detail_url")
-    story_arcs: List[GenericEntry] = Field(default_factory=list, alias="story_arc_credits")
-    summary: Optional[str] = Field(default=None, alias="deck")
-    volumes: List[GenericEntry] = Field(default_factory=list, alias="volume_credits")
+    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    summary: Optional[str] = Field(alias="deck", default=None)
+    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
     website: Optional[str] = None
 
     def __init__(self, **data: Any):
-        if "death" in data and data["death"] is not None:
+        if "death" in data and data["death"]:
             data["death"] = data["death"]["date"].split()[0]
-        if data["birth"]:
+        if "birth" in data and data["birth"]:
             data["birth"] = data["birth"].split()[0]
         super().__init__(**data)
 
@@ -117,24 +117,24 @@ class CreatorEntry(BaseModel):
     country: Optional[str] = None
     date_added: datetime
     date_last_updated: datetime
-    date_of_birth: Optional[date] = Field(default=None, alias="birth")
-    date_of_death: Optional[date] = Field(default=None, alias="death")
+    date_of_birth: Optional[date] = Field(alias="birth", default=None)
+    date_of_death: Optional[date] = Field(alias="death", default=None)
     description: Optional[str] = None
     email: Optional[str] = None
     gender: int
     hometown: Optional[str] = None
     creator_id: int = Field(alias="id")
     image: ImageEntry
-    issue_count: Optional[int] = Field(default=None, alias="count_of_isssue_appearances")
+    issue_count: Optional[int] = Field(alias="count_of_isssue_appearances", default=None)
     name: str
     site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(default=None, alias="deck")
+    summary: Optional[str] = Field(alias="deck", default=None)
     website: Optional[str] = None
 
     def __init__(self, **data: Any):
-        if "death" in data and data["death"] is not None:
+        if "death" in data and data["death"]:
             data["death"] = data["death"]["date"].split()[0]
-        if data["birth"]:
+        if "birth" in data and data["birth"]:
             data["birth"] = data["birth"].split()[0]
         super().__init__(**data)
 

@@ -22,6 +22,7 @@ from requests.exceptions import ConnectionError, HTTPError, ReadTimeout
 from simyan import __version__
 from simyan.exceptions import AuthenticationError, CacheError, ServiceError
 from simyan.schemas.character import Character, CharacterEntry
+from simyan.schemas.concept import Concept, ConceptEntry
 from simyan.schemas.creator import Creator, CreatorEntry
 from simyan.schemas.issue import Issue, IssueEntry
 from simyan.schemas.location import Location, LocationEntry
@@ -38,22 +39,24 @@ T = TypeVar("T")
 class ComicvineResource(Enum):
     """Enum class for Comicvine Resources."""
 
-    CHARACTER = (4005, "character", List[CharacterEntry])
-    """Details for the Character resource on Comicvine."""
-    CREATOR = (4040, "person", List[CreatorEntry])
-    """Details for the Creator resource on Comicvine."""
-    ISSUE = (4000, "issue", List[IssueEntry])
-    """Details for the Issue resource on Comicvine."""
-    LOCATION = (4020, "location", List[LocationEntry])
-    """Details for the Location resource on Comicvine."""
     PUBLISHER = (4010, "publisher", List[PublisherEntry])
     """Details for the Publisher resource on Comicvine."""
-    STORY_ARC = (4045, "story_arc", List[StoryArcEntry])
-    """Details for the Story Arc resource on Comicvine."""
-    TEAM = (4060, "team", List[TeamEntry])
-    """Details for the Team resource on Comicvine."""
     VOLUME = (4050, "volume", List[VolumeEntry])
     """Details for the Volume resource on Comicvine."""
+    ISSUE = (4000, "issue", List[IssueEntry])
+    """Details for the Issue resource on Comicvine."""
+    STORY_ARC = (4045, "story_arc", List[StoryArcEntry])
+    """Details for the Story Arc resource on Comicvine."""
+    CREATOR = (4040, "person", List[CreatorEntry])
+    """Details for the Creator resource on Comicvine."""
+    CHARACTER = (4005, "character", List[CharacterEntry])
+    """Details for the Character resource on Comicvine."""
+    TEAM = (4060, "team", List[TeamEntry])
+    """Details for the Team resource on Comicvine."""
+    LOCATION = (4020, "location", List[LocationEntry])
+    """Details for the Location resource on Comicvine."""
+    CONCEPT = (4015, "concept", List[ConceptEntry])
+    """Details for the Concept resource on Comicvine."""
 
     @property
     def resource_id(self) -> int:
@@ -540,6 +543,50 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
+    def concept(self, concept_id: int) -> Concept:
+        """
+        Request data for a Concept based on its id.
+
+        Args:
+            concept_id: The Concept id.
+
+        Returns:
+            A Concept object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        try:
+            result = self._get_request(
+                endpoint=f"/concept/{ComicvineResource.CONCEPT.resource_id}-{concept_id}"
+            )["results"]
+            return parse_obj_as(Concept, result)
+        except ValidationError as err:
+            raise ServiceError(err) from err
+
+    def concept_list(
+        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+    ) -> List[ConceptEntry]:
+        """
+        Request data for a list of ConceptEntries.
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of ConceptEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        try:
+            results = self._retrieve_offset_results(
+                endpoint="/concepts/", params=params, max_results=max_results
+            )
+            return parse_obj_as(List[ConceptEntry], results)
+        except ValidationError as err:
+            raise ServiceError(err) from err
+
     def search(
         self, resource: ComicvineResource, query: str, max_results: int = 500
     ) -> Union[
@@ -551,6 +598,7 @@ class Comicvine:
         List[CharacterEntry],
         List[TeamEntry],
         List[LocationEntry],
+        List[ConceptEntry],
     ]:
         """
         Request a list of search results filtered by provided resource.

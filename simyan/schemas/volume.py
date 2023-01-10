@@ -9,9 +9,9 @@ This module provides the following classes:
 __all__ = ["Volume", "VolumeEntry"]
 import re
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import List, Optional
 
-from pydantic import Field
+from pydantic import Field, validator
 
 from simyan.schemas import BaseModel
 from simyan.schemas.generic_entries import CountEntry, GenericEntry, ImageEntry, IssueEntry
@@ -49,7 +49,7 @@ class Volume(BaseModel):
     api_url: str = Field(alias="api_detail_url")
     characters: List[CountEntry] = Field(default_factory=list)
     concepts: List[CountEntry] = Field(default_factory=list)
-    creators: List[CountEntry] = Field(default_factory=list, alias="people")
+    creators: List[CountEntry] = Field(alias="people", default_factory=list)
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
@@ -65,14 +65,25 @@ class Volume(BaseModel):
     publisher: Optional[GenericEntry] = None
     site_url: str = Field(alias="site_detail_url")
     start_year: Optional[int] = None
-    summary: Optional[str] = Field(default=None, alias="deck")
+    summary: Optional[str] = Field(alias="deck", default=None)
 
-    def __init__(self, **data: Any):
-        try:
-            data["start_year"] = int(data["start_year"] or "")
-        except ValueError:
-            data["start_year"] = None
-        super().__init__(**data)
+    @validator("start_year", pre=True)
+    def validate_start_year(cls, v: str) -> Optional[int]:
+        """
+        Convert start_year to int or None.
+
+        Args:
+            v: String value of the start_year
+
+        Returns:
+            int or None version of the start_year
+        """
+        if v:
+            try:
+                return int(v)
+            except ValueError:
+                return None
+        return None
 
     @property
     def alias_list(self) -> List[str]:
@@ -121,14 +132,25 @@ class VolumeEntry(BaseModel):
     publisher: Optional[GenericEntry] = None
     site_url: str = Field(alias="site_detail_url")
     start_year: Optional[int] = None
-    summary: Optional[str] = Field(default=None, alias="deck")
+    summary: Optional[str] = Field(alias="deck", default=None)
 
-    def __init__(self, **data: Any):
-        try:
-            data["start_year"] = int(data["start_year"] or "")
-        except ValueError:
-            data["start_year"] = None
-        super().__init__(**data)
+    @validator("start_year", pre=True)
+    def validate_start_year(cls, v: str) -> Optional[int]:
+        """
+        Convert start_year to int or None.
+
+        Args:
+            v: String value of the start_year
+
+        Returns:
+            int or None version of the start_year
+        """
+        if v:
+            try:
+                return int(v)
+            except ValueError:
+                return None
+        return None
 
     @property
     def alias_list(self) -> List[str]:

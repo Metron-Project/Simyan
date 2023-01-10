@@ -11,7 +11,6 @@
 [![Ruff](https://img.shields.io/badge/Linter-Ruff-informational?style=flat-square)](https://github.com/charliermarsh/ruff)
 
 [![Github - Contributors](https://img.shields.io/github/contributors/Metron-Project/Simyan.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Metron-Project/Simyan/graphs/contributors)
-[![Github Action - Code Analysis](https://img.shields.io/github/actions/workflow/status/Metron-Project/Simyan/code-analysis.yaml?branch=main&logo=Github-Actions&label=Code-Analysis&style=flat-square)](https://github.com/Metron-Project/Simyan/actions/workflows/code-analysis.yaml)
 [![Github Action - Testing](https://img.shields.io/github/actions/workflow/status/Metron-Project/Simyan/testing.yaml?branch=main&logo=Github-Actions&label=Testing&style=flat-square)](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml)
 
 [![Read the Docs](https://img.shields.io/readthedocs/simyan?label=Read-the-Docs&logo=Read-the-Docs&style=flat-square)](https://simyan.readthedocs.io/en/latest/?badge=latest)
