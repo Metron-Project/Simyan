@@ -12,7 +12,7 @@ from simyan.exceptions import ServiceError
 from simyan.schemas.publisher import PublisherEntry
 
 
-def test_publisher(session: Comicvine):
+def test_publisher(session: Comicvine) -> None:
     """Test using the publisher endpoint with a valid publisher_id."""
     result = session.publisher(publisher_id=10)
     assert result is not None
@@ -44,13 +44,13 @@ def test_publisher(session: Comicvine):
     assert len(result.volumes) == 7287
 
 
-def test_publisher_fail(session: Comicvine):
+def test_publisher_fail(session: Comicvine) -> None:
     """Test using the publisher endpoint with an invalid publisher_id."""
     with pytest.raises(ServiceError):
         session.publisher(publisher_id=-1)
 
 
-def test_publisher_list(session: Comicvine):
+def test_publisher_list(session: Comicvine) -> None:
     """Test using the publisher_list endpoint with a valid search."""
     search_results = session.publisher_list({"filter": "name:DC Comics"})
     assert len(search_results) != 0
@@ -79,25 +79,25 @@ def test_publisher_list(session: Comicvine):
     assert result.site_url == "https://comicvine.gamespot.com/dc-comics/4010-10/"
 
 
-def test_publisher_list_empty(session: Comicvine):
+def test_publisher_list_empty(session: Comicvine) -> None:
     """Test using the publisher_list endpoint with an invalid search."""
     results = session.publisher_list({"filter": "name:INVALID"})
     assert len(results) == 0
 
 
-def test_publisher_list_max_results(session: Comicvine):
+def test_publisher_list_max_results(session: Comicvine) -> None:
     """Test publisher_list endpoint with max_results."""
     results = session.publisher_list({"filter": "name:Comics"}, max_results=10)
     assert len(results) == 10
 
 
-def test_search_publisher(session: Comicvine):
+def test_search_publisher(session: Comicvine) -> None:
     """Test using the search endpoint for a list of Publishers."""
     results = session.search(resource=ComicvineResource.PUBLISHER, query="DC")
     assert all(isinstance(x, PublisherEntry) for x in results)
 
 
-def test_search_publisher_max_results(session: Comicvine):
+def test_search_publisher_max_results(session: Comicvine) -> None:
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.PUBLISHER, query="DC", max_results=10)
     assert all(isinstance(x, PublisherEntry) for x in results)
