@@ -88,10 +88,10 @@ ignore = [
   "ANN206",
   "ANN401",
   "C901",
-  "RET504",
-  "SIM105",
   "D107",
-  "D212"
+  "D212",
+  "RET504",
+  "SIM105"
 ]
 line-length = 100
 select = [
