@@ -127,11 +127,11 @@ class Comicvine:
         except ConnectionError as err:
             raise ServiceError(f"Unable to connect to `{url}`") from err
         except HTTPError as err:
-            if err.response.status_code == 401:  # noqa: RET506
+            if err.response.status_code == 401:
                 raise AuthenticationError("Invalid API Key") from err
-            elif err.response.status_code == 404:
+            if err.response.status_code == 404:
                 raise ServiceError("Unknown endpoint") from err
-            elif err.response.status_code == 502:
+            if err.response.status_code == 502:
                 raise ServiceError("Service error, retry again in 30s") from err
             raise ServiceError(err.response.json()["error"]) from err
         except JSONDecodeError as err:
@@ -140,7 +140,10 @@ class Comicvine:
             raise ServiceError("Service took too long to respond") from err
 
     def _get_request(
-        self, endpoint: str, params: Dict[str, str] = None, skip_cache: bool = False
+        self,
+        endpoint: str,
+        params: Dict[str, str] = None,
+        skip_cache: bool = False,
     ) -> Dict[str, Any]:
         """
         Check cache or make GET request to Comicvine API endpoint.
@@ -148,6 +151,7 @@ class Comicvine:
         Args:
             endpoint: The endpoint to request information from.
             params: Parameters to add to the request.
+            skip_cache: Skip read and writing to the cache.
 
         Returns:
             Json response from the Comicvine API.
@@ -174,7 +178,7 @@ class Comicvine:
                     return cached_response
             except AttributeError as err:
                 raise CacheError(
-                    f"Cache object passed in is missing attribute: {repr(err)}"
+                    f"Cache object passed in is missing attribute: {repr(err)}",
                 ) from err
 
         response = self._perform_get_request(url=url, params=params)
@@ -186,7 +190,7 @@ class Comicvine:
                 self.cache.insert(query=cache_key, response=response)
             except AttributeError as err:
                 raise CacheError(
-                    f"Cache object passed in is missing attribute: {repr(err)}"
+                    f"Cache object passed in is missing attribute: {repr(err)}",
                 ) from err
 
         return response
@@ -205,14 +209,16 @@ class Comicvine:
         """
         try:
             result = self._get_request(
-                endpoint=f"/publisher/{ComicvineResource.PUBLISHER.resource_id}-{publisher_id}"
+                endpoint=f"/publisher/{ComicvineResource.PUBLISHER.resource_id}-{publisher_id}",
             )["results"]
             return parse_obj_as(Publisher, result)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def publisher_list(
-        self, params: Optional[Dict[str, Any]] = None, max_results: int = 500
+        self,
+        params: Optional[Dict[str, Any]] = None,
+        max_results: int = 500,
     ) -> List[PublisherEntry]:
         """
         Request data for a list of PublisherEntries.
@@ -229,7 +235,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_offset_results(
-                endpoint="/publishers/", params=params, max_results=max_results
+                endpoint="/publishers/",
+                params=params,
+                max_results=max_results,
             )
             return parse_obj_as(List[PublisherEntry], results)
         except ValidationError as err:
@@ -249,14 +257,16 @@ class Comicvine:
         """
         try:
             result = self._get_request(
-                endpoint=f"/volume/{ComicvineResource.VOLUME.resource_id}-{volume_id}"
+                endpoint=f"/volume/{ComicvineResource.VOLUME.resource_id}-{volume_id}",
             )["results"]
             return parse_obj_as(Volume, result)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def volume_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
     ) -> List[VolumeEntry]:
         """
         Request data for a list of VolumeEntries.
@@ -273,7 +283,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_offset_results(
-                endpoint="/volumes/", params=params, max_results=max_results
+                endpoint="/volumes/",
+                params=params,
+                max_results=max_results,
             )
             return parse_obj_as(List[VolumeEntry], results)
         except ValidationError as err:
@@ -293,14 +305,16 @@ class Comicvine:
         """
         try:
             result = self._get_request(
-                endpoint=f"/issue/{ComicvineResource.ISSUE.resource_id}-{issue_id}"
+                endpoint=f"/issue/{ComicvineResource.ISSUE.resource_id}-{issue_id}",
             )["results"]
             return parse_obj_as(Issue, result)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def issue_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
     ) -> List[IssueEntry]:
         """
         Request data for a list of IssueEntries.
@@ -317,7 +331,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_offset_results(
-                endpoint="/issues/", params=params, max_results=max_results
+                endpoint="/issues/",
+                params=params,
+                max_results=max_results,
             )
             return parse_obj_as(List[IssueEntry], results)
         except ValidationError as err:
@@ -337,14 +353,16 @@ class Comicvine:
         """
         try:
             result = self._get_request(
-                endpoint=f"/story_arc/{ComicvineResource.STORY_ARC.resource_id}-{story_arc_id}"
+                endpoint=f"/story_arc/{ComicvineResource.STORY_ARC.resource_id}-{story_arc_id}",
             )["results"]
             return parse_obj_as(StoryArc, result)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def story_arc_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
     ) -> List[StoryArcEntry]:
         """
         Request data for a list of StoryArcEntries.
@@ -361,7 +379,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_offset_results(
-                endpoint="/story_arcs/", params=params, max_results=max_results
+                endpoint="/story_arcs/",
+                params=params,
+                max_results=max_results,
             )
             return parse_obj_as(List[StoryArcEntry], results)
         except ValidationError as err:
@@ -381,14 +401,16 @@ class Comicvine:
         """
         try:
             result = self._get_request(
-                endpoint=f"/person/{ComicvineResource.CREATOR.resource_id}-{creator_id}"
+                endpoint=f"/person/{ComicvineResource.CREATOR.resource_id}-{creator_id}",
             )["results"]
             return parse_obj_as(Creator, result)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def creator_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
     ) -> List[CreatorEntry]:
         """
         Request data for a list of CreatorEntries.
@@ -405,7 +427,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_offset_results(
-                endpoint="/people/", params=params, max_results=max_results
+                endpoint="/people/",
+                params=params,
+                max_results=max_results,
             )
             return parse_obj_as(List[CreatorEntry], results)
         except ValidationError as err:
@@ -425,14 +449,16 @@ class Comicvine:
         """
         try:
             result = self._get_request(
-                endpoint=f"/character/{ComicvineResource.CHARACTER.resource_id}-{character_id}"
+                endpoint=f"/character/{ComicvineResource.CHARACTER.resource_id}-{character_id}",
             )["results"]
             return parse_obj_as(Character, result)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def character_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
     ) -> List[CharacterEntry]:
         """
         Request data for a list of CharacterEntries.
@@ -449,7 +475,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_offset_results(
-                endpoint="/characters/", params=params, max_results=max_results
+                endpoint="/characters/",
+                params=params,
+                max_results=max_results,
             )
             return parse_obj_as(List[CharacterEntry], results)
         except ValidationError as err:
@@ -469,14 +497,16 @@ class Comicvine:
         """
         try:
             result = self._get_request(
-                endpoint=f"/team/{ComicvineResource.TEAM.resource_id}-{team_id}"
+                endpoint=f"/team/{ComicvineResource.TEAM.resource_id}-{team_id}",
             )["results"]
             return parse_obj_as(Team, result)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def team_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
     ) -> List[TeamEntry]:
         """
         Request data for a list of TeamEntries.
@@ -493,7 +523,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_offset_results(
-                endpoint="/teams/", params=params, max_results=max_results
+                endpoint="/teams/",
+                params=params,
+                max_results=max_results,
             )
             return parse_obj_as(List[TeamEntry], results)
         except ValidationError as err:
@@ -513,14 +545,16 @@ class Comicvine:
         """
         try:
             result = self._get_request(
-                endpoint=f"/location/{ComicvineResource.LOCATION.resource_id}-{location_id}"
+                endpoint=f"/location/{ComicvineResource.LOCATION.resource_id}-{location_id}",
             )["results"]
             return parse_obj_as(Location, result)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def location_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
     ) -> List[LocationEntry]:
         """
         Request data for a list of LocationEntries.
@@ -537,7 +571,9 @@ class Comicvine:
         """
         try:
             results = self._retrieve_offset_results(
-                endpoint="/locations/", params=params, max_results=max_results
+                endpoint="/locations/",
+                params=params,
+                max_results=max_results,
             )
             return parse_obj_as(List[LocationEntry], results)
         except ValidationError as err:
@@ -557,14 +593,16 @@ class Comicvine:
         """
         try:
             result = self._get_request(
-                endpoint=f"/concept/{ComicvineResource.CONCEPT.resource_id}-{concept_id}"
+                endpoint=f"/concept/{ComicvineResource.CONCEPT.resource_id}-{concept_id}",
             )["results"]
             return parse_obj_as(Concept, result)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def concept_list(
-        self, params: Optional[Dict[str, Union[str, int]]] = None, max_results: int = 500
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
     ) -> List[ConceptEntry]:
         """
         Request data for a list of ConceptEntries.
@@ -581,14 +619,19 @@ class Comicvine:
         """
         try:
             results = self._retrieve_offset_results(
-                endpoint="/concepts/", params=params, max_results=max_results
+                endpoint="/concepts/",
+                params=params,
+                max_results=max_results,
             )
             return parse_obj_as(List[ConceptEntry], results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def search(
-        self, resource: ComicvineResource, query: str, max_results: int = 500
+        self,
+        resource: ComicvineResource,
+        query: str,
+        max_results: int = 500,
     ) -> Union[
         List[PublisherEntry],
         List[VolumeEntry],
@@ -625,7 +668,10 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def _retrieve_page_results(
-        self, endpoint: str, params: Optional[Dict[str, Any]] = None, max_results: int = 500
+        self,
+        endpoint: str,
+        params: Optional[Dict[str, Any]] = None,
+        max_results: int = 500,
     ) -> List[Dict[str, Any]]:
         """
         Get responses until all the results are collected.
@@ -655,7 +701,10 @@ class Comicvine:
         return results[:max_results]
 
     def _retrieve_offset_results(
-        self, endpoint: str, params: Optional[Dict[str, Any]] = None, max_results: int = 500
+        self,
+        endpoint: str,
+        params: Optional[Dict[str, Any]] = None,
+        max_results: int = 500,
     ) -> List[Dict[str, Any]]:
         """
         Get responses until all the results are collected.
