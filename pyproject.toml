@@ -140,7 +140,7 @@ select = [
   "YTT"
 ]
 show-fixes = true
-target-version = "py38"
+target-version = "py37"
 
 [tool.ruff.flake8-annotations]
 allow-star-arg-any = true
