@@ -22,5 +22,6 @@ def comicvine_api_key() -> str:
 def session(comicvine_api_key: str) -> Comicvine:
     """Set the Simyan session fixture."""
     return Comicvine(
-        api_key=comicvine_api_key, cache=SQLiteCache(Path("tests/cache.sqlite"), expiry=None)
+        api_key=comicvine_api_key,
+        cache=SQLiteCache(path=Path("tests/cache.sqlite"), expiry=None),
     )

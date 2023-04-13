@@ -36,7 +36,7 @@ A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvin
 from simyan.comicvine import Comicvine
 from simyan.sqlite_cache import SQLiteCache
 
-session = Comicvine(api_key="ComicVine API Key", cache=SQLiteCache())
+session = Comicvine(api_key="Comicvine API Key", cache=SQLiteCache())
 
 # Search for Publisher
 results = session.publisher_list(params={"filter": "name:DC Comics"})

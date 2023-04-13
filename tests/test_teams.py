@@ -12,7 +12,7 @@ from simyan.exceptions import ServiceError
 from simyan.schemas.team import TeamEntry
 
 
-def test_team(session: Comicvine):
+def test_team(session: Comicvine) -> None:
     """Test using the team endpoint with a valid team_id."""
     result = session.team(team_id=50163)
     assert result is not None
@@ -36,13 +36,13 @@ def test_team(session: Comicvine):
     assert len(result.volumes) == 63
 
 
-def test_team_fail(session: Comicvine):
+def test_team_fail(session: Comicvine) -> None:
     """Test using the team endpoint with an invalid team_id."""
     with pytest.raises(ServiceError):
         session.team(team_id=-1)
 
 
-def test_team_list(session: Comicvine):
+def test_team_list(session: Comicvine) -> None:
     """Test using the team_list endpoint with a valid search."""
     search_results = session.team_list({"filter": "name:Blue Lantern Corps"})
     assert len(search_results) != 0
@@ -60,25 +60,25 @@ def test_team_list(session: Comicvine):
     assert result.site_url == "https://comicvine.gamespot.com/blue-lantern-corps/4060-50163/"
 
 
-def test_team_list_empty(session: Comicvine):
+def test_team_list_empty(session: Comicvine) -> None:
     """Test using the team_list endpoint with an invalid search."""
     results = session.team_list({"filter": "name:INVALID"})
     assert len(results) == 0
 
 
-def test_team_list_max_results(session: Comicvine):
+def test_team_list_max_results(session: Comicvine) -> None:
     """Test team_list endpoint with max_results."""
     results = session.team_list({"filter": "name:Lantern"}, max_results=10)
     assert len(results) == 10
 
 
-def test_search_team(session: Comicvine):
+def test_search_team(session: Comicvine) -> None:
     """Test using the search endpoint for a list of Teams."""
     results = session.search(resource=ComicvineResource.TEAM, query="Lantern")
     assert all(isinstance(x, TeamEntry) for x in results)
 
 
-def test_search_team_max_results(session: Comicvine):
+def test_search_team_max_results(session: Comicvine) -> None:
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.TEAM, query="Lantern", max_results=10)
     assert all(isinstance(x, TeamEntry) for x in results)

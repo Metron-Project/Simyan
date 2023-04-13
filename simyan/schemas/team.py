@@ -57,7 +57,8 @@ class Team(BaseModel):
     issue_count: int = Field(alias="count_of_isssue_appearances")
     issues: List[GenericEntry] = Field(alias="issue_credits", default_factory=list)
     issues_disbanded_in: List[GenericEntry] = Field(
-        alias="disbanded_in_issues", default_factory=list
+        alias="disbanded_in_issues",
+        default_factory=list,
     )
     member_count: int = Field(alias="count_of_team_members")
     members: List[GenericEntry] = Field(alias="characters", default_factory=list)

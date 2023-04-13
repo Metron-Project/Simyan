@@ -12,7 +12,7 @@ from simyan.exceptions import ServiceError
 from simyan.schemas.issue import IssueEntry
 
 
-def test_issue(session: Comicvine):
+def test_issue(session: Comicvine) -> None:
     """Test using the issue endpoint with a valid issue_id."""
     result = session.issue(issue_id=111265)
     assert result is not None
@@ -45,13 +45,13 @@ def test_issue(session: Comicvine):
     assert result.volume.id_ == 18216
 
 
-def test_issue_fail(session: Comicvine):
+def test_issue_fail(session: Comicvine) -> None:
     """Test using the issue endpoint with an invalid issue_id."""
     with pytest.raises(ServiceError):
         session.issue(issue_id=-1)
 
 
-def test_issue_list(session: Comicvine):
+def test_issue_list(session: Comicvine) -> None:
     """Test using the issue_list endpoint with a valid search."""
     search_results = session.issue_list({"filter": "volume:18216,issue_number:1"})
     assert len(search_results) != 0
@@ -70,32 +70,32 @@ def test_issue_list(session: Comicvine):
     assert result.volume.id_ == 18216
 
 
-def test_issue_list_empty(session: Comicvine):
+def test_issue_list_empty(session: Comicvine) -> None:
     """Test using the issue_list endpoint with an invalid search."""
     results = session.issue_list({"filter": "name:INVALID"})
     assert len(results) == 0
 
 
-def test_issue_list_max_results(session: Comicvine):
+def test_issue_list_max_results(session: Comicvine) -> None:
     """Test issue_list endpoint with max_results."""
     results = session.issue_list({"filter": "volume:18216"}, max_results=10)
     assert len(results) == 10
 
 
-def test_search_issue(session: Comicvine):
+def test_search_issue(session: Comicvine) -> None:
     """Test using the search endpoint for a list of Issues."""
     results = session.search(resource=ComicvineResource.ISSUE, query="Lantern")
     assert all(isinstance(x, IssueEntry) for x in results)
 
 
-def test_search_issue_max_results(session: Comicvine):
+def test_search_issue_max_results(session: Comicvine) -> None:
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.ISSUE, query="Lantern", max_results=10)
     assert all(isinstance(x, IssueEntry) for x in results)
     assert len(results) == 10
 
 
-def test_issue_bad_cover_date(session: Comicvine):
+def test_issue_bad_cover_date(session: Comicvine) -> None:
     """Test for issue with a cover date."""
     xmen_2 = session.issue(issue_id=6787)
     assert xmen_2.store_date is None
@@ -109,38 +109,38 @@ def test_issue_bad_cover_date(session: Comicvine):
     assert xmen_2.characters[0].name == "Angel"
 
 
-def test_issue_no_has_staff_review(session: Comicvine):
+def test_issue_no_has_staff_review(session: Comicvine) -> None:
     """Test issue endpoint to return result without a Staff Review field."""
     result = session.issue(issue_id=505513)
     assert "has_staff_review" not in result.__dict__.keys()
 
 
-def test_issue_list_no_has_staff_review(session: Comicvine):
+def test_issue_list_no_has_staff_review(session: Comicvine) -> None:
     """Test issue_list endpoint to return result without a Staff Review field."""
     result = session.issue_list({"filter": "issue_number:1,volume:85930"})
     assert "has_staff_review" not in result[0].__dict__.keys()
 
 
-def test_issue_no_description(session: Comicvine):
+def test_issue_no_description(session: Comicvine) -> None:
     """Test issue endpoint to return result that has a null/no description."""
     result = session.issue(issue_id=134272)
     assert result.description is None
 
 
-def test_issue_list_no_description(session: Comicvine):
+def test_issue_list_no_description(session: Comicvine) -> None:
     """Test issue_list endpoint to return result that has a null/no description."""
     results = session.issue_list(params={"filter": "volume:18006"})
     result = [x for x in results if x.issue_id == 134272][0]
     assert result.description is None
 
 
-def test_issue_no_cover_date(session: Comicvine):
+def test_issue_no_cover_date(session: Comicvine) -> None:
     """Test issue endpoint to return result that has a null/no cover_date."""
     result = session.issue(issue_id=325298)
     assert result.cover_date is None
 
 
-def test_issue_list_no_cover_date(session: Comicvine):
+def test_issue_list_no_cover_date(session: Comicvine) -> None:
     """Test issue_list endpoint to return result that has a null/no cover_date."""
     results = session.issue_list(params={"filter": "volume:3088"})
     result = [x for x in results if x.issue_id == 325298][0]

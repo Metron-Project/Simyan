@@ -12,7 +12,7 @@ from simyan.exceptions import ServiceError
 from simyan.schemas.creator import CreatorEntry
 
 
-def test_creator(session: Comicvine):
+def test_creator(session: Comicvine) -> None:
     """Test using the creator endpoint with a valid creator_id."""
     result = session.creator(creator_id=40439)
     assert result is not None
@@ -37,13 +37,13 @@ def test_creator(session: Comicvine):
     assert result.website == "http://www.geoffjohns.com"
 
 
-def test_creator_fail(session: Comicvine):
+def test_creator_fail(session: Comicvine) -> None:
     """Test using the creator endpoint with an invalid creator_id."""
     with pytest.raises(ServiceError):
         session.creator(creator_id=-1)
 
 
-def test_creator_list(session: Comicvine):
+def test_creator_list(session: Comicvine) -> None:
     """Test using the creator_list endpoint with a valid search."""
     search_results = session.creator_list({"filter": "name:Geoff Johns"})
     assert len(search_results) != 0
@@ -65,32 +65,32 @@ def test_creator_list(session: Comicvine):
     assert result.website == "http://www.geoffjohns.com"
 
 
-def test_creator_list_empty(session: Comicvine):
+def test_creator_list_empty(session: Comicvine) -> None:
     """Test using the creator_list endpoint with an invalid search."""
     results = session.creator_list({"filter": "name:INVALID"})
     assert len(results) == 0
 
 
-def test_creator_list_max_results(session: Comicvine):
+def test_creator_list_max_results(session: Comicvine) -> None:
     """Test creator_list endpoint with max_results."""
     results = session.creator_list({"filter": "name:Geoff"}, max_results=10)
     assert len(results) == 10
 
 
-def test_search_creator(session: Comicvine):
+def test_search_creator(session: Comicvine) -> None:
     """Test using the search endpoint for a list of Creators."""
     results = session.search(resource=ComicvineResource.CREATOR, query="Geoff")
     assert all(isinstance(x, CreatorEntry) for x in results)
 
 
-def test_search_creator_max_results(session: Comicvine):
+def test_search_creator_max_results(session: Comicvine) -> None:
     """Test search endpoint with max_results."""
     results = session.search(resource=ComicvineResource.CREATOR, query="Geoff", max_results=10)
     assert all(isinstance(x, CreatorEntry) for x in results)
     assert len(results) == 10
 
 
-def test_creator_with_dob(session: Comicvine):
+def test_creator_with_dob(session: Comicvine) -> None:
     """Test creators date of birth & death."""
     kirby = session.creator(creator_id=5614)
     assert kirby.date_of_birth == date(1917, 8, 28)

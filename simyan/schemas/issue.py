@@ -61,7 +61,8 @@ class Issue(BaseModel):
 
     aliases: Optional[str] = None
     alternative_images: List[AlternativeImageEntry] = Field(
-        alias="associated_images", default_factory=list
+        alias="associated_images",
+        default_factory=list,
     )
     api_url: str = Field(alias="api_detail_url")
     characters: List[GenericEntry] = Field(alias="character_credits", default_factory=list)
@@ -77,7 +78,8 @@ class Issue(BaseModel):
     first_appearance_locations: List[GenericEntry] = Field(default_factory=list)
     first_appearance_objects: List[GenericEntry] = Field(default_factory=list)
     first_appearance_story_arcs: List[GenericEntry] = Field(
-        alias="first_appearance_storyarcs", default_factory=list
+        alias="first_appearance_storyarcs",
+        default_factory=list,
     )
     first_appearance_teams: List[GenericEntry] = Field(default_factory=list)
     issue_id: int = Field(alias="id")
@@ -162,7 +164,8 @@ class IssueEntry(BaseModel):
 
     aliases: Optional[str] = None
     alternative_images: List[AlternativeImageEntry] = Field(
-        alias="associated_images", default_factory=list
+        alias="associated_images",
+        default_factory=list,
     )
     api_url: str = Field(alias="api_detail_url")
     cover_date: Optional[date] = None
