@@ -43,9 +43,7 @@ jobs:
         run: pip install .[test]
       - name: Test with pytest
         env:
-          LEAGUE_OF_COMIC_GEEKS__CLIENT_ID: IGNORED
-          LEAGUE_OF_COMIC_GEEKS__CLIENT_SECRET: IGNORED
-          LEAGUE_OF_COMIC_GEEKS__ACCESS_TOKEN: IGNORED
+          COMICVINE__API_KEY: IGNORED
         run: pytest
   collector:
     needs: [pytest]
