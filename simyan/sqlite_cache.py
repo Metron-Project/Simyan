@@ -57,8 +57,7 @@ class SQLiteCache:
             )
         else:
             cursor = self.con.execute("SELECT * FROM queries WHERE query = ?;", (query,))
-        results = cursor.fetchone()
-        if results:
+        if results := cursor.fetchone():
             return json.loads(results["response"])
         return {}
 

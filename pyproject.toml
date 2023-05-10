@@ -17,7 +17,6 @@ classifiers = [
   "Operating System :: POSIX :: Linux",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python",
@@ -38,7 +37,7 @@ maintainers = [
 ]
 name = "Simyan"
 readme = "README.md"
-requires-python = ">= 3.7"
+requires-python = ">= 3.8"
 
 [project.optional-dependencies]
 dev = [
@@ -62,7 +61,7 @@ Source = "https://github.com/Metron-Project/Simyan"
 
 [tool.black]
 line-length = 100
-target-version = ["py310", "py311", "py37", "py38", "py39"]
+target-version = ["py310", "py311", "py38", "py39"]
 
 [tool.coverage.report]
 show_missing = true
@@ -140,7 +139,7 @@ select = [
   "YTT"
 ]
 show-fixes = true
-target-version = "py37"
+target-version = "py38"
 
 [tool.ruff.flake8-annotations]
 allow-star-arg-any = true
