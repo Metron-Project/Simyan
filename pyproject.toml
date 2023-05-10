@@ -27,7 +27,7 @@ classifiers = [
 dependencies = [
   "pydantic >= 1.10.7",
   "ratelimit >= 2.2.1",
-  "requests >= 2.28.2"
+  "requests >= 2.30.0"
 ]
 description = "A Python wrapper for the Comicvine API."
 dynamic = ["version"]
@@ -45,12 +45,12 @@ dev = [
   "pre-commit >= 2.21.0"
 ]
 docs = [
-  "mkdocs >= 1.4.2",
+  "mkdocs >= 1.4.3",
   "mkdocs-include-markdown-plugin >= 4.0.4",
   "mkdocstrings[python] >= 0.21.2"
 ]
 test = [
-  "pytest >= 7.3.0",
+  "pytest >= 7.3.1",
   "pytest-cov >= 4.0.0"
 ]
 
