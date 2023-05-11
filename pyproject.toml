@@ -75,7 +75,7 @@ source = ["simyan"]
 path = "simyan/__init__.py"
 
 [tool.pytest.ini_options]
-addopts = ["--cov", "-x"]
+addopts = ["--cov"]
 
 [tool.ruff]
 fix = true
