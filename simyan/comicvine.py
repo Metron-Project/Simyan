@@ -26,6 +26,7 @@ from simyan.schemas.concept import Concept, ConceptEntry
 from simyan.schemas.creator import Creator, CreatorEntry
 from simyan.schemas.issue import Issue, IssueEntry
 from simyan.schemas.location import Location, LocationEntry
+from simyan.schemas.power import Power, PowerEntry
 from simyan.schemas.publisher import Publisher, PublisherEntry
 from simyan.schemas.story_arc import StoryArc, StoryArcEntry
 from simyan.schemas.team import Team, TeamEntry
@@ -57,6 +58,8 @@ class ComicvineResource(Enum):
     """Details for the Location resource on Comicvine."""
     CONCEPT = (4015, "concept", List[ConceptEntry])
     """Details for the Concept resource on Comicvine."""
+    POWER = (4035, "power", List[PowerEntry])
+    """Details for the Power resource on Comicvine."""
 
     @property
     def resource_id(self) -> int:
@@ -236,7 +239,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[PublisherEntry]:
         """
-        Request data for a list of PublisherEntries.
+        Request data for a list of Publishers.
 
         Args:
             params: Parameters to add to the request.
@@ -264,7 +267,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[PublisherEntry]:
         """
-        Request data for a list of PublisherEntries.
+        Request data for a list of Publishers.
 
         **DEPRECATED**: Use list_publishers()
 
@@ -322,7 +325,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[VolumeEntry]:
         """
-        Request data for a list of VolumeEntries.
+        Request data for a list of Volumes.
 
         Args:
             params: Parameters to add to the request.
@@ -350,7 +353,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[VolumeEntry]:
         """
-        Request data for a list of VolumeEntries.
+        Request data for a list of Volumes.
 
         **DEPRECATED**: Use list_volumes()
 
@@ -408,7 +411,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[IssueEntry]:
         """
-        Request data for a list of IssueEntries.
+        Request data for a list of Issues.
 
         Args:
             params: Parameters to add to the request.
@@ -436,7 +439,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[IssueEntry]:
         """
-        Request data for a list of IssueEntries.
+        Request data for a list of Issues.
 
         **DEPRECATED**: Use list_issues()
 
@@ -454,7 +457,7 @@ class Comicvine:
 
     def get_story_arc(self, story_arc_id: int) -> StoryArc:
         """
-        Request data for a StoryArc based on its id.
+        Request data for a Story Arc based on its id.
 
         Args:
             story_arc_id: The StoryArc id.
@@ -474,7 +477,7 @@ class Comicvine:
 
     def story_arc(self, story_arc_id: int) -> StoryArc:
         """
-        Request data for a StoryArc based on its id.
+        Request data for a Story Arc based on its id.
 
         **DEPRECATED**: Use get_story_arc()
 
@@ -494,7 +497,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[StoryArcEntry]:
         """
-        Request data for a list of StoryArcEntries.
+        Request data for a list of Story Arcs.
 
         Args:
             params: Parameters to add to the request.
@@ -522,7 +525,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[StoryArcEntry]:
         """
-        Request data for a list of StoryArcEntries.
+        Request data for a list of Story Arcs.
 
         **DEPRECATED**: Use list_story_arcs()
 
@@ -580,7 +583,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[CreatorEntry]:
         """
-        Request data for a list of CreatorEntries.
+        Request data for a list of Creators.
 
         Args:
             params: Parameters to add to the request.
@@ -608,7 +611,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[CreatorEntry]:
         """
-        Request data for a list of CreatorEntries.
+        Request data for a list of Creators.
 
         **DEPRECATED**: Use list_creators()
 
@@ -666,7 +669,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[CharacterEntry]:
         """
-        Request data for a list of CharacterEntries.
+        Request data for a list of Characters.
 
         Args:
             params: Parameters to add to the request.
@@ -694,7 +697,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[CharacterEntry]:
         """
-        Request data for a list of CharacterEntries.
+        Request data for a list of Characters.
 
         **DEPRECATED**: Use list_characters()
 
@@ -752,7 +755,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[TeamEntry]:
         """
-        Request data for a list of TeamEntries.
+        Request data for a list of Teams.
 
         Args:
             params: Parameters to add to the request.
@@ -780,7 +783,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[TeamEntry]:
         """
-        Request data for a list of TeamEntries.
+        Request data for a list of Teams.
 
         **DEPRECATED**: Use list_teams()
 
@@ -838,7 +841,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[LocationEntry]:
         """
-        Request data for a list of LocationEntries.
+        Request data for a list of Locations.
 
         Args:
             params: Parameters to add to the request.
@@ -866,7 +869,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[LocationEntry]:
         """
-        Request data for a list of LocationEntries.
+        Request data for a list of Locations.
 
         **DEPRECATED**: Use list_locations()
 
@@ -924,7 +927,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[ConceptEntry]:
         """
-        Request data for a list of ConceptEntries.
+        Request data for a list of Concepts.
 
         Args:
             params: Parameters to add to the request.
@@ -952,7 +955,7 @@ class Comicvine:
         max_results: int = 500,
     ) -> List[ConceptEntry]:
         """
-        Request data for a list of ConceptEntries.
+        Request data for a list of Concepts.
 
         **DEPRECATED**: Use list_concepts()
 
@@ -967,6 +970,54 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         return self.list_concepts(params=params, max_results=max_results)
+
+    def get_power(self, power_id: int) -> Power:
+        """
+        Request data for a Power based on its id.
+
+        Args:
+            power_id: The Power id.
+
+        Returns:
+            A Power object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        try:
+            result = self._get_request(
+                endpoint=f"/power/{ComicvineResource.POWER.resource_id}-{power_id}",
+            )["results"]
+            return parse_obj_as(Power, result)
+        except ValidationError as err:
+            raise ServiceError(err) from err
+
+    def list_powers(
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
+    ) -> List[PowerEntry]:
+        """
+        Request data for a list of Powers.
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of PowerEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        try:
+            results = self._retrieve_offset_results(
+                endpoint="/powers/",
+                params=params,
+                max_results=max_results,
+            )
+            return parse_obj_as(List[PowerEntry], results)
+        except ValidationError as err:
+            raise ServiceError(err) from err
 
     def search(
         self,
@@ -983,6 +1034,7 @@ class Comicvine:
         List[TeamEntry],
         List[LocationEntry],
         List[ConceptEntry],
+        List[PowerEntry],
     ]:
         """
         Request a list of search results filtered by provided resource.
