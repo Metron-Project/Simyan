@@ -18,9 +18,9 @@ from simyan.schemas import BaseModel
 from simyan.schemas.generic_entries import GenericEntry, ImageEntry, IssueEntry
 
 
-class Location(BaseModel):
+class BaseLocation(BaseModel):
     r"""
-    The Location object contains information for a location.
+    Contains fields for all Locations.
 
     Attributes:
         aliases: List of names used by the Location, separated by `~\r\n`.
@@ -31,14 +31,11 @@ class Location(BaseModel):
         first_issue: First issue the Location appeared in.
         image: Different sized images, posters and thumbnails for the Location.
         issue_count: Number of issues the Location appears in.
-        issues: List of issues the Location appears in.
         location_id: Identifier used by Comicvine.
         name: Name/Title of the Location.
         site_url: Url to the resource in Comicvine.
         start_year: The year the Location was first used.
-        story_arcs: List of story arcs the Location appears in.
         summary: Short description of the Location.
-        volumes: List of volumes the Location appears in.
     """
 
     aliases: Optional[str] = None
@@ -49,14 +46,11 @@ class Location(BaseModel):
     first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
     image: ImageEntry
     issue_count: Optional[int] = Field(alias="count_of_issue_appearances", default=None)
-    issues: List[IssueEntry] = Field(alias="issue_credits", default_factory=list)
     location_id: int = Field(alias="id")
     name: str
     site_url: str = Field(alias="site_detail_url")
     start_year: Optional[int] = None
-    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
     summary: Optional[str] = Field(alias="deck", default=None)
-    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
 
     @property
     def alias_list(self) -> List[str]:
@@ -69,46 +63,20 @@ class Location(BaseModel):
         return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
 
 
-class LocationEntry(BaseModel):
+class Location(BaseLocation):
     r"""
-    The LocationEntry object contains information for a location.
+    Extends BaseLocation by including all the list references of a location.
 
     Attributes:
-        aliases: List of names used by the LocationEntry, separated by `~\r\n`.
-        api_url: Url to the resource in the Comicvine API.
-        date_added: Date and time when the LocationEntry was added.
-        date_last_updated: Date and time when the LocationEntry was last updated.
-        description: Long description of the LocationEntry.
-        first_issue: First issue the LocationEntry appeared in.
-        image: Different sized images, posters and thumbnails for the LocationEntry.
-        issue_count: Number of issues the LocationEntry appears in.
-        location_id: Identifier used by Comicvine.
-        name: Name/Title of the LocationEntry.
-        site_url: Url to the resource in Comicvine.
-        start_year: The year the LocationEntry was first used.
-        summary: Short description of the LocationEntry.
+        issues: List of issues the Location appears in.
+        story_arcs: List of story arcs the Location appears in.
+        volumes: List of volumes the Location appears in.
     """
 
-    aliases: Optional[str] = None
-    api_url: str = Field(alias="api_detail_url")
-    date_added: datetime
-    date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
-    image: ImageEntry
-    issue_count: Optional[int] = Field(alias="count_of_issue_appearances", default=None)
-    location_id: int = Field(alias="id")
-    name: str
-    site_url: str = Field(alias="site_detail_url")
-    start_year: Optional[int] = None
-    summary: Optional[str] = Field(alias="deck", default=None)
+    issues: List[IssueEntry] = Field(alias="issue_credits", default_factory=list)
+    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
 
-    @property
-    def alias_list(self) -> List[str]:
-        r"""
-        List of aliases the LocationEntry has used.
 
-        Returns:
-            List of aliases, split by `~\r\n`
-        """
-        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
+class LocationEntry(BaseLocation):
+    """Contains all the fields available when viewing a list of Locations."""

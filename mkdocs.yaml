@@ -1,13 +1,53 @@
 site_name: Simyan
 site_url: https://simyan.readthedocs.io/en/latest/
-repo_url: https://github.com/Buried-In-Code/Simyan
-repo_name: Github
 site_description: A Python wrapper for the Comicvine API.
 site_author: Jonah Jackson
+
 copyright: GPL-3.0
 
+repo_url: https://github.com/Metron-Project/Simyan
+repo_name: Metron-Project/Simyan
+
 theme:
-  name: readthedocs
+  name: material
+  favicon: img/favicon.ico
+  features:
+    - content.code.copy
+    - navigation.expand
+    - navigation.top
+  icon:
+    repo: material/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+
+extra:
+  social:
+    - icon: material/github
+      link: https://github.com/Buried-In-Code
+    - icon: material/language-python
+      link: https://pypi.org/project/simyan/
+    - icon: material/mastodon
+      link: https://fosstodon.org/@BuriedInCode
+    - icon: simple/matrix
+      link: https://matrix.to/#/#metron-general:matrix.org
+
+markdown_extensions:
+  - pymdownx.highlight:
+      auto_title: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+
 
 nav:
   - Home: index.md
