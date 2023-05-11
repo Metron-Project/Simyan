@@ -1,9 +1,9 @@
 # Simyan
 
-[![PyPI - Python](https://img.shields.io/pypi/pyversions/Simyan.svg?logo=PyPI&label=Python&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
-[![PyPI - Status](https://img.shields.io/pypi/status/Simyan.svg?logo=PyPI&label=Status&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
-[![PyPI - Version](https://img.shields.io/pypi/v/Simyan.svg?logo=PyPI&label=Version&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
-[![PyPI - License](https://img.shields.io/pypi/l/Simyan.svg?logo=PyPI&label=License&style=flat-square)](https://opensource.org/licenses/GPL-3.0)
+[![PyPI - Python](https://img.shields.io/pypi/pyversions/Simyan.svg?logo=Python&label=Python&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
+[![PyPI - Status](https://img.shields.io/pypi/status/Simyan.svg?logo=Python&label=Status&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
+[![PyPI - Version](https://img.shields.io/pypi/v/Simyan.svg?logo=Python&label=Version&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
+[![PyPI - License](https://img.shields.io/pypi/l/Simyan.svg?logo=Python&label=License&style=flat-square)](https://opensource.org/licenses/GPL-3.0)
 
 [![Hatch](https://img.shields.io/badge/Packaging-Hatch-4051b5?style=flat-square)](https://github.com/pypa/hatch)
 [![Pre-Commit](https://img.shields.io/badge/Pre--Commit-Enabled-informational?style=flat-square&logo=pre-commit)](https://github.com/pre-commit/pre-commit)
@@ -11,7 +11,7 @@
 [![Ruff](https://img.shields.io/badge/Linter-Ruff-informational?style=flat-square)](https://github.com/charliermarsh/ruff)
 
 [![Github - Contributors](https://img.shields.io/github/contributors/Metron-Project/Simyan.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Metron-Project/Simyan/graphs/contributors)
-[![Github Action - Testing](https://img.shields.io/github/actions/workflow/status/Metron-Project/Simyan/testing.yaml?branch=main&logo=Github-Actions&label=Testing&style=flat-square)](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml)
+[![Github Action - Testing](https://img.shields.io/github/actions/workflow/status/Metron-Project/Simyan/testing.yaml?branch=main&logo=Github&label=Testing&style=flat-square)](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml)
 
 [![Read the Docs](https://img.shields.io/readthedocs/simyan?label=Read-the-Docs&logo=Read-the-Docs&style=flat-square)](https://simyan.readthedocs.io/en/latest/?badge=latest)
 
@@ -19,18 +19,15 @@ A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvin
 
 ## Installation
 
-### PyPI
+```bash
+pip install Simyan
+```
 
-1. Make sure you have [Python](https://www.python.org/) installed: `python --version`
-2. Install the project from PyPI: `pip install simyan`
+## Documentation
 
-### Github
+[Read the project documentation](https://simyan.readthedocs.io/en/latest/?badge=latest)
 
-1. Make sure you have [Python](https://www.python.org/) installed: `python --version`
-2. Clone the repo: `git clone https://github.com/Metron-Project/Simyan`
-3. Install the project: `pip install .`
-
-## Example Usage
+### Example Usage
 
 ```python
 from simyan.comicvine import Comicvine
@@ -47,6 +44,10 @@ for publisher in results:
 result = session.volume(volume_id=26266)
 print(result.summary)
 ```
+
+## Bugs/Requests
+
+Please use the [GitHub issue tracker](https://github.com/Metron-Project/Simyan/issues) to submit bugs or request features.
 
 ## Notes
 

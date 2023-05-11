@@ -17,25 +17,24 @@ from simyan.schemas import BaseModel
 from simyan.schemas.generic_entries import GenericEntry, ImageEntry, IssueEntry
 
 
-class StoryArc(BaseModel):
+class BaseStoryArc(BaseModel):
     r"""
-    The StoryArc object contains information for a story arc.
+    Contains fields for all Story Arcs.
 
     Attributes:
-        aliases: List of names used by the StoryArc, separated by `~\r\n`.
+        aliases: List of names used by the Story Arc, separated by `~\r\n`.
         api_url: Url to the resource in the Comicvine API.
-        date_added: Date and time when the StoryArc was added.
-        date_last_updated: Date and time when the StoryArc was last updated.
-        description: Long description of the StoryArc.
-        first_issue: First issue of the StoryArc.
+        date_added: Date and time when the Story Arc was added.
+        date_last_updated: Date and time when the Story Arc was last updated.
+        description: Long description of the Story Arc.
+        first_issue: First issue of the Story Arc.
         story_arc_id: Identifier used by Comicvine.
-        image: Different sized images, posters and thumbnails for the StoryArc.
-        issue_count: Number of issues in the StoryArc.
-        issues: List of issues in the StoryArc.
-        name: Name/Title of the StoryArc.
-        publisher: The publisher of the StoryArc.
+        image: Different sized images, posters and thumbnails for the Story Arc.
+        issue_count: Number of issues in the Story Arc.
+        name: Name/Title of the Story Arc.
+        publisher: The publisher of the Story Arc.
         site_url: Url to the resource in Comicvine.
-        summary: Short description of the StoryArc.
+        summary: Short description of the Story Arc.
     """
 
     aliases: Optional[str] = None
@@ -47,63 +46,32 @@ class StoryArc(BaseModel):
     story_arc_id: int = Field(alias="id")
     image: ImageEntry
     issue_count: int = Field(alias="count_of_isssue_appearances")
+    name: str
+    publisher: Optional[GenericEntry] = None
+    site_url: str = Field(alias="site_detail_url")
+    summary: Optional[str] = Field(alias="deck", default=None)
+
+    @property
+    def alias_list(self) -> List[str]:
+        r"""
+        List of aliases the Story Arc has used.
+
+        Returns:
+            List of aliases, split by `~\r\n`
+        """
+        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
+
+
+class StoryArc(BaseStoryArc):
+    r"""
+    Extends BaseStoryArc by including all the list references of a story arc.
+
+    Attributes:
+        issues: List of issues in the Story Arc.
+    """
+
     issues: List[GenericEntry] = Field(default_factory=list)
-    name: str
-    publisher: Optional[GenericEntry] = None
-    site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(alias="deck", default=None)
-
-    @property
-    def alias_list(self) -> List[str]:
-        r"""
-        List of aliases the StoryArc has used.
-
-        Returns:
-            List of aliases, split by `~\r\n`
-        """
-        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
 
 
-class StoryArcEntry(BaseModel):
-    r"""
-    The StoryArcEntry object contains information for a story arc.
-
-    Attributes:
-        aliases: List of names used by the StoryArcEntry, separated by `~\r\n`.
-        api_url: Url to the resource in the Comicvine API.
-        date_added: Date and time when the StoryArcEntry was added.
-        date_last_updated: Date and time when the StoryArcEntry was last updated.
-        description: Long description of the StoryArcEntry.
-        first_issue: First issue of the StoryArcEntry.
-        story_arc_id: Identifier used by Comicvine.
-        image: Different sized images, posters and thumbnails for the StoryArcEntry.
-        issue_count: Number of issues in the StoryArcEntry.
-        name: Name/Title of the StoryArcEntry.
-        publisher: The publisher of the StoryArcEntry.
-        site_url: Url to the resource in Comicvine.
-        summary: Short description of the StoryArcEntry.
-    """
-
-    aliases: Optional[str] = None
-    api_url: str = Field(alias="api_detail_url")
-    date_added: datetime
-    date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
-    story_arc_id: int = Field(alias="id")
-    image: ImageEntry
-    issue_count: int = Field(alias="count_of_isssue_appearances")
-    name: str
-    publisher: Optional[GenericEntry] = None
-    site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(alias="deck", default=None)
-
-    @property
-    def alias_list(self) -> List[str]:
-        r"""
-        List of aliases the StoryArcEntry has used.
-
-        Returns:
-            List of aliases, split by `~\r\n`
-        """
-        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
+class StoryArcEntry(BaseStoryArc):
+    """Contains all the fields available when viewing a list of Story Arcs."""

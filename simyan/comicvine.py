@@ -194,7 +194,7 @@ class Comicvine:
 
         return response
 
-    def publisher(self, publisher_id: int) -> Publisher:
+    def get_publisher(self, publisher_id: int) -> Publisher:
         """
         Request data for a Publisher based on its id.
 
@@ -214,7 +214,23 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def publisher_list(
+    def publisher(self, publisher_id: int) -> Publisher:
+        """
+        Request data for a Publisher based on its id.
+
+        **DEPRECATED**: Use get_publisher()
+
+        Args:
+            publisher_id: The Publisher id.
+
+        Returns:
+            A Publisher object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.get_publisher(publisher_id=publisher_id)
+
+    def list_publishers(
         self,
         params: Optional[Dict[str, Any]] = None,
         max_results: int = 500,
@@ -242,7 +258,29 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def volume(self, volume_id: int) -> Volume:
+    def publisher_list(
+        self,
+        params: Optional[Dict[str, Any]] = None,
+        max_results: int = 500,
+    ) -> List[PublisherEntry]:
+        """
+        Request data for a list of PublisherEntries.
+
+        **DEPRECATED**: Use list_publishers()
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of PublisherEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.list_publishers(params=params, max_results=max_results)
+
+    def get_volume(self, volume_id: int) -> Volume:
         """
         Request data for a Volume based on its id.
 
@@ -262,7 +300,23 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def volume_list(
+    def volume(self, volume_id: int) -> Volume:
+        """
+        Request data for a Volume based on its id.
+
+        **DEPRECATED**: Use get_volume()
+
+        Args:
+            volume_id: The Volume id.
+
+        Returns:
+            A Volume object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.get_volume(volume_id=volume_id)
+
+    def list_volumes(
         self,
         params: Optional[Dict[str, Union[str, int]]] = None,
         max_results: int = 500,
@@ -290,7 +344,29 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def issue(self, issue_id: int) -> Issue:
+    def volume_list(
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
+    ) -> List[VolumeEntry]:
+        """
+        Request data for a list of VolumeEntries.
+
+        **DEPRECATED**: Use list_volumes()
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of VolumeEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.list_volumes(params=params, max_results=max_results)
+
+    def get_issue(self, issue_id: int) -> Issue:
         """
         Request data for an Issue based on its id.
 
@@ -310,7 +386,23 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def issue_list(
+    def issue(self, issue_id: int) -> Issue:
+        """
+        Request data for an Issue based on its id.
+
+        **DEPRECATED**: Use get_issue()
+
+        Args:
+            issue_id: The Issue id.
+
+        Returns:
+            A Issue object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.get_issue(issue_id=issue_id)
+
+    def list_issues(
         self,
         params: Optional[Dict[str, Union[str, int]]] = None,
         max_results: int = 500,
@@ -338,7 +430,29 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def story_arc(self, story_arc_id: int) -> StoryArc:
+    def issue_list(
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
+    ) -> List[IssueEntry]:
+        """
+        Request data for a list of IssueEntries.
+
+        **DEPRECATED**: Use list_issues()
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of IssueEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.list_issues(params=params, max_results=max_results)
+
+    def get_story_arc(self, story_arc_id: int) -> StoryArc:
         """
         Request data for a StoryArc based on its id.
 
@@ -358,7 +472,23 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def story_arc_list(
+    def story_arc(self, story_arc_id: int) -> StoryArc:
+        """
+        Request data for a StoryArc based on its id.
+
+        **DEPRECATED**: Use get_story_arc()
+
+        Args:
+            story_arc_id: The StoryArc id.
+
+        Returns:
+            A StoryArc object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.get_story_arc(story_arc_id=story_arc_id)
+
+    def list_story_arcs(
         self,
         params: Optional[Dict[str, Union[str, int]]] = None,
         max_results: int = 500,
@@ -386,7 +516,29 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def creator(self, creator_id: int) -> Creator:
+    def story_arc_list(
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
+    ) -> List[StoryArcEntry]:
+        """
+        Request data for a list of StoryArcEntries.
+
+        **DEPRECATED**: Use list_story_arcs()
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of StoryArcEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.list_story_arcs(params=params, max_results=max_results)
+
+    def get_creator(self, creator_id: int) -> Creator:
         """
         Request data for a Creator based on its id.
 
@@ -406,7 +558,23 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def creator_list(
+    def creator(self, creator_id: int) -> Creator:
+        """
+        Request data for a Creator based on its id.
+
+        **DEPRECATED**: Use get_creator()
+
+        Args:
+            creator_id: The Creator id.
+
+        Returns:
+            A Creator object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.get_creator(creator_id=creator_id)
+
+    def list_creators(
         self,
         params: Optional[Dict[str, Union[str, int]]] = None,
         max_results: int = 500,
@@ -434,7 +602,29 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def character(self, character_id: int) -> Character:
+    def creator_list(
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
+    ) -> List[CreatorEntry]:
+        """
+        Request data for a list of CreatorEntries.
+
+        **DEPRECATED**: Use list_creators()
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of CreatorEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.list_creators(params=params, max_results=max_results)
+
+    def get_character(self, character_id: int) -> Character:
         """
         Request data for a Character based on its id.
 
@@ -454,7 +644,23 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def character_list(
+    def character(self, character_id: int) -> Character:
+        """
+        Request data for a Character based on its id.
+
+        **DEPRECATED**: Use get_character()
+
+        Args:
+            character_id: The Character id.
+
+        Returns:
+            A Character object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.get_character(character_id=character_id)
+
+    def list_characters(
         self,
         params: Optional[Dict[str, Union[str, int]]] = None,
         max_results: int = 500,
@@ -482,7 +688,29 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def team(self, team_id: int) -> Team:
+    def character_list(
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
+    ) -> List[CharacterEntry]:
+        """
+        Request data for a list of CharacterEntries.
+
+        **DEPRECATED**: Use list_characters()
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of CharacterEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.list_characters(params=params, max_results=max_results)
+
+    def get_team(self, team_id: int) -> Team:
         """
         Request data for a Team based on its id.
 
@@ -502,7 +730,23 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def team_list(
+    def team(self, team_id: int) -> Team:
+        """
+        Request data for a Team based on its id.
+
+        **DEPRECATED**: Use get_team()
+
+        Args:
+            team_id: The Team id.
+
+        Returns:
+            A Team object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.get_team(team_id=team_id)
+
+    def list_teams(
         self,
         params: Optional[Dict[str, Union[str, int]]] = None,
         max_results: int = 500,
@@ -530,7 +774,29 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def location(self, location_id: int) -> Location:
+    def team_list(
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
+    ) -> List[TeamEntry]:
+        """
+        Request data for a list of TeamEntries.
+
+        **DEPRECATED**: Use list_teams()
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of TeamEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.list_teams(params=params, max_results=max_results)
+
+    def get_location(self, location_id: int) -> Location:
         """
         Request data for a Location based on its id.
 
@@ -550,7 +816,23 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def location_list(
+    def location(self, location_id: int) -> Location:
+        """
+        Request data for a Location based on its id.
+
+        **DEPRECATED**: Use get_location()
+
+        Args:
+            location_id: The Location id.
+
+        Returns:
+            A Location object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.get_location(location_id=location_id)
+
+    def list_locations(
         self,
         params: Optional[Dict[str, Union[str, int]]] = None,
         max_results: int = 500,
@@ -578,7 +860,29 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def concept(self, concept_id: int) -> Concept:
+    def location_list(
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
+    ) -> List[LocationEntry]:
+        """
+        Request data for a list of LocationEntries.
+
+        **DEPRECATED**: Use list_locations()
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of LocationEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.list_locations(params=params, max_results=max_results)
+
+    def get_concept(self, concept_id: int) -> Concept:
         """
         Request data for a Concept based on its id.
 
@@ -598,7 +902,23 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def concept_list(
+    def concept(self, concept_id: int) -> Concept:
+        """
+        Request data for a Concept based on its id.
+
+        **DEPRECATED**: Use get_concept()
+
+        Args:
+            concept_id: The Concept id.
+
+        Returns:
+            A Concept object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.get_concept(concept_id=concept_id)
+
+    def list_concepts(
         self,
         params: Optional[Dict[str, Union[str, int]]] = None,
         max_results: int = 500,
@@ -625,6 +945,28 @@ class Comicvine:
             return parse_obj_as(List[ConceptEntry], results)
         except ValidationError as err:
             raise ServiceError(err) from err
+
+    def concept_list(
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
+    ) -> List[ConceptEntry]:
+        """
+        Request data for a list of ConceptEntries.
+
+        **DEPRECATED**: Use list_concepts()
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of ConceptEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        return self.list_concepts(params=params, max_results=max_results)
 
     def search(
         self,
