@@ -64,6 +64,7 @@ nav:
       - generic_entries: simyan/schemas/generic_entries.md
       - issue: simyan/schemas/issue.md
       - location: simyan/schemas/location.md
+      - origin: simyan/schemas/origin.md
       - power: simyan/schemas/power.md
       - publisher: simyan/schemas/publisher.md
       - story_arc: simyan/schemas/story_arc.md
