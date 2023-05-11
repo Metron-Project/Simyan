@@ -17,10 +17,11 @@
 
 A [Python](https://www.python.org/) wrapper for the [Comicvine](https://comicvine.gamespot.com/api/) API.
 
-## Installation from PyPI
+## Installation
 
-1. Make sure you have a supported version of [Python](https://www.python.org/) installed: `python --version`
-2. Install the project from PyPI: `pip install Simyan`
+```bash
+pip install Simyan
+```
 
 ## Documentation
 
