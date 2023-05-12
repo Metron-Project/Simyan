@@ -20,7 +20,7 @@ def test_power(session: Comicvine) -> None:
 
     assert result.alias_list == []
     assert result.api_url == "https://comicvine.gamespot.com/api/power/4035-1/"
-    assert len(result.characters) == 7965
+    assert len(result.characters) == 7966
     assert result.date_added == datetime(2008, 6, 6, 11, 28, 15)
     assert result.name == "Flight"
     assert (
