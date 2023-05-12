@@ -63,6 +63,7 @@ nav:
       - creator: simyan/schemas/creator.md
       - generic_entries: simyan/schemas/generic_entries.md
       - issue: simyan/schemas/issue.md
+      - item: simyan/schemas/item.md
       - location: simyan/schemas/location.md
       - origin: simyan/schemas/origin.md
       - power: simyan/schemas/power.md

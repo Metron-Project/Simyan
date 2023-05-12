@@ -25,6 +25,7 @@ from simyan.schemas.character import Character, CharacterEntry
 from simyan.schemas.concept import Concept, ConceptEntry
 from simyan.schemas.creator import Creator, CreatorEntry
 from simyan.schemas.issue import Issue, IssueEntry
+from simyan.schemas.item import Item, ItemEntry
 from simyan.schemas.location import Location, LocationEntry
 from simyan.schemas.origin import Origin, OriginEntry
 from simyan.schemas.power import Power, PowerEntry
@@ -63,10 +64,12 @@ class ComicvineResource(Enum):
     """Details for the Power resource on Comicvine."""
     ORIGIN = (4030, "origin", List[OriginEntry])
     """Details for the Origin resource on Comicvine."""
+    ITEM = (4055, "object", List[ItemEntry])
+    """Details for the Item resource on Comicvine."""
 
     @property
     def resource_id(self) -> int:
-        """Start of id used by comicvine to create unique ids."""
+        """Start of id used by Comicvine to create unique ids."""
         return self.value[0]
 
     @property
@@ -1070,6 +1073,54 @@ class Comicvine:
         except ValidationError as err:
             raise ServiceError(err) from err
 
+    def get_item(self, item_id: int) -> Item:
+        """
+        Request data for an Item based on its id.
+
+        Args:
+            item_id: The Item id.
+
+        Returns:
+            A Item object
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        try:
+            result = self._get_request(
+                endpoint=f"/object/{ComicvineResource.ITEM.resource_id}-{item_id}",
+            )["results"]
+            return parse_obj_as(Item, result)
+        except ValidationError as err:
+            raise ServiceError(err) from err
+
+    def list_items(
+        self,
+        params: Optional[Dict[str, Union[str, int]]] = None,
+        max_results: int = 500,
+    ) -> List[ItemEntry]:
+        """
+        Request data for a list of Items.
+
+        Args:
+            params: Parameters to add to the request.
+            max_results: Limits the amount of results looked up and returned.
+
+        Returns:
+            A list of ItemEntry objects.
+
+        Raises:
+            ServiceError: If there is an issue with validating the response.
+        """
+        try:
+            results = self._retrieve_offset_results(
+                endpoint="/objects/",
+                params=params,
+                max_results=max_results,
+            )
+            return parse_obj_as(List[ItemEntry], results)
+        except ValidationError as err:
+            raise ServiceError(err) from err
+
     def search(
         self,
         resource: ComicvineResource,
@@ -1087,6 +1138,7 @@ class Comicvine:
         List[ConceptEntry],
         List[PowerEntry],
         List[OriginEntry],
+        List[ItemEntry],
     ]:
         """
         Request a list of search results filtered by provided resource.

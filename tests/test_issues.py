@@ -38,7 +38,7 @@ def test_issue(session: Comicvine) -> None:
     assert result.number == "1"
     assert len(result.objects) == 1
     assert result.site_url == "https://comicvine.gamespot.com/green-lantern-1-airborne/4000-111265/"
-    assert result.store_date == date(2005, 5, 18)
+    assert result.store_date == date(2005, 5, 25)
     assert len(result.story_arcs) == 1
     assert len(result.teams) == 2
     assert len(result.teams_disbanded) == 0
@@ -66,7 +66,7 @@ def test_issue_list(session: Comicvine) -> None:
     assert result.name == "Airborne"
     assert result.number == "1"
     assert result.site_url == "https://comicvine.gamespot.com/green-lantern-1-airborne/4000-111265/"
-    assert result.store_date == date(2005, 5, 18)
+    assert result.store_date == date(2005, 5, 25)
     assert result.volume.id_ == 18216
 
 
