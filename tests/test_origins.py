@@ -1,5 +1,4 @@
-"""
-The Origins test module.
+"""The Origins test module.
 
 This module contains tests for Origin and OriginEntry objects.
 """
@@ -15,7 +14,7 @@ def test_origin(session: Comicvine) -> None:
     """Test using the origin endpoint with a valid origin_id."""
     result = session.get_origin(origin_id=1)
     assert result is not None
-    assert result.origin_id == 1
+    assert result.id == 1
 
     assert result.api_url == "https://comicvine.gamespot.com/api/origin/4030-1/"
     assert result.character_set is None
@@ -35,7 +34,7 @@ def test_origin_list(session: Comicvine) -> None:
     """Test using the list origins endpoint with a valid search query."""
     search_results = session.list_origins({"filter": "name:Mutant"})
     assert len(search_results) != 0
-    result = [x for x in search_results if x.origin_id == 1][0]
+    result = next(x for x in search_results if x.id == 1)
     assert result is not None
 
     assert result.api_url == "https://comicvine.gamespot.com/api/origin/4030-1/"

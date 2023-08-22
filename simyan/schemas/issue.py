@@ -1,5 +1,4 @@
-"""
-The Issue module.
+"""The Issue module.
 
 This module provides the following classes:
 
@@ -7,34 +6,32 @@ This module provides the following classes:
 - IssueEntry
 """
 __all__ = ["Issue", "IssueEntry"]
-import re
 from datetime import date, datetime
 from typing import Any, List, Optional
 
-from pydantic import Field, validator
+from pydantic import Field
 
 from simyan.schemas import BaseModel
 from simyan.schemas.generic_entries import (
-    AlternativeImageEntry,
+    AssociatedImage,
     CreatorEntry,
     GenericEntry,
-    ImageEntry,
+    Image,
 )
 
 
 class BaseIssue(BaseModel):
-    r"""
-    Contains fields for all Issues.
+    r"""Contains fields for all Issues.
 
     Attributes:
-        aliases: List of names used by the Issue, separated by `~\r\n`.
-        alternative_images: List of different images associated with the Issue.
+        aliases: List of names used by the Issue, collected in a string.
+        associated_images: List of different images associated with the Issue.
         api_url: Url to the resource in the Comicvine API.
         cover_date: Date on the cover of the Issue.
         date_added: Date and time when the Issue was added.
         date_last_updated: Date and time when the Issue was last updated.
         description: Long description of the Issue.
-        issue_id: Identifier used by Comicvine.
+        id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Issue.
         name: Name/Title of the Issue.
         number: The Issue number.
@@ -45,17 +42,14 @@ class BaseIssue(BaseModel):
     """
 
     aliases: Optional[str] = None
-    alternative_images: List[AlternativeImageEntry] = Field(
-        alias="associated_images",
-        default_factory=list,
-    )
+    associated_images: List[AssociatedImage] = Field(default_factory=list)
     api_url: str = Field(alias="api_detail_url")
     cover_date: Optional[date] = None
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
-    issue_id: int = Field(alias="id")
-    image: ImageEntry
+    id: int  # noqa: A003
+    image: Image
     name: Optional[str] = None
     number: Optional[str] = Field(alias="issue_number", default=None)
     site_url: str = Field(alias="site_detail_url")
@@ -63,38 +57,9 @@ class BaseIssue(BaseModel):
     summary: Optional[str] = Field(alias="deck", default=None)
     volume: GenericEntry
 
-    @validator("store_date", "cover_date", pre=True)
-    def validate_date_fields(cls, v: str) -> Optional[date]:
-        """
-        Convert date fields to date or None.
-
-        Args:
-            v: String value of the date fields in isoformat
-
-        Returns:
-            date value of field or None
-        """
-        if v and isinstance(v, str):
-            try:
-                return date.fromisoformat(v)
-            except ValueError:
-                return None
-        return None
-
-    @property
-    def alias_list(self) -> List[str]:
-        r"""
-        List of aliases the Issue has used.
-
-        Returns:
-            List of aliases, split by `~\r\n`
-        """
-        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
-
 
 class Issue(BaseIssue):
-    r"""
-    Extends BaseIssue by including all the list references of an issue.
+    r"""Extends BaseIssue by including all the list references of an issue.
 
     Attributes:
         characters: List of characters in the Issue.
@@ -133,7 +98,7 @@ class Issue(BaseIssue):
     teams: List[GenericEntry] = Field(alias="team_credits", default_factory=list)
     teams_disbanded: List[GenericEntry] = Field(alias="team_disbanded_in", default_factory=list)
 
-    def __init__(self, **data: Any):
+    def __init__(self: "Issue", **data: Any):
         if "first_appearance_characters" in data and not data["first_appearance_characters"]:
             data["first_appearance_characters"] = []
         if "first_appearance_concepts" in data and not data["first_appearance_concepts"]:

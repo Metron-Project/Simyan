@@ -7,8 +7,7 @@ from pathlib import Path
 
 
 def get_cache_root() -> Path:
-    """
-    Create and return the path to the cache for simyan, supports XDG_CACHE_HOME env.
+    """Create and return the path to the cache for simyan, supports XDG_CACHE_HOME env.
 
     Returns:
         The path to the simyan cache folder.

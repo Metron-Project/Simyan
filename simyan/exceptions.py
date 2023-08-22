@@ -1,5 +1,4 @@
-"""
-The Exceptions module.
+"""The Exceptions module.
 
 This module provides the following classes:
 

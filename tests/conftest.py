@@ -1,5 +1,4 @@
-"""
-The Conftest module.
+"""The Conftest module.
 
 This module contains pytest fixtures.
 """

@@ -1,5 +1,4 @@
-"""
-The Creators test module.
+"""The Creators test module.
 
 This module contains tests for Creator and CreatorEntry objects.
 """
@@ -14,15 +13,14 @@ from simyan.schemas.creator import CreatorEntry
 
 def test_creator(session: Comicvine) -> None:
     """Test using the creator endpoint with a valid creator_id."""
-    result = session.creator(creator_id=40439)
+    result = session.get_creator(creator_id=40439)
     assert result is not None
-    assert result.creator_id == 40439
+    assert result.id == 40439
 
-    assert result.alias_list == ["Geoffrey Johns"]
     assert result.api_url == "https://comicvine.gamespot.com/api/person/4040-40439/"
     assert len(result.characters) == 271
     assert result.country == "United States"
-    assert result.date_added == datetime(2008, 6, 6, 11, 28, 14)
+    assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 28, 14).astimezone()
     assert result.date_of_birth == date(1973, 1, 25)
     assert result.date_of_death is None
     assert result.email is None
@@ -40,20 +38,19 @@ def test_creator(session: Comicvine) -> None:
 def test_creator_fail(session: Comicvine) -> None:
     """Test using the creator endpoint with an invalid creator_id."""
     with pytest.raises(ServiceError):
-        session.creator(creator_id=-1)
+        session.get_creator(creator_id=-1)
 
 
 def test_creator_list(session: Comicvine) -> None:
     """Test using the creator_list endpoint with a valid search."""
-    search_results = session.creator_list({"filter": "name:Geoff Johns"})
+    search_results = session.list_creators({"filter": "name:Geoff Johns"})
     assert len(search_results) != 0
-    result = [x for x in search_results if x.creator_id == 40439][0]
+    result = next(x for x in search_results if x.id == 40439)
     assert result is not None
 
-    assert result.alias_list == ["Geoffrey Johns"]
     assert result.api_url == "https://comicvine.gamespot.com/api/person/4040-40439/"
     assert result.country == "United States"
-    assert result.date_added == datetime(2008, 6, 6, 11, 28, 14)
+    assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 28, 14).astimezone()
     assert result.date_of_birth == date(1973, 1, 25)
     assert result.date_of_death is None
     assert result.email is None
@@ -67,13 +64,13 @@ def test_creator_list(session: Comicvine) -> None:
 
 def test_creator_list_empty(session: Comicvine) -> None:
     """Test using the creator_list endpoint with an invalid search."""
-    results = session.creator_list({"filter": "name:INVALID"})
+    results = session.list_creators({"filter": "name:INVALID"})
     assert len(results) == 0
 
 
 def test_creator_list_max_results(session: Comicvine) -> None:
     """Test creator_list endpoint with max_results."""
-    results = session.creator_list({"filter": "name:Geoff"}, max_results=10)
+    results = session.list_creators({"filter": "name:Geoff"}, max_results=10)
     assert len(results) == 10
 
 
@@ -92,6 +89,6 @@ def test_search_creator_max_results(session: Comicvine) -> None:
 
 def test_creator_with_dob(session: Comicvine) -> None:
     """Test creators date of birth & death."""
-    kirby = session.creator(creator_id=5614)
+    kirby = session.get_creator(creator_id=5614)
     assert kirby.date_of_birth == date(1917, 8, 28)
     assert kirby.date_of_death == date(1994, 2, 6)
