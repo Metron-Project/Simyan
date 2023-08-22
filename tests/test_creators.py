@@ -27,7 +27,7 @@ def test_creator(session: Comicvine) -> None:
     assert result.gender == 1
     assert result.hometown == "Detroit, MI"
     assert result.issue_count is None
-    assert len(result.issues) == 1558
+    assert len(result.issues) == 1547
     assert result.name == "Geoff Johns"
     assert result.site_url == "https://comicvine.gamespot.com/geoff-johns/4040-40439/"
     assert len(result.story_arcs) == 0

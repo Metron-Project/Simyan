@@ -26,12 +26,12 @@ def test_team(session: Comicvine) -> None:
     assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 27, 45).astimezone()
     assert len(result.issues_disbanded_in) == 1
     assert result.first_issue.id == 119950
-    assert len(result.issues) == 116
+    assert len(result.issues) == 117
     assert result.name == "Blue Lantern Corps"
     assert result.publisher.id == 10
     assert result.site_url == "https://comicvine.gamespot.com/blue-lantern-corps/4060-50163/"
     assert len(result.story_arcs) == 0
-    assert len(result.volumes) == 63
+    assert len(result.volumes) == 64
 
 
 def test_team_fail(session: Comicvine) -> None:

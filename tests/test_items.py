@@ -20,13 +20,13 @@ def test_item(session: Comicvine) -> None:
     assert result.api_url == "https://comicvine.gamespot.com/api/object/4055-41361/"
     assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 27, 50).astimezone()
     assert result.first_issue.id == 123898
-    assert result.issue_count == 3153
-    assert len(result.issues) == 3153
+    assert result.issue_count == 3193
+    assert len(result.issues) == 3193
     assert result.name == "Green Power Ring"
     assert result.site_url == "https://comicvine.gamespot.com/green-power-ring/4055-41361/"
     assert result.start_year == 1940
-    assert len(result.story_arcs) == 561
-    assert len(result.volumes) == 937
+    assert len(result.story_arcs) == 566
+    assert len(result.volumes) == 957
 
 
 def test_item_fail(session: Comicvine) -> None:
@@ -45,7 +45,7 @@ def test_item_list(session: Comicvine) -> None:
     assert result.api_url == "https://comicvine.gamespot.com/api/object/4055-41361/"
     assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 27, 50).astimezone()
     assert result.first_issue.id == 123898
-    assert result.issue_count == 3153
+    assert result.issue_count == 3193
     assert result.name == "Green Power Ring"
     assert result.site_url == "https://comicvine.gamespot.com/green-power-ring/4055-41361/"
     assert result.start_year == 1940
