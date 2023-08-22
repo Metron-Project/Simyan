@@ -201,9 +201,7 @@ class Comicvine:
                     return cached_response
             except AttributeError as err:
                 msg = f"Cache object passed in is missing attribute: {err!r}"
-                raise CacheError(
-                    msg,
-                ) from err
+                raise CacheError(msg) from err
 
         response = self._perform_get_request(url=url, params=params)
         if "error" in response and response["error"] != "OK":
@@ -214,9 +212,7 @@ class Comicvine:
                 self.cache.insert(query=cache_key, response=response)
             except AttributeError as err:
                 msg = f"Cache object passed in is missing attribute: {err!r}"
-                raise CacheError(
-                    msg,
-                ) from err
+                raise CacheError(msg) from err
 
         return response
 
