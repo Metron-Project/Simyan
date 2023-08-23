@@ -1,5 +1,4 @@
-"""
-The Creator module.
+"""The Creator module.
 
 This module provides the following classes:
 
@@ -7,22 +6,20 @@ This module provides the following classes:
 - CreatorEntry
 """
 __all__ = ["Creator", "CreatorEntry"]
-import re
 from datetime import date, datetime
 from typing import Any, List, Optional
 
 from pydantic import Field
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, ImageEntry
+from simyan.schemas.generic_entries import GenericEntry, Image
 
 
 class BaseCreator(BaseModel):
-    r"""
-    Contains fields for all Creators.
+    r"""Contains fields for all Creators.
 
     Attributes:
-        aliases: List of names used by the Creator, separated by `~\r\n`
+        aliases: List of names used by the Creator, collected in a string.
         api_url: Url to the resource in the Comicvine API.
         country: Country of origin.
         date_added: Date and time when the Creator was added.
@@ -33,7 +30,7 @@ class BaseCreator(BaseModel):
         email: Email address of the Creator.
         gender: Creator gender.
         hometown: Hometown of the Creator.
-        creator_id: Identifier used by Comicvine.
+        id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Creator.
         issue_count: Number of issues the Creator appears in.
         name: Name/Title of the Creator.
@@ -53,35 +50,24 @@ class BaseCreator(BaseModel):
     email: Optional[str] = None
     gender: int
     hometown: Optional[str] = None
-    creator_id: int = Field(alias="id")
-    image: ImageEntry
+    id: int  # noqa: A003
+    image: Image
     issue_count: Optional[int] = Field(alias="count_of_isssue_appearances", default=None)
     name: str
     site_url: str = Field(alias="site_detail_url")
     summary: Optional[str] = Field(alias="deck", default=None)
     website: Optional[str] = None
 
-    def __init__(self, **data: Any):
+    def __init__(self: "BaseCreator", **data: Any):
         if "death" in data and data["death"]:
             data["death"] = data["death"]["date"].split()[0]
         if "birth" in data and data["birth"]:
             data["birth"] = data["birth"].split()[0]
         super().__init__(**data)
 
-    @property
-    def alias_list(self) -> List[str]:
-        r"""
-        List of aliases the Creator has used.
-
-        Returns:
-            List of aliases, split by `~\r\n`
-        """
-        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
-
 
 class Creator(BaseCreator):
-    r"""
-    Extends BaseCreator by including all the list references of a creator.
+    r"""Extends BaseCreator by including all the list references of a creator.
 
     Attributes:
         characters: List of characters the Creator has created.

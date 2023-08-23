@@ -1,5 +1,4 @@
-"""
-The Origin module.
+"""The Origin module.
 
 This module provides the following classes:
 
@@ -16,25 +15,23 @@ from simyan.schemas.generic_entries import GenericEntry
 
 
 class BaseOrigin(BaseModel):
-    r"""
-    Contains fields for all Origins.
+    r"""Contains fields for all Origins.
 
     Attributes:
         api_url: Url to the resource in the Comicvine API.
+        id: Identifier used by Comicvine.
         name: Name/Title of the Origin.
-        origin_id: Identifier used by Comicvine.
         site_url: Url to the resource in Comicvine.
     """
 
     api_url: str = Field(alias="api_detail_url")
+    id: int  # noqa: A003
     name: str
-    origin_id: int = Field(alias="id")
     site_url: str = Field(alias="site_detail_url")
 
 
 class Origin(BaseOrigin):
-    r"""
-    Extends BaseOrigin by including all the list references of a origin.
+    r"""Extends BaseOrigin by including all the list references of a origin.
 
     Attributes:
         character_set: Unknown field

@@ -1,5 +1,4 @@
-"""
-The Character module.
+"""The Character module.
 
 This module provides the following classes:
 
@@ -7,22 +6,20 @@ This module provides the following classes:
 - CharacterEntry
 """
 __all__ = ["Character", "CharacterEntry"]
-import re
 from datetime import date, datetime
 from typing import Any, List, Optional
 
 from pydantic import Field
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, ImageEntry, IssueEntry
+from simyan.schemas.generic_entries import GenericEntry, Image, IssueEntry
 
 
 class BaseCharacter(BaseModel):
-    r"""
-    Contains fields for all Characters.
+    r"""Contains fields for all Characters.
 
     Attributes:
-        aliases: List of names used by the Character, separated by `~\r\n`.
+        aliases: List of names used by the Character, collected in a string.
         api_url: Url to the resource in the Comicvine API.
         date_added: Date and time when the Character was added.
         date_last_updated: Date and time when the Character was last updated.
@@ -30,7 +27,7 @@ class BaseCharacter(BaseModel):
         description: Long description of the Character.
         first_issue: First issue the Character appeared in.
         gender: Character gender.
-        character_id: Identifier used by Comicvine.
+        id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Character.
         issue_count: Number of issues the Character appears in.
         name: Real name or public identity of Character.
@@ -48,8 +45,8 @@ class BaseCharacter(BaseModel):
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
     gender: int
-    character_id: int = Field(alias="id")
-    image: ImageEntry
+    id: int  # noqa: A003
+    image: Image
     issue_count: int = Field(alias="count_of_issue_appearances")
     name: str
     origin: Optional[GenericEntry] = None
@@ -58,25 +55,14 @@ class BaseCharacter(BaseModel):
     site_url: str = Field(alias="site_detail_url")
     summary: Optional[str] = Field(alias="deck", default=None)
 
-    def __init__(self, **data: Any):
+    def __init__(self: "BaseCharacter", **data: Any):
         if "birth" in data and data["birth"]:
-            data["birth"] = datetime.strptime(data["birth"], "%b %d, %Y").date()
+            data["birth"] = datetime.strptime(data["birth"], "%b %d, %Y").date()  # noqa: DTZ007
         super().__init__(**data)
-
-    @property
-    def alias_list(self) -> List[str]:
-        r"""
-        List of aliases the Character has used.
-
-        Returns:
-            List of aliases, split by `~\r\n`
-        """
-        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
 
 
 class Character(BaseCharacter):
-    r"""
-    Extends BaseCharacter by including all the list references of a character.
+    r"""Extends BaseCharacter by including all the list references of a character.
 
     Attributes:
         creators: List of creators which worked on the Character.

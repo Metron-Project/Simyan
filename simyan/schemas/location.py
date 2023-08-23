@@ -1,5 +1,4 @@
-"""
-The Location module.
+"""The Location module.
 
 This module provides the following classes:
 
@@ -8,30 +7,28 @@ This module provides the following classes:
 """
 __all__ = ["Location", "LocationEntry"]
 
-import re
 from datetime import datetime
 from typing import List, Optional
 
 from pydantic import Field
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, ImageEntry, IssueEntry
+from simyan.schemas.generic_entries import GenericEntry, Image, IssueEntry
 
 
 class BaseLocation(BaseModel):
-    r"""
-    Contains fields for all Locations.
+    r"""Contains fields for all Locations.
 
     Attributes:
-        aliases: List of names used by the Location, separated by `~\r\n`.
+        aliases: List of names used by the Location, collected in a string.
         api_url: Url to the resource in the Comicvine API.
         date_added: Date and time when the Location was added.
         date_last_updated: Date and time when the Location was last updated.
         description: Long description of the Location.
         first_issue: First issue the Location appeared in.
+        id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Location.
         issue_count: Number of issues the Location appears in.
-        location_id: Identifier used by Comicvine.
         name: Name/Title of the Location.
         site_url: Url to the resource in Comicvine.
         start_year: The year the Location was first used.
@@ -44,28 +41,17 @@ class BaseLocation(BaseModel):
     date_last_updated: datetime
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
-    image: ImageEntry
+    id: int  # noqa: A003
+    image: Image
     issue_count: Optional[int] = Field(alias="count_of_issue_appearances", default=None)
-    location_id: int = Field(alias="id")
     name: str
     site_url: str = Field(alias="site_detail_url")
     start_year: Optional[int] = None
     summary: Optional[str] = Field(alias="deck", default=None)
 
-    @property
-    def alias_list(self) -> List[str]:
-        r"""
-        List of aliases the Location has used.
-
-        Returns:
-            List of aliases, split by `~\r\n`
-        """
-        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
-
 
 class Location(BaseLocation):
-    r"""
-    Extends BaseLocation by including all the list references of a location.
+    r"""Extends BaseLocation by including all the list references of a location.
 
     Attributes:
         issues: List of issues the Location appears in.

@@ -1,5 +1,4 @@
-"""
-The Exceptions test module.
+"""The Exceptions test module.
 
 This module contains tests for Exceptions.
 """
@@ -13,7 +12,7 @@ def test_unauthorized() -> None:
     """Test generating an AuthenticationError."""
     session = Comicvine(api_key="Invalid", cache=None)
     with pytest.raises(AuthenticationError):
-        session.publisher(publisher_id=1)
+        session.get_publisher(publisher_id=1)
 
 
 def test_not_found(session: Comicvine) -> None:
@@ -24,6 +23,6 @@ def test_not_found(session: Comicvine) -> None:
 
 def test_timeout(comicvine_api_key: str) -> None:
     """Test a TimeoutError for slow responses."""
-    session = Comicvine(api_key=comicvine_api_key, timeout=0.1, cache=None)
+    session = Comicvine(api_key=comicvine_api_key, timeout=1, cache=None)
     with pytest.raises(ServiceError):
-        session.publisher(publisher_id=1)
+        session.get_publisher(publisher_id=1)

@@ -1,5 +1,4 @@
-"""
-The Powers test module.
+"""The Powers test module.
 
 This module contains tests for Power and PowerEntry objects.
 """
@@ -16,12 +15,11 @@ def test_power(session: Comicvine) -> None:
     """Test using the power endpoint with a valid power_id."""
     result = session.get_power(power_id=1)
     assert result is not None
-    assert result.power_id == 1
+    assert result.id == 1
 
-    assert result.alias_list == []
     assert result.api_url == "https://comicvine.gamespot.com/api/power/4035-1/"
-    assert len(result.characters) == 7966
-    assert result.date_added == datetime(2008, 6, 6, 11, 28, 15)
+    assert len(result.characters) == 8040
+    assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 28, 15).astimezone()
     assert result.name == "Flight"
     assert (
         result.site_url
@@ -39,12 +37,11 @@ def test_power_list(session: Comicvine) -> None:
     """Test using the list powers endpoint with a valid search query."""
     search_results = session.list_powers({"filter": "name:Flight"})
     assert len(search_results) != 0
-    result = [x for x in search_results if x.power_id == 1][0]
+    result = next(x for x in search_results if x.id == 1)
     assert result is not None
 
-    assert result.alias_list == []
     assert result.api_url == "https://comicvine.gamespot.com/api/power/4035-1/"
-    assert result.date_added == datetime(2008, 6, 6, 11, 28, 15)
+    assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 28, 15).astimezone()
     assert result.name == "Flight"
     assert (
         result.site_url

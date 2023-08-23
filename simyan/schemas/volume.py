@@ -1,5 +1,4 @@
-"""
-The Volume module.
+"""The Volume module.
 
 This module provides the following classes:
 
@@ -7,28 +6,26 @@ This module provides the following classes:
 - VolumeEntry
 """
 __all__ = ["Volume", "VolumeEntry"]
-import re
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import CountEntry, GenericEntry, ImageEntry, IssueEntry
+from simyan.schemas.generic_entries import CountEntry, GenericEntry, Image, IssueEntry
 
 
 class BaseVolume(BaseModel):
-    r"""
-    Contains fields for all Volumes.
+    r"""Contains fields for all Volumes.
 
     Attributes:
-        aliases: List of names used by the Volume, separated by `~\r\n`.
+        aliases: List of names used by the Volume, collected in a string.
         api_url: Url to the resource in the Comicvine API.
         date_added: Date and time when the Volume was added.
         date_last_updated: Date and time when the Volume was last updated.
         description: Long description of the Volume.
         first_issue: First issue of the Volume.
-        volume_id: Identifier used by Comicvine.
+        id: Identifier used by Comicvine.
         image: Different sized images, posters and thumbnails for the Volume.
         issue_count: Number of issues in the Volume.
         last_issue: Last issue of the Volume.
@@ -45,7 +42,8 @@ class BaseVolume(BaseModel):
     date_last_updated: datetime
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = None
-    image: ImageEntry
+    id: int  # noqa: A003
+    image: Image
     issue_count: int = Field(alias="count_of_issues")
     last_issue: Optional[IssueEntry] = None
     name: str
@@ -53,12 +51,10 @@ class BaseVolume(BaseModel):
     site_url: str = Field(alias="site_detail_url")
     start_year: Optional[int] = None
     summary: Optional[str] = Field(alias="deck", default=None)
-    volume_id: int = Field(alias="id")
 
-    @validator("start_year", pre=True)
-    def validate_start_year(cls, v: str) -> Optional[int]:
-        """
-        Convert start_year to int or None.
+    @field_validator("start_year", mode="before")
+    def validate_start_year(cls: "BaseVolume", v: str) -> Optional[int]:
+        """Convert start_year to int or None.
 
         Args:
             v: String value of the start_year
@@ -73,20 +69,9 @@ class BaseVolume(BaseModel):
                 return None
         return None
 
-    @property
-    def alias_list(self) -> List[str]:
-        r"""
-        List of aliases the Volume has used.
-
-        Returns:
-            List of aliases, split by `~\r\n`
-        """
-        return re.split(r"[~\r\n]+", self.aliases) if self.aliases else []
-
 
 class Volume(BaseVolume):
-    r"""
-    Extends BaseVolume by including all the list references of a volume.
+    r"""Extends BaseVolume by including all the list references of a volume.
 
     Attributes:
         characters: List of characters in the Volume.
