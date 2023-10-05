@@ -12,7 +12,7 @@ import platform
 import re
 from enum import Enum
 from json import JSONDecodeError
-from typing import TYPE_CHECKING, Any, List, TypeVar
+from typing import Any, List, TypeVar
 from urllib.parse import urlencode
 
 from pydantic import TypeAdapter, ValidationError
@@ -34,9 +34,7 @@ from simyan.schemas.publisher import Publisher, PublisherEntry
 from simyan.schemas.story_arc import StoryArc, StoryArcEntry
 from simyan.schemas.team import Team, TeamEntry
 from simyan.schemas.volume import Volume, VolumeEntry
-
-if TYPE_CHECKING:
-    from simyan.sqlite_cache import SQLiteCache
+from simyan.sqlite_cache import SQLiteCache
 
 MINUTE = 60
 T = TypeVar("T")

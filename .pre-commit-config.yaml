@@ -1,10 +1,10 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.285
+    rev: v0.0.292
     hooks:
       - id: ruff
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.16
+    rev: 0.7.17
     hooks:
       - id: mdformat
         additional_dependencies:
@@ -20,10 +20,8 @@ repos:
       - id: check-builtin-literals
       - id: check-case-conflict
       - id: check-docstring-first
-#      - id: check-json
       - id: check-merge-conflict
       - id: check-toml
-#      - id: check-xml
       - id: check-yaml
         args:
           - --allow-multiple-documents
@@ -40,12 +38,8 @@ repos:
       - id: trailing-whitespace
         args:
           - --markdown-linebreak-ext=md
-#      - id: pretty-format-json
-#        args:
-#          - --autofix
-#          - --indent=2
   - repo: https://github.com/psf/black
-    rev: 23.7.0
+    rev: 23.9.1
     hooks:
       - id: black
   - repo: https://github.com/pappasam/toml-sort
