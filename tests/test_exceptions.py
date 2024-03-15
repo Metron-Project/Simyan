@@ -2,6 +2,7 @@
 
 This module contains tests for Exceptions.
 """
+
 import pytest
 
 from simyan.comicvine import Comicvine

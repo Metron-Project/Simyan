@@ -2,6 +2,7 @@
 
 This module contains tests for StoryArc and StoryArcEntry objects.
 """
+
 from datetime import datetime
 
 import pytest
@@ -100,9 +101,7 @@ def test_search_story_arc(session: Comicvine) -> None:
 def test_search_story_arc_max_results(session: Comicvine) -> None:
     """Test search endpoint with max_results."""
     results = session.search(
-        resource=ComicvineResource.STORY_ARC,
-        query="Blackest Night",
-        max_results=10,
+        resource=ComicvineResource.STORY_ARC, query="Blackest Night", max_results=10
     )
     assert all(isinstance(x, StoryArcEntry) for x in results)
     assert len(results) == 0

@@ -2,6 +2,7 @@
 
 This module contains tests for Character and CharacterEntry objects.
 """
+
 from datetime import datetime
 
 import pytest
@@ -88,9 +89,7 @@ def test_search_character(session: Comicvine) -> None:
 def test_search_character_max_results(session: Comicvine) -> None:
     """Test search endpoint with max_results."""
     results = session.search(
-        resource=ComicvineResource.CHARACTER,
-        query="Kyle Rayner",
-        max_results=10,
+        resource=ComicvineResource.CHARACTER, query="Kyle Rayner", max_results=10
     )
     assert all(isinstance(x, CharacterEntry) for x in results)
     assert len(results) == 10

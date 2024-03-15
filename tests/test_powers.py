@@ -2,6 +2,7 @@
 
 This module contains tests for Power and PowerEntry objects.
 """
+
 from datetime import datetime
 
 import pytest

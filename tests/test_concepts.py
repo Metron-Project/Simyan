@@ -2,6 +2,7 @@
 
 This module contains tests for Concept and ConceptEntry objects.
 """
+
 from datetime import datetime
 
 import pytest

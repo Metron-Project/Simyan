@@ -5,6 +5,7 @@ This module provides the following classes:
 - Origin
 - OriginEntry
 """
+
 __all__ = ["Origin", "OriginEntry"]
 from typing import List, Optional
 
@@ -25,7 +26,7 @@ class BaseOrigin(BaseModel):
     """
 
     api_url: str = Field(alias="api_detail_url")
-    id: int  # noqa: A003
+    id: int
     name: str
     site_url: str = Field(alias="site_detail_url")
 

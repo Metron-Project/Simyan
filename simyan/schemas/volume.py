@@ -5,6 +5,7 @@ This module provides the following classes:
 - Volume
 - VolumeEntry
 """
+
 __all__ = ["Volume", "VolumeEntry"]
 from datetime import datetime
 from typing import List, Optional
@@ -42,7 +43,7 @@ class BaseVolume(BaseModel):
     date_last_updated: datetime
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = None
-    id: int  # noqa: A003
+    id: int
     image: Image
     issue_count: int = Field(alias="count_of_issues")
     last_issue: Optional[IssueEntry] = None

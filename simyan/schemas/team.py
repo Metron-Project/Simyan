@@ -5,6 +5,7 @@ This module provides the following classes:
 - Team
 - TeamEntry
 """
+
 __all__ = ["Team", "TeamEntry"]
 from datetime import datetime
 from typing import List, Optional
@@ -41,7 +42,7 @@ class BaseTeam(BaseModel):
     date_last_updated: datetime
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
-    id: int  # noqa: A003
+    id: int
     image: Image
     issue_count: int = Field(alias="count_of_isssue_appearances")
     member_count: int = Field(alias="count_of_team_members")
@@ -68,8 +69,7 @@ class Team(BaseTeam):
     friends: List[GenericEntry] = Field(alias="character_friends", default_factory=list)
     issues: List[GenericEntry] = Field(alias="issue_credits", default_factory=list)
     issues_disbanded_in: List[GenericEntry] = Field(
-        alias="disbanded_in_issues",
-        default_factory=list,
+        alias="disbanded_in_issues", default_factory=list
     )
     members: List[GenericEntry] = Field(alias="characters", default_factory=list)
     story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)

@@ -5,6 +5,7 @@ This module provides the following classes:
 - Concept
 - ConceptEntry
 """
+
 __all__ = ["Concept", "ConceptEntry"]
 from datetime import datetime
 from typing import List, Optional
@@ -40,7 +41,7 @@ class BaseConcept(BaseModel):
     date_last_updated: datetime
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
-    id: int  # noqa: A003
+    id: int
     image: Image
     issue_count: int = Field(alias="count_of_isssue_appearances")
     name: str

@@ -5,6 +5,7 @@ This module provides the following classes:
 - Location
 - LocationEntry
 """
+
 __all__ = ["Location", "LocationEntry"]
 
 from datetime import datetime
@@ -41,7 +42,7 @@ class BaseLocation(BaseModel):
     date_last_updated: datetime
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
-    id: int  # noqa: A003
+    id: int
     image: Image
     issue_count: Optional[int] = Field(alias="count_of_issue_appearances", default=None)
     name: str

@@ -5,6 +5,7 @@ This module provides the following classes:
 - Issue
 - IssueEntry
 """
+
 __all__ = ["Issue", "IssueEntry"]
 from datetime import date, datetime
 from typing import Any, List, Optional
@@ -12,12 +13,7 @@ from typing import Any, List, Optional
 from pydantic import Field
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import (
-    AssociatedImage,
-    CreatorEntry,
-    GenericEntry,
-    Image,
-)
+from simyan.schemas.generic_entries import AssociatedImage, CreatorEntry, GenericEntry, Image
 
 
 class BaseIssue(BaseModel):
@@ -48,7 +44,7 @@ class BaseIssue(BaseModel):
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
-    id: int  # noqa: A003
+    id: int
     image: Image
     name: Optional[str] = None
     number: Optional[str] = Field(alias="issue_number", default=None)
@@ -88,8 +84,7 @@ class Issue(BaseIssue):
     first_appearance_locations: List[GenericEntry] = Field(default_factory=list)
     first_appearance_objects: List[GenericEntry] = Field(default_factory=list)
     first_appearance_story_arcs: List[GenericEntry] = Field(
-        alias="first_appearance_storyarcs",
-        default_factory=list,
+        alias="first_appearance_storyarcs", default_factory=list
     )
     first_appearance_teams: List[GenericEntry] = Field(default_factory=list)
     locations: List[GenericEntry] = Field(alias="location_credits", default_factory=list)

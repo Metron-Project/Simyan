@@ -5,6 +5,7 @@ This module provides the following classes:
 - Character
 - CharacterEntry
 """
+
 __all__ = ["Character", "CharacterEntry"]
 from datetime import date, datetime
 from typing import Any, List, Optional
@@ -37,6 +38,7 @@ class BaseCharacter(BaseModel):
         site_url: Url to the resource in Comicvine.
         summary: Short description of the Character.
     """
+
     aliases: Optional[str] = None
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
@@ -45,7 +47,7 @@ class BaseCharacter(BaseModel):
     description: Optional[str] = None
     first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
     gender: int
-    id: int  # noqa: A003
+    id: int
     image: Image
     issue_count: int = Field(alias="count_of_issue_appearances")
     name: str
@@ -56,7 +58,7 @@ class BaseCharacter(BaseModel):
     summary: Optional[str] = Field(alias="deck", default=None)
 
     def __init__(self: "BaseCharacter", **data: Any):
-        if "birth" in data and data["birth"]:
+        if data.get("birth"):
             data["birth"] = datetime.strptime(data["birth"], "%b %d, %Y").date()  # noqa: DTZ007
         super().__init__(**data)
 

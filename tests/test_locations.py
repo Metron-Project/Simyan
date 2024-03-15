@@ -2,6 +2,7 @@
 
 This module contains tests for Location and LocationEntry objects.
 """
+
 from datetime import datetime
 
 import pytest

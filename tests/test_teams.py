@@ -2,6 +2,7 @@
 
 This module contains tests for Team and TeamEntry objects.
 """
+
 from datetime import datetime
 
 import pytest

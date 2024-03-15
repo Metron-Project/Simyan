@@ -4,6 +4,7 @@ This module provides the following classes:
 
 - BaseModel
 """
+
 __all__ = ["BaseModel"]
 
 from pydantic import BaseModel as PydanticModel

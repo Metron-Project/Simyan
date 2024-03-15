@@ -2,6 +2,7 @@
 
 This module contains tests for Creator and CreatorEntry objects.
 """
+
 from datetime import date, datetime
 
 import pytest

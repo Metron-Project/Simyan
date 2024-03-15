@@ -6,6 +6,7 @@ This module provides the following classes:
 - AuthenticationError
 - CacheError
 """
+
 __all__ = ["ServiceError", "AuthenticationError", "CacheError"]
 
 

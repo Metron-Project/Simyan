@@ -4,6 +4,7 @@ This module provides the following classes:
 
 - SQLiteCache
 """
+
 from __future__ import annotations
 
 __all__ = ["SQLiteCache"]
@@ -28,11 +29,7 @@ class SQLiteCache:
         connection (sqlite3.Connection): Database connection
     """
 
-    def __init__(
-        self: SQLiteCache,
-        path: Path | None = None,
-        expiry: int | None = 14,
-    ):
+    def __init__(self: SQLiteCache, path: Path | None = None, expiry: int | None = 14):
         self.expiry = expiry
         self.connection = sqlite3.connect(path or get_cache_root() / "cache.sqlite")
         self.connection.row_factory = sqlite3.Row

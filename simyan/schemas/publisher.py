@@ -5,6 +5,7 @@ This module provides the following classes:
 - Publisher
 - PublisherEntry
 """
+
 __all__ = ["Publisher", "PublisherEntry"]
 from datetime import datetime
 from typing import List, Optional
@@ -39,7 +40,7 @@ class BasePublisher(BaseModel):
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
-    id: int  # noqa: A003
+    id: int
     image: Image
     location_address: Optional[str] = None
     location_city: Optional[str] = None

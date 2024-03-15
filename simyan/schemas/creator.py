@@ -5,6 +5,7 @@ This module provides the following classes:
 - Creator
 - CreatorEntry
 """
+
 __all__ = ["Creator", "CreatorEntry"]
 from datetime import date, datetime
 from typing import Any, List, Optional
@@ -50,7 +51,7 @@ class BaseCreator(BaseModel):
     email: Optional[str] = None
     gender: int
     hometown: Optional[str] = None
-    id: int  # noqa: A003
+    id: int
     image: Image
     issue_count: Optional[int] = Field(alias="count_of_isssue_appearances", default=None)
     name: str
@@ -59,9 +60,9 @@ class BaseCreator(BaseModel):
     website: Optional[str] = None
 
     def __init__(self: "BaseCreator", **data: Any):
-        if "death" in data and data["death"]:
+        if data.get("death"):
             data["death"] = data["death"]["date"].split()[0]
-        if "birth" in data and data["birth"]:
+        if data.get("birth"):
             data["birth"] = data["birth"].split()[0]
         super().__init__(**data)
 

@@ -5,6 +5,7 @@ This module provides the following classes:
 - Power
 - PowerEntry
 """
+
 __all__ = ["Power", "PowerEntry"]
 from datetime import datetime
 from typing import List, Optional
@@ -34,7 +35,7 @@ class BasePower(BaseModel):
     date_added: datetime
     date_last_updated: datetime
     description: Optional[str] = None
-    id: int  # noqa: A003
+    id: int
     name: str
     site_url: str = Field(alias="site_detail_url")
 

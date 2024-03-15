@@ -2,6 +2,7 @@
 
 This module contains tests for Publisher and PublisherEntry objects.
 """
+
 from datetime import datetime
 
 import pytest
