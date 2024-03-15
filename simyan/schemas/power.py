@@ -6,9 +6,10 @@ This module provides the following classes:
 - PowerEntry
 """
 
+from __future__ import annotations
+
 __all__ = ["Power", "PowerEntry"]
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import Field
 
@@ -30,11 +31,11 @@ class BasePower(BaseModel):
         site_url: Url to the resource in Comicvine.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
+    description: str | None = None
     id: int
     name: str
     site_url: str = Field(alias="site_detail_url")
@@ -47,7 +48,7 @@ class Power(BasePower):
         characters: List of characters with the Power.
     """
 
-    characters: List[GenericEntry] = Field(default_factory=list)
+    characters: list[GenericEntry] = Field(default_factory=list)
 
 
 class PowerEntry(BasePower):

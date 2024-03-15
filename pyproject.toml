@@ -121,6 +121,3 @@ classmethod-decorators = ["classmethod", "pydantic.field_validator"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-
-[tool.ruff.lint.pyupgrade]
-keep-runtime-typing = true

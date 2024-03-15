@@ -6,9 +6,10 @@ This module provides the following classes:
 - ItemEntry
 """
 
+from __future__ import annotations
+
 __all__ = ["Item", "ItemEntry"]
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import Field
 
@@ -35,19 +36,19 @@ class BaseItem(BaseModel):
         summary: Short description of the Item.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
+    description: str | None = None
+    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
     id: int
     image: Image
     issue_count: int = Field(alias="count_of_issue_appearances")
     name: str
     site_url: str = Field(alias="site_detail_url")
-    start_year: Optional[int] = None
-    summary: Optional[str] = Field(alias="deck", default=None)
+    start_year: int | None = None
+    summary: str | None = Field(alias="deck", default=None)
 
 
 class Item(BaseItem):
@@ -59,9 +60,9 @@ class Item(BaseItem):
         volumes: List of volumes the Item appears in.
     """
 
-    issues: List[GenericEntry] = Field(alias="issue_credits", default_factory=list)
-    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
-    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
+    issues: list[GenericEntry] = Field(alias="issue_credits", default_factory=list)
+    story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
 
 
 class ItemEntry(BaseItem):

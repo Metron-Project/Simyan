@@ -6,9 +6,10 @@ This module provides the following classes:
 - VolumeEntry
 """
 
+from __future__ import annotations
+
 __all__ = ["Volume", "VolumeEntry"]
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import Field, field_validator
 
@@ -37,24 +38,24 @@ class BaseVolume(BaseModel):
         summary: Short description of the Volume.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = None
+    description: str | None = None
+    first_issue: IssueEntry | None = None
     id: int
     image: Image
     issue_count: int = Field(alias="count_of_issues")
-    last_issue: Optional[IssueEntry] = None
+    last_issue: IssueEntry | None = None
     name: str
-    publisher: Optional[GenericEntry] = None
+    publisher: GenericEntry | None = None
     site_url: str = Field(alias="site_detail_url")
-    start_year: Optional[int] = None
-    summary: Optional[str] = Field(alias="deck", default=None)
+    start_year: int | None = None
+    summary: str | None = Field(alias="deck", default=None)
 
     @field_validator("start_year", mode="before")
-    def validate_start_year(cls: "BaseVolume", v: str) -> Optional[int]:
+    def validate_start_year(cls: BaseVolume, v: str) -> int | None:
         """Convert start_year to int or None.
 
         Args:
@@ -83,12 +84,12 @@ class Volume(BaseVolume):
         objects: List of objects in the Volume.
     """
 
-    characters: List[CountEntry] = Field(default_factory=list)
-    concepts: List[CountEntry] = Field(default_factory=list)
-    creators: List[CountEntry] = Field(alias="people", default_factory=list)
-    issues: List[IssueEntry] = Field(default_factory=list)
-    locations: List[CountEntry] = Field(default_factory=list)
-    objects: List[CountEntry] = Field(default_factory=list)
+    characters: list[CountEntry] = Field(default_factory=list)
+    concepts: list[CountEntry] = Field(default_factory=list)
+    creators: list[CountEntry] = Field(alias="people", default_factory=list)
+    issues: list[IssueEntry] = Field(default_factory=list)
+    locations: list[CountEntry] = Field(default_factory=list)
+    objects: list[CountEntry] = Field(default_factory=list)
 
 
 class VolumeEntry(BaseVolume):
