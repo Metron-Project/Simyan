@@ -2,6 +2,7 @@
 
 This module contains tests for Creator and CreatorEntry objects.
 """
+
 from datetime import date, datetime
 
 import pytest
@@ -18,7 +19,7 @@ def test_creator(session: Comicvine) -> None:
     assert result.id == 40439
 
     assert result.api_url == "https://comicvine.gamespot.com/api/person/4040-40439/"
-    assert len(result.characters) == 271
+    assert len(result.characters) == 280
     assert result.country == "United States"
     assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 28, 14).astimezone()
     assert result.date_of_birth == date(1973, 1, 25)
@@ -27,11 +28,11 @@ def test_creator(session: Comicvine) -> None:
     assert result.gender == 1
     assert result.hometown == "Detroit, MI"
     assert result.issue_count is None
-    assert len(result.issues) == 1547
+    assert len(result.issues) == 1562
     assert result.name == "Geoff Johns"
     assert result.site_url == "https://comicvine.gamespot.com/geoff-johns/4040-40439/"
-    assert len(result.story_arcs) == 0
-    assert len(result.volumes) == 577
+    assert len(result.story_arcs) == 1
+    assert len(result.volumes) == 579
     assert result.website == "http://www.geoffjohns.com"
 
 

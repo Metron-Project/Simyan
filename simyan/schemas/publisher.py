@@ -5,9 +5,11 @@ This module provides the following classes:
 - Publisher
 - PublisherEntry
 """
+
+from __future__ import annotations
+
 __all__ = ["Publisher", "PublisherEntry"]
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import Field
 
@@ -34,19 +36,19 @@ class BasePublisher(BaseModel):
         summary: Short description of the Publisher.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    id: int  # noqa: A003
+    description: str | None = None
+    id: int
     image: Image
-    location_address: Optional[str] = None
-    location_city: Optional[str] = None
-    location_state: Optional[str] = None
+    location_address: str | None = None
+    location_city: str | None = None
+    location_state: str | None = None
     name: str
     site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(default=None, alias="deck")
+    summary: str | None = Field(default=None, alias="deck")
 
 
 class Publisher(BasePublisher):
@@ -59,10 +61,10 @@ class Publisher(BasePublisher):
         volumes: List of volumes the Publisher created.
     """
 
-    characters: List[GenericEntry] = Field(default_factory=list)
-    story_arcs: List[GenericEntry] = Field(default_factory=list)
-    teams: List[GenericEntry] = Field(default_factory=list)
-    volumes: List[GenericEntry] = Field(default_factory=list)
+    characters: list[GenericEntry] = Field(default_factory=list)
+    story_arcs: list[GenericEntry] = Field(default_factory=list)
+    teams: list[GenericEntry] = Field(default_factory=list)
+    volumes: list[GenericEntry] = Field(default_factory=list)
 
 
 class PublisherEntry(BasePublisher):

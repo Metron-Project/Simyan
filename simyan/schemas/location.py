@@ -5,10 +5,12 @@ This module provides the following classes:
 - Location
 - LocationEntry
 """
+
+from __future__ import annotations
+
 __all__ = ["Location", "LocationEntry"]
 
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import Field
 
@@ -35,19 +37,19 @@ class BaseLocation(BaseModel):
         summary: Short description of the Location.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
-    id: int  # noqa: A003
+    description: str | None = None
+    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
+    id: int
     image: Image
-    issue_count: Optional[int] = Field(alias="count_of_issue_appearances", default=None)
+    issue_count: int | None = Field(alias="count_of_issue_appearances", default=None)
     name: str
     site_url: str = Field(alias="site_detail_url")
-    start_year: Optional[int] = None
-    summary: Optional[str] = Field(alias="deck", default=None)
+    start_year: int | None = None
+    summary: str | None = Field(alias="deck", default=None)
 
 
 class Location(BaseLocation):
@@ -59,9 +61,9 @@ class Location(BaseLocation):
         volumes: List of volumes the Location appears in.
     """
 
-    issues: List[IssueEntry] = Field(alias="issue_credits", default_factory=list)
-    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
-    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
+    issues: list[IssueEntry] = Field(alias="issue_credits", default_factory=list)
+    story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
 
 
 class LocationEntry(BaseLocation):

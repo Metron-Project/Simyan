@@ -5,9 +5,11 @@ This module provides the following classes:
 - Team
 - TeamEntry
 """
+
+from __future__ import annotations
+
 __all__ = ["Team", "TeamEntry"]
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import Field
 
@@ -35,20 +37,20 @@ class BaseTeam(BaseModel):
         summary: Short description of the Team.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
-    id: int  # noqa: A003
+    description: str | None = None
+    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
+    id: int
     image: Image
     issue_count: int = Field(alias="count_of_isssue_appearances")
     member_count: int = Field(alias="count_of_team_members")
     name: str
-    publisher: Optional[GenericEntry] = None
+    publisher: GenericEntry | None = None
     site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(alias="deck", default=None)
+    summary: str | None = Field(alias="deck", default=None)
 
 
 class Team(BaseTeam):
@@ -64,16 +66,15 @@ class Team(BaseTeam):
         volumes: List of volumes the Team appears in.
     """
 
-    enemies: List[GenericEntry] = Field(alias="character_enemies", default_factory=list)
-    friends: List[GenericEntry] = Field(alias="character_friends", default_factory=list)
-    issues: List[GenericEntry] = Field(alias="issue_credits", default_factory=list)
-    issues_disbanded_in: List[GenericEntry] = Field(
-        alias="disbanded_in_issues",
-        default_factory=list,
+    enemies: list[GenericEntry] = Field(alias="character_enemies", default_factory=list)
+    friends: list[GenericEntry] = Field(alias="character_friends", default_factory=list)
+    issues: list[GenericEntry] = Field(alias="issue_credits", default_factory=list)
+    issues_disbanded_in: list[GenericEntry] = Field(
+        alias="disbanded_in_issues", default_factory=list
     )
-    members: List[GenericEntry] = Field(alias="characters", default_factory=list)
-    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
-    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
+    members: list[GenericEntry] = Field(alias="characters", default_factory=list)
+    story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
 
 
 class TeamEntry(BaseTeam):

@@ -5,9 +5,11 @@ This module provides the following classes:
 - Concept
 - ConceptEntry
 """
+
+from __future__ import annotations
+
 __all__ = ["Concept", "ConceptEntry"]
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import Field
 
@@ -34,19 +36,19 @@ class BaseConcept(BaseModel):
         summary: Short description of the Concept.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
-    id: int  # noqa: A003
+    description: str | None = None
+    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
+    id: int
     image: Image
     issue_count: int = Field(alias="count_of_isssue_appearances")
     name: str
     site_url: str = Field(alias="site_detail_url")
-    start_year: Optional[int] = None
-    summary: Optional[str] = Field(alias="deck", default=None)
+    start_year: int | None = None
+    summary: str | None = Field(alias="deck", default=None)
 
 
 class Concept(BaseConcept):
@@ -57,8 +59,8 @@ class Concept(BaseConcept):
         volumes: List of volumes the Concept appears.
     """
 
-    issues: List[IssueEntry] = Field(alias="issue_credits", default_factory=list)
-    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
+    issues: list[IssueEntry] = Field(alias="issue_credits", default_factory=list)
+    volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
 
 
 class ConceptEntry(BaseConcept):

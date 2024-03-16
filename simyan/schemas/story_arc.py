@@ -5,9 +5,11 @@ This module provides the following classes:
 - StoryArc
 - StoryArcEntry
 """
+
+from __future__ import annotations
+
 __all__ = ["StoryArc", "StoryArcEntry"]
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import Field
 
@@ -34,19 +36,19 @@ class BaseStoryArc(BaseModel):
         summary: Short description of the Story Arc.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
-    id: int  # noqa: A003
+    description: str | None = None
+    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
+    id: int
     image: Image
     issue_count: int = Field(alias="count_of_isssue_appearances")
     name: str
-    publisher: Optional[GenericEntry] = None
+    publisher: GenericEntry | None = None
     site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(alias="deck", default=None)
+    summary: str | None = Field(alias="deck", default=None)
 
 
 class StoryArc(BaseStoryArc):
@@ -56,7 +58,7 @@ class StoryArc(BaseStoryArc):
         issues: List of issues in the Story Arc.
     """
 
-    issues: List[GenericEntry] = Field(default_factory=list)
+    issues: list[GenericEntry] = Field(default_factory=list)
 
 
 class StoryArcEntry(BaseStoryArc):

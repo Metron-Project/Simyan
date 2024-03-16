@@ -5,19 +5,17 @@ This module provides the following classes:
 - Issue
 - IssueEntry
 """
+
+from __future__ import annotations
+
 __all__ = ["Issue", "IssueEntry"]
 from datetime import date, datetime
-from typing import Any, List, Optional
+from typing import Any
 
 from pydantic import Field
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import (
-    AssociatedImage,
-    CreatorEntry,
-    GenericEntry,
-    Image,
-)
+from simyan.schemas.generic_entries import AssociatedImage, CreatorEntry, GenericEntry, Image
 
 
 class BaseIssue(BaseModel):
@@ -41,20 +39,20 @@ class BaseIssue(BaseModel):
         volume: The volume the Issue is in.
     """
 
-    aliases: Optional[str] = None
-    associated_images: List[AssociatedImage] = Field(default_factory=list)
+    aliases: str | None = None
+    associated_images: list[AssociatedImage] = Field(default_factory=list)
     api_url: str = Field(alias="api_detail_url")
-    cover_date: Optional[date] = None
+    cover_date: date | None = None
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    id: int  # noqa: A003
+    description: str | None = None
+    id: int
     image: Image
-    name: Optional[str] = None
-    number: Optional[str] = Field(alias="issue_number", default=None)
+    name: str | None = None
+    number: str | None = Field(alias="issue_number", default=None)
     site_url: str = Field(alias="site_detail_url")
-    store_date: Optional[date] = None
-    summary: Optional[str] = Field(alias="deck", default=None)
+    store_date: date | None = None
+    summary: str | None = Field(alias="deck", default=None)
     volume: GenericEntry
 
 
@@ -79,26 +77,25 @@ class Issue(BaseIssue):
         teams_disbanded: List of teams who disbanded in the Issue.
     """
 
-    characters: List[GenericEntry] = Field(alias="character_credits", default_factory=list)
-    concepts: List[GenericEntry] = Field(alias="concept_credits", default_factory=list)
-    creators: List[CreatorEntry] = Field(alias="person_credits", default_factory=list)
-    deaths: List[GenericEntry] = Field(alias="character_died_in", default_factory=list)
-    first_appearance_characters: List[GenericEntry] = Field(default_factory=list)
-    first_appearance_concepts: List[GenericEntry] = Field(default_factory=list)
-    first_appearance_locations: List[GenericEntry] = Field(default_factory=list)
-    first_appearance_objects: List[GenericEntry] = Field(default_factory=list)
-    first_appearance_story_arcs: List[GenericEntry] = Field(
-        alias="first_appearance_storyarcs",
-        default_factory=list,
+    characters: list[GenericEntry] = Field(alias="character_credits", default_factory=list)
+    concepts: list[GenericEntry] = Field(alias="concept_credits", default_factory=list)
+    creators: list[CreatorEntry] = Field(alias="person_credits", default_factory=list)
+    deaths: list[GenericEntry] = Field(alias="character_died_in", default_factory=list)
+    first_appearance_characters: list[GenericEntry] = Field(default_factory=list)
+    first_appearance_concepts: list[GenericEntry] = Field(default_factory=list)
+    first_appearance_locations: list[GenericEntry] = Field(default_factory=list)
+    first_appearance_objects: list[GenericEntry] = Field(default_factory=list)
+    first_appearance_story_arcs: list[GenericEntry] = Field(
+        alias="first_appearance_storyarcs", default_factory=list
     )
-    first_appearance_teams: List[GenericEntry] = Field(default_factory=list)
-    locations: List[GenericEntry] = Field(alias="location_credits", default_factory=list)
-    objects: List[GenericEntry] = Field(alias="object_credits", default_factory=list)
-    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
-    teams: List[GenericEntry] = Field(alias="team_credits", default_factory=list)
-    teams_disbanded: List[GenericEntry] = Field(alias="team_disbanded_in", default_factory=list)
+    first_appearance_teams: list[GenericEntry] = Field(default_factory=list)
+    locations: list[GenericEntry] = Field(alias="location_credits", default_factory=list)
+    objects: list[GenericEntry] = Field(alias="object_credits", default_factory=list)
+    story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    teams: list[GenericEntry] = Field(alias="team_credits", default_factory=list)
+    teams_disbanded: list[GenericEntry] = Field(alias="team_disbanded_in", default_factory=list)
 
-    def __init__(self: "Issue", **data: Any):
+    def __init__(self: Issue, **data: Any):
         if "first_appearance_characters" in data and not data["first_appearance_characters"]:
             data["first_appearance_characters"] = []
         if "first_appearance_concepts" in data and not data["first_appearance_concepts"]:

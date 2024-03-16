@@ -2,6 +2,7 @@
 
 This module contains tests for Issue and IssueEntry objects.
 """
+
 from datetime import date, datetime
 
 import pytest

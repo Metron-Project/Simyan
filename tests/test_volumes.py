@@ -2,6 +2,7 @@
 
 This module contains tests for Volume and VolumeEntry objects.
 """
+
 from datetime import datetime
 
 import pytest
@@ -18,7 +19,7 @@ def test_volume(session: Comicvine) -> None:
     assert result.id == 18216
 
     assert result.api_url == "https://comicvine.gamespot.com/api/volume/4050-18216/"
-    assert len(result.characters) == 367
+    assert len(result.characters) == 368
     assert len(result.concepts) == 18
     assert len(result.creators) == 95
     assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 8, 33).astimezone()
@@ -28,7 +29,7 @@ def test_volume(session: Comicvine) -> None:
     assert result.last_issue.id == 278617
     assert len(result.locations) == 48
     assert result.name == "Green Lantern"
-    assert len(result.objects) == 367
+    assert len(result.objects) == 368
     assert result.publisher.id == 10
     assert result.site_url == "https://comicvine.gamespot.com/green-lantern/4050-18216/"
     assert result.start_year == 2005

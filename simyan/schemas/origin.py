@@ -5,8 +5,10 @@ This module provides the following classes:
 - Origin
 - OriginEntry
 """
+
+from __future__ import annotations
+
 __all__ = ["Origin", "OriginEntry"]
-from typing import List, Optional
 
 from pydantic import Field
 
@@ -25,7 +27,7 @@ class BaseOrigin(BaseModel):
     """
 
     api_url: str = Field(alias="api_detail_url")
-    id: int  # noqa: A003
+    id: int
     name: str
     site_url: str = Field(alias="site_detail_url")
 
@@ -39,9 +41,9 @@ class Origin(BaseOrigin):
         profiles: Unknown field
     """
 
-    character_set: Optional[int] = None
-    characters: List[GenericEntry] = Field(default_factory=list)
-    profiles: List[int] = Field(default_factory=list)
+    character_set: int | None = None
+    characters: list[GenericEntry] = Field(default_factory=list)
+    profiles: list[int] = Field(default_factory=list)
 
 
 class OriginEntry(BaseOrigin):

@@ -5,9 +5,12 @@ This module provides the following classes:
 - Character
 - CharacterEntry
 """
+
+from __future__ import annotations
+
 __all__ = ["Character", "CharacterEntry"]
 from datetime import date, datetime
-from typing import Any, List, Optional
+from typing import Any
 
 from pydantic import Field
 
@@ -37,26 +40,27 @@ class BaseCharacter(BaseModel):
         site_url: Url to the resource in Comicvine.
         summary: Short description of the Character.
     """
-    aliases: Optional[str] = None
+
+    aliases: str | None = None
     api_url: str = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    date_of_birth: Optional[date] = Field(alias="birth", default=None)
-    description: Optional[str] = None
-    first_issue: Optional[IssueEntry] = Field(alias="first_appeared_in_issue", default=None)
+    date_of_birth: date | None = Field(alias="birth", default=None)
+    description: str | None = None
+    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
     gender: int
-    id: int  # noqa: A003
+    id: int
     image: Image
     issue_count: int = Field(alias="count_of_issue_appearances")
     name: str
-    origin: Optional[GenericEntry] = None
-    publisher: Optional[GenericEntry] = None
-    real_name: Optional[str] = None
+    origin: GenericEntry | None = None
+    publisher: GenericEntry | None = None
+    real_name: str | None = None
     site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(alias="deck", default=None)
+    summary: str | None = Field(alias="deck", default=None)
 
-    def __init__(self: "BaseCharacter", **data: Any):
-        if "birth" in data and data["birth"]:
+    def __init__(self: BaseCharacter, **data: Any):
+        if data.get("birth"):
             data["birth"] = datetime.strptime(data["birth"], "%b %d, %Y").date()  # noqa: DTZ007
         super().__init__(**data)
 
@@ -78,17 +82,17 @@ class Character(BaseCharacter):
         volumes: List of volumes the Character appears in.
     """
 
-    creators: List[GenericEntry] = Field(default_factory=list)
-    deaths: List[GenericEntry] = Field(alias="issues_died_in", default_factory=list)
-    enemies: List[GenericEntry] = Field(alias="character_enemies", default_factory=list)
-    enemy_teams: List[GenericEntry] = Field(alias="team_enemies", default_factory=list)
-    friendly_teams: List[GenericEntry] = Field(alias="team_friends", default_factory=list)
-    friends: List[GenericEntry] = Field(alias="character_friends", default_factory=list)
-    issues: List[GenericEntry] = Field(alias="issue_credits", default_factory=list)
-    powers: List[GenericEntry] = Field(default_factory=list)
-    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
-    teams: List[GenericEntry] = Field(default_factory=list)
-    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
+    creators: list[GenericEntry] = Field(default_factory=list)
+    deaths: list[GenericEntry] = Field(alias="issues_died_in", default_factory=list)
+    enemies: list[GenericEntry] = Field(alias="character_enemies", default_factory=list)
+    enemy_teams: list[GenericEntry] = Field(alias="team_enemies", default_factory=list)
+    friendly_teams: list[GenericEntry] = Field(alias="team_friends", default_factory=list)
+    friends: list[GenericEntry] = Field(alias="character_friends", default_factory=list)
+    issues: list[GenericEntry] = Field(alias="issue_credits", default_factory=list)
+    powers: list[GenericEntry] = Field(default_factory=list)
+    story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    teams: list[GenericEntry] = Field(default_factory=list)
+    volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
 
 
 class CharacterEntry(BaseCharacter):

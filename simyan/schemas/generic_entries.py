@@ -9,15 +9,10 @@ This module provides the following classes:
 - Image
 - AssociatedImage
 """
-__all__ = [
-    "GenericEntry",
-    "CountEntry",
-    "IssueEntry",
-    "CreatorEntry",
-    "Image",
-    "AssociatedImage",
-]
-from typing import Optional
+
+from __future__ import annotations
+
+__all__ = ["GenericEntry", "CountEntry", "IssueEntry", "CreatorEntry", "Image", "AssociatedImage"]
 
 from pydantic import Field
 
@@ -35,9 +30,9 @@ class GenericEntry(BaseModel, extra="forbid"):
     """
 
     api_url: str = Field(alias="api_detail_url")
-    id: int  # noqa: A003
-    name: Optional[str] = None
-    site_url: Optional[str] = Field(default=None, alias="site_detail_url")
+    id: int
+    name: str | None = None
+    site_url: str | None = Field(default=None, alias="site_detail_url")
 
 
 class CountEntry(GenericEntry):
@@ -57,7 +52,7 @@ class IssueEntry(GenericEntry):
         number:
     """
 
-    number: Optional[str] = Field(default=None, alias="issue_number")
+    number: str | None = Field(default=None, alias="issue_number")
 
 
 class CreatorEntry(GenericEntry):
@@ -95,7 +90,7 @@ class Image(BaseModel, extra="forbid"):
     super_url: str
     thumbnail: str = Field(alias="thumb_url")
     tiny_url: str
-    tags: Optional[str] = Field(default=None, alias="image_tags")
+    tags: str | None = Field(default=None, alias="image_tags")
 
 
 class AssociatedImage(BaseModel, extra="forbid"):
@@ -109,6 +104,6 @@ class AssociatedImage(BaseModel, extra="forbid"):
     """
 
     url: str = Field(alias="original_url")
-    id: int  # noqa: A003
-    caption: Optional[str] = None
-    tags: Optional[str] = Field(default=None, alias="image_tags")
+    id: int
+    caption: str | None = None
+    tags: str | None = Field(default=None, alias="image_tags")

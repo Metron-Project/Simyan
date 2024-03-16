@@ -25,7 +25,8 @@ classifiers = [
   "Typing :: Typed"
 ]
 dependencies = [
-  "pydantic >= 2.4.2",
+  "eval-type-backport >= 0.1.3; python_version < \"3.10\"",
+  "pydantic >= 2.6.4",
   "ratelimit >= 2.2.1",
   "requests >= 2.31.0"
 ]
@@ -42,18 +43,18 @@ requires-python = ">= 3.8"
 
 [project.optional-dependencies]
 dev = [
-  "pre-commit >= 3.4.0"
+  "pre-commit >= 3.5.0"
 ]
 docs = [
   "mkdocs >= 1.5.3",
-  "mkdocs-include-markdown-plugin >= 6.0.1",
-  "mkdocs-material >= 9.4.4",
-  "mkdocstrings[python] >= 0.23.0"
+  "mkdocs-include-markdown-plugin >= 6.0.4",
+  "mkdocs-material >= 9.5.13",
+  "mkdocstrings[python] >= 0.24.1"
 ]
 test = [
-  "pytest >= 7.4.2",
+  "pytest >= 8.1.1",
   "pytest-cov >= 4.1.0",
-  "pytest-pretty >= 1.2.0"
+  "tox >= 4.14.1"
 ]
 
 [project.urls]
@@ -61,10 +62,6 @@ Documentation = "https://simyan.readthedocs.io/en/latest/"
 Homepage = "https://pypi.org/project/Simyan"
 Issues = "https://github.com/Metron-Project/Simyan/issues"
 Source = "https://github.com/Metron-Project/Simyan"
-
-[tool.black]
-line-length = 100
-target-version = ["py310", "py311", "py312", "py38", "py39"]
 
 [tool.coverage.report]
 show_missing = true
@@ -80,38 +77,47 @@ addopts = ["--cov"]
 
 [tool.ruff]
 fix = true
+line-length = 100
+output-format = "grouped"
+show-fixes = true
+unsafe-fixes = true
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "native"
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
 ignore = [
+  "COM812",
   "D107",
   "EXE",
   "FBT",
   "PLR2004",
   "TCH"
 ]
-line-length = 100
-output-format = "grouped"
+ignore-init-module-imports = true
 select = ["ALL"]
-show-fixes = true
-target-version = "py38"
 
-[tool.ruff.flake8-annotations]
+[tool.ruff.lint.flake8-annotations]
 allow-star-arg-any = true
 mypy-init-return = true
 
-[tool.ruff.flake8-tidy-imports]
+[tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
-[tool.ruff.isort]
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = true
+
+[tool.ruff.lint.isort]
 combine-as-imports = true
+split-on-trailing-comma = false
 
-[tool.ruff.mccabe]
-max-complexity = 18
-
-[tool.ruff.pep8-naming]
+[tool.ruff.lint.pep8-naming]
 classmethod-decorators = ["classmethod", "pydantic.field_validator"]
 
-[tool.ruff.per-file-ignores]
-"simyan/schemas/*.py" = ["FA100"]
+[tool.ruff.lint.per-file-ignores]
 "tests/test_*.py" = ["S101"]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"

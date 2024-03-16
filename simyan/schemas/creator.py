@@ -5,9 +5,12 @@ This module provides the following classes:
 - Creator
 - CreatorEntry
 """
+
+from __future__ import annotations
+
 __all__ = ["Creator", "CreatorEntry"]
 from datetime import date, datetime
-from typing import Any, List, Optional
+from typing import Any
 
 from pydantic import Field
 
@@ -39,29 +42,29 @@ class BaseCreator(BaseModel):
         website: Url to the Creator's website.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: str = Field(alias="api_detail_url")
-    country: Optional[str] = None
+    country: str | None = None
     date_added: datetime
     date_last_updated: datetime
-    date_of_birth: Optional[date] = Field(alias="birth", default=None)
-    date_of_death: Optional[date] = Field(alias="death", default=None)
-    description: Optional[str] = None
-    email: Optional[str] = None
+    date_of_birth: date | None = Field(alias="birth", default=None)
+    date_of_death: date | None = Field(alias="death", default=None)
+    description: str | None = None
+    email: str | None = None
     gender: int
-    hometown: Optional[str] = None
-    id: int  # noqa: A003
+    hometown: str | None = None
+    id: int
     image: Image
-    issue_count: Optional[int] = Field(alias="count_of_isssue_appearances", default=None)
+    issue_count: int | None = Field(alias="count_of_isssue_appearances", default=None)
     name: str
     site_url: str = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(alias="deck", default=None)
-    website: Optional[str] = None
+    summary: str | None = Field(alias="deck", default=None)
+    website: str | None = None
 
-    def __init__(self: "BaseCreator", **data: Any):
-        if "death" in data and data["death"]:
+    def __init__(self: BaseCreator, **data: Any):
+        if data.get("death"):
             data["death"] = data["death"]["date"].split()[0]
-        if "birth" in data and data["birth"]:
+        if data.get("birth"):
             data["birth"] = data["birth"].split()[0]
         super().__init__(**data)
 
@@ -76,10 +79,10 @@ class Creator(BaseCreator):
         volumes: List of volumes the Creator appears in.
     """
 
-    characters: List[GenericEntry] = Field(alias="created_characters", default_factory=list)
-    issues: List[GenericEntry] = Field(default_factory=list)
-    story_arcs: List[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
-    volumes: List[GenericEntry] = Field(alias="volume_credits", default_factory=list)
+    characters: list[GenericEntry] = Field(alias="created_characters", default_factory=list)
+    issues: list[GenericEntry] = Field(default_factory=list)
+    story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
+    volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
 
 
 class CreatorEntry(BaseCreator):
