@@ -32,7 +32,7 @@ def test_team(session: Comicvine) -> None:
     assert result.publisher.id == 10
     assert result.site_url == "https://comicvine.gamespot.com/blue-lantern-corps/4060-50163/"
     assert len(result.story_arcs) == 0
-    assert len(result.volumes) == 64
+    assert len(result.volumes) == 63
 
 
 def test_team_fail(session: Comicvine) -> None:

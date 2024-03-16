@@ -18,7 +18,7 @@ def test_origin(session: Comicvine) -> None:
 
     assert result.api_url == "https://comicvine.gamespot.com/api/origin/4030-1/"
     assert result.character_set is None
-    assert len(result.characters) == 4241
+    assert len(result.characters) == 4307
     assert result.name == "Mutant"
     assert result.profiles == []
     assert result.site_url == "https://comicvine.gamespot.com/mutant/4030-1/"

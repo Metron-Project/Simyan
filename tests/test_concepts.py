@@ -21,8 +21,8 @@ def test_concept(session: Comicvine) -> None:
     assert result.api_url == "https://comicvine.gamespot.com/api/concept/4015-41148/"
     assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 27, 52).astimezone()
     assert result.first_issue.id == 144069
-    assert result.issue_count == 2419
-    assert len(result.issues) == 2419
+    assert result.issue_count == 2487
+    assert len(result.issues) == 2487
     assert result.name == "Green Lantern"
     assert result.site_url == "https://comicvine.gamespot.com/green-lantern/4015-41148/"
     assert result.start_year == 1940
@@ -45,7 +45,7 @@ def test_concept_list(session: Comicvine) -> None:
     assert result.api_url == "https://comicvine.gamespot.com/api/concept/4015-41148/"
     assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 27, 52).astimezone()
     assert result.first_issue.id == 144069
-    assert result.issue_count == 2419
+    assert result.issue_count == 2487
     assert result.name == "Green Lantern"
     assert result.site_url == "https://comicvine.gamespot.com/green-lantern/4015-41148/"
     assert result.start_year == 1940

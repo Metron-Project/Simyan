@@ -19,10 +19,10 @@ def test_location(session: Comicvine) -> None:
     assert result.id == 56000
 
     assert result.api_url == "https://comicvine.gamespot.com/api/location/4020-56000/"
-    assert result.issue_count == 26
+    assert result.issue_count == 27
     assert result.date_added.astimezone() == datetime(2009, 1, 2, 16, 16, 18).astimezone()
     assert result.first_issue.id == 149271
-    assert len(result.issues) == 26
+    assert len(result.issues) == 27
     assert result.name == "Odym"
     assert result.site_url == "https://comicvine.gamespot.com/odym/4020-56000/"
     assert len(result.story_arcs) == 0
@@ -43,7 +43,7 @@ def test_location_list(session: Comicvine) -> None:
     assert result is not None
 
     assert result.api_url == "https://comicvine.gamespot.com/api/location/4020-56000/"
-    assert result.issue_count == 26
+    assert result.issue_count == 27
     assert result.date_added.astimezone() == datetime(2009, 1, 2, 16, 16, 18).astimezone()
     assert result.first_issue.id == 149271
     assert result.name == "Odym"
