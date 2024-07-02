@@ -112,7 +112,7 @@ split-on-trailing-comma = false
 classmethod-decorators = ["classmethod", "pydantic.field_validator"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/test_*.py" = ["S101"]
+"tests/*_test.py" = ["S101"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
