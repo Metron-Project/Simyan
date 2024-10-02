@@ -18,7 +18,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python",
   "Topic :: Internet",
@@ -26,9 +26,9 @@ classifiers = [
 ]
 dependencies = [
   "eval-type-backport >= 0.2.0; python_version < \"3.10\"",
-  "pydantic >= 2.8.0",
+  "pydantic >= 2.9.2",
   "ratelimit >= 2.2.1",
-  "requests >= 2.32.3"
+  "requests >= 2.32.3",
 ]
 description = "A Python wrapper for the Comicvine API."
 dynamic = ["version"]
@@ -39,18 +39,20 @@ maintainers = [
 ]
 name = "Simyan"
 readme = "README.md"
-requires-python = ">= 3.8"
+requires-python = ">= 3.9"
 
 [project.optional-dependencies]
 docs = [
-  "mkdocs >= 1.6.0",
-  "mkdocs-include-markdown-plugin >= 6.2.1",
-  "mkdocs-material >= 9.5.27",
-  "mkdocstrings[python] >= 0.25.1"
+  "mkdocs >= 1.6.1",
+  "mkdocs-include-markdown-plugin >= 6.2.2",
+  "mkdocs-material >= 9.5.39",
+  "mkdocstrings[python] >= 0.26.1"
 ]
 test = [
-  "pytest >= 8.2.2",
-  "pytest-cov >= 5.0.0"
+  "pytest >= 8.3.3",
+  "pytest-cov >= 5.0.0",
+  "tox >= 4.21.1",
+  "tox-uv >= 1.13.0",
 ]
 
 [project.urls]
@@ -112,7 +114,7 @@ split-on-trailing-comma = false
 classmethod-decorators = ["classmethod", "pydantic.field_validator"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*_test.py" = ["S101"]
+"tests/*" = ["S101"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -120,9 +122,7 @@ convention = "google"
 [tool.ruff.lint.pyupgrade]
 keep-runtime-typing = true
 
-[tool.rye]
+[tool.uv]
 dev-dependencies = [
-  "pre-commit >= 3.5.0",
-  "tox >= 4.15.1",
-  "tox-rye @ git+https://github.com/bluss/tox-rye"
+    "pre-commit >= 3.8.0",
 ]
