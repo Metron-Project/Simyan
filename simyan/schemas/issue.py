@@ -95,7 +95,7 @@ class Issue(BaseIssue):
     teams: list[GenericEntry] = Field(alias="team_credits", default_factory=list)
     teams_disbanded: list[GenericEntry] = Field(alias="team_disbanded_in", default_factory=list)
 
-    def __init__(self: Issue, **data: Any):
+    def __init__(self, **data: Any):
         if "first_appearance_characters" in data and not data["first_appearance_characters"]:
             data["first_appearance_characters"] = []
         if "first_appearance_concepts" in data and not data["first_appearance_concepts"]:

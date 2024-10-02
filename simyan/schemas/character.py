@@ -59,7 +59,7 @@ class BaseCharacter(BaseModel):
     site_url: str = Field(alias="site_detail_url")
     summary: str | None = Field(alias="deck", default=None)
 
-    def __init__(self: BaseCharacter, **data: Any):
+    def __init__(self, **data: Any):
         if data.get("birth"):
             data["birth"] = datetime.strptime(data["birth"], "%b %d, %Y").date()  # noqa: DTZ007
         super().__init__(**data)
