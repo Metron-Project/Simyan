@@ -13,7 +13,7 @@ import platform
 import re
 from enum import Enum
 from json import JSONDecodeError
-from typing import Any, List, TypeVar
+from typing import Any, TypeVar
 from urllib.parse import urlencode
 
 from pydantic import TypeAdapter, ValidationError
@@ -44,43 +44,43 @@ T = TypeVar("T")
 class ComicvineResource(Enum):
     """Enum class for Comicvine Resources."""
 
-    PUBLISHER = (4010, "publisher", List[PublisherEntry])
+    PUBLISHER = (4010, "publisher", list[PublisherEntry])
     """Details for the Publisher resource on Comicvine."""
-    VOLUME = (4050, "volume", List[VolumeEntry])
+    VOLUME = (4050, "volume", list[VolumeEntry])
     """Details for the Volume resource on Comicvine."""
-    ISSUE = (4000, "issue", List[IssueEntry])
+    ISSUE = (4000, "issue", list[IssueEntry])
     """Details for the Issue resource on Comicvine."""
-    STORY_ARC = (4045, "story_arc", List[StoryArcEntry])
+    STORY_ARC = (4045, "story_arc", list[StoryArcEntry])
     """Details for the Story Arc resource on Comicvine."""
-    CREATOR = (4040, "person", List[CreatorEntry])
+    CREATOR = (4040, "person", list[CreatorEntry])
     """Details for the Creator resource on Comicvine."""
-    CHARACTER = (4005, "character", List[CharacterEntry])
+    CHARACTER = (4005, "character", list[CharacterEntry])
     """Details for the Character resource on Comicvine."""
-    TEAM = (4060, "team", List[TeamEntry])
+    TEAM = (4060, "team", list[TeamEntry])
     """Details for the Team resource on Comicvine."""
-    LOCATION = (4020, "location", List[LocationEntry])
+    LOCATION = (4020, "location", list[LocationEntry])
     """Details for the Location resource on Comicvine."""
-    CONCEPT = (4015, "concept", List[ConceptEntry])
+    CONCEPT = (4015, "concept", list[ConceptEntry])
     """Details for the Concept resource on Comicvine."""
-    POWER = (4035, "power", List[PowerEntry])
+    POWER = (4035, "power", list[PowerEntry])
     """Details for the Power resource on Comicvine."""
-    ORIGIN = (4030, "origin", List[OriginEntry])
+    ORIGIN = (4030, "origin", list[OriginEntry])
     """Details for the Origin resource on Comicvine."""
-    ITEM = (4055, "object", List[ItemEntry])
+    ITEM = (4055, "object", list[ItemEntry])
     """Details for the Item resource on Comicvine."""
 
     @property
-    def resource_id(self: ComicvineResource) -> int:
+    def resource_id(self) -> int:
         """Start of id used by Comicvine to create unique ids."""
         return self.value[0]
 
     @property
-    def search_resource(self: ComicvineResource) -> str:
+    def search_resource(self) -> str:
         """Resource string for filtering searches."""
         return self.value[1]
 
     @property
-    def search_response(self: ComicvineResource) -> type[T]:
+    def search_response(self) -> type[T]:
         """Response type for resource when using a search endpoint."""
         return self.value[2]
 
@@ -92,19 +92,11 @@ class Comicvine:
         api_key: User's API key to access the Comicvine API.
         timeout: Set how long requests will wait for a response (in seconds).
         cache: SQLiteCache to use if set.
-
-    Attributes:
-        headers (Dict[str, str]): Header used when requesting from Comicvine API.
-        api_key (str): User's API key to access the Comicvine API.
-        timeout (int): How long requests will wait for a response (in seconds).
-        cache (Optional[SQLiteCache]): SQLiteCache to use if set.
     """
 
     API_URL = "https://comicvine.gamespot.com/api"
 
-    def __init__(
-        self: Comicvine, api_key: str, timeout: int = 30, cache: SQLiteCache | None = None
-    ):
+    def __init__(self, api_key: str, timeout: int = 30, cache: SQLiteCache | None = None):
         self.headers = {
             "Accept": "application/json",
             "User-Agent": f"Simyan/{__version__}/{platform.system()}: {platform.release()}",
@@ -116,7 +108,7 @@ class Comicvine:
     @sleep_and_retry
     @limits(calls=20, period=MINUTE)
     def _perform_get_request(
-        self: Comicvine, url: str, params: dict[str, str] | None = None
+        self, url: str, params: dict[str, str] | None = None
     ) -> dict[str, Any]:
         """Make GET request to Comicvine API endpoint.
 
@@ -159,10 +151,7 @@ class Comicvine:
             raise ServiceError(msg) from err
 
     def _get_request(
-        self: Comicvine,
-        endpoint: str,
-        params: dict[str, str] | None = None,
-        skip_cache: bool = False,
+        self, endpoint: str, params: dict[str, str] | None = None, skip_cache: bool = False
     ) -> dict[str, Any]:
         """Check cache or make GET request to Comicvine API endpoint.
 
@@ -210,7 +199,7 @@ class Comicvine:
 
         return response
 
-    def get_publisher(self: Comicvine, publisher_id: int) -> Publisher:
+    def get_publisher(self, publisher_id: int) -> Publisher:
         """Request data for a Publisher based on its id.
 
         Args:
@@ -231,7 +220,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_publishers(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[PublisherEntry]:
         """Request data for a list of Publishers.
 
@@ -249,12 +238,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/publishers/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[PublisherEntry])
+            adapter = TypeAdapter(list[PublisherEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_volume(self: Comicvine, volume_id: int) -> Volume:
+    def get_volume(self, volume_id: int) -> Volume:
         """Request data for a Volume based on its id.
 
         Args:
@@ -275,7 +264,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_volumes(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[VolumeEntry]:
         """Request data for a list of Volumes.
 
@@ -293,12 +282,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/volumes/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[VolumeEntry])
+            adapter = TypeAdapter(list[VolumeEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_issue(self: Comicvine, issue_id: int) -> Issue:
+    def get_issue(self, issue_id: int) -> Issue:
         """Request data for an Issue based on its id.
 
         Args:
@@ -319,7 +308,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_issues(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[IssueEntry]:
         """Request data for a list of Issues.
 
@@ -337,12 +326,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/issues/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[IssueEntry])
+            adapter = TypeAdapter(list[IssueEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_story_arc(self: Comicvine, story_arc_id: int) -> StoryArc:
+    def get_story_arc(self, story_arc_id: int) -> StoryArc:
         """Request data for a Story Arc based on its id.
 
         Args:
@@ -363,7 +352,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_story_arcs(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[StoryArcEntry]:
         """Request data for a list of Story Arcs.
 
@@ -381,12 +370,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/story_arcs/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[StoryArcEntry])
+            adapter = TypeAdapter(list[StoryArcEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_creator(self: Comicvine, creator_id: int) -> Creator:
+    def get_creator(self, creator_id: int) -> Creator:
         """Request data for a Creator based on its id.
 
         Args:
@@ -407,7 +396,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_creators(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[CreatorEntry]:
         """Request data for a list of Creators.
 
@@ -425,12 +414,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/people/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[CreatorEntry])
+            adapter = TypeAdapter(list[CreatorEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_character(self: Comicvine, character_id: int) -> Character:
+    def get_character(self, character_id: int) -> Character:
         """Request data for a Character based on its id.
 
         Args:
@@ -451,7 +440,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_characters(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[CharacterEntry]:
         """Request data for a list of Characters.
 
@@ -469,12 +458,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/characters/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[CharacterEntry])
+            adapter = TypeAdapter(list[CharacterEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_team(self: Comicvine, team_id: int) -> Team:
+    def get_team(self, team_id: int) -> Team:
         """Request data for a Team based on its id.
 
         Args:
@@ -495,7 +484,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_teams(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[TeamEntry]:
         """Request data for a list of Teams.
 
@@ -513,12 +502,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/teams/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[TeamEntry])
+            adapter = TypeAdapter(list[TeamEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_location(self: Comicvine, location_id: int) -> Location:
+    def get_location(self, location_id: int) -> Location:
         """Request data for a Location based on its id.
 
         Args:
@@ -539,7 +528,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_locations(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[LocationEntry]:
         """Request data for a list of Locations.
 
@@ -557,12 +546,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/locations/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[LocationEntry])
+            adapter = TypeAdapter(list[LocationEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_concept(self: Comicvine, concept_id: int) -> Concept:
+    def get_concept(self, concept_id: int) -> Concept:
         """Request data for a Concept based on its id.
 
         Args:
@@ -583,7 +572,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_concepts(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[ConceptEntry]:
         """Request data for a list of Concepts.
 
@@ -601,12 +590,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/concepts/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[ConceptEntry])
+            adapter = TypeAdapter(list[ConceptEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_power(self: Comicvine, power_id: int) -> Power:
+    def get_power(self, power_id: int) -> Power:
         """Request data for a Power based on its id.
 
         Args:
@@ -627,7 +616,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_powers(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[PowerEntry]:
         """Request data for a list of Powers.
 
@@ -645,12 +634,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/powers/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[PowerEntry])
+            adapter = TypeAdapter(list[PowerEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_origin(self: Comicvine, origin_id: int) -> Origin:
+    def get_origin(self, origin_id: int) -> Origin:
         """Request data for an Origin based on its id.
 
         Args:
@@ -671,7 +660,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_origins(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[OriginEntry]:
         """Request data for a list of Origins.
 
@@ -689,12 +678,12 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/origins/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[OriginEntry])
+            adapter = TypeAdapter(list[OriginEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
-    def get_item(self: Comicvine, item_id: int) -> Item:
+    def get_item(self, item_id: int) -> Item:
         """Request data for an Item based on its id.
 
         Args:
@@ -715,7 +704,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_items(
-        self: Comicvine, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[ItemEntry]:
         """Request data for a list of Items.
 
@@ -733,13 +722,13 @@ class Comicvine:
             results = self._retrieve_offset_results(
                 endpoint="/objects/", params=params, max_results=max_results
             )
-            adapter = TypeAdapter(List[ItemEntry])
+            adapter = TypeAdapter(list[ItemEntry])
             return adapter.validate_python(results)
         except ValidationError as err:
             raise ServiceError(err) from err
 
     def search(
-        self: Comicvine, resource: ComicvineResource, query: str, max_results: int = 500
+        self, resource: ComicvineResource, query: str, max_results: int = 500
     ) -> (
         list[PublisherEntry]
         | list[VolumeEntry]
@@ -779,7 +768,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def _retrieve_page_results(
-        self: Comicvine, endpoint: str, params: dict[str, Any] | None = None, max_results: int = 500
+        self, endpoint: str, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[dict[str, Any]]:
         """Get responses until all the results are collected.
 
@@ -808,7 +797,7 @@ class Comicvine:
         return results[:max_results]
 
     def _retrieve_offset_results(
-        self: Comicvine, endpoint: str, params: dict[str, Any] | None = None, max_results: int = 500
+        self, endpoint: str, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[dict[str, Any]]:
         """Get responses until all the results are collected.
 

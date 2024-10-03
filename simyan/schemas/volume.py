@@ -55,7 +55,7 @@ class BaseVolume(BaseModel):
     summary: str | None = Field(alias="deck", default=None)
 
     @field_validator("start_year", mode="before")
-    def validate_start_year(cls: BaseVolume, v: str) -> int | None:
+    def validate_start_year(cls, v: str) -> int | None:
         """Convert start_year to int or None.
 
         Args:

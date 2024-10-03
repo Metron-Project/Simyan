@@ -61,7 +61,7 @@ class BaseCreator(BaseModel):
     summary: str | None = Field(alias="deck", default=None)
     website: str | None = None
 
-    def __init__(self: BaseCreator, **data: Any):
+    def __init__(self, **data: Any):
         if data.get("death"):
             data["death"] = data["death"]["date"].split()[0]
         if data.get("birth"):
