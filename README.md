@@ -42,8 +42,8 @@ print(result.summary)
 
 ## Documentation
 
-- [Simyan documentation](https://simyan.readthedocs.io/en/stable)
-- [Comicvine API documentation](https://comicvine.gamespot.com/api/documentation)
+- [Simyan](https://simyan.readthedocs.io/en/stable)
+- [Comicvine API](https://comicvine.gamespot.com/api/documentation)
 
 ## Bugs/Requests
 
