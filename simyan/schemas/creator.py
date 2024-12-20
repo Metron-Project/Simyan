@@ -1,24 +1,22 @@
 """The Creator module.
 
 This module provides the following classes:
-
+- BasicCreator
 - Creator
-- CreatorEntry
 """
 
-from __future__ import annotations
+__all__ = ["BasicCreator", "Creator"]
 
-__all__ = ["Creator", "CreatorEntry"]
 from datetime import date, datetime
-from typing import Any
+from typing import Any, Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, Image
+from simyan.schemas.generic_entries import GenericEntry, Images
 
 
-class BaseCreator(BaseModel):
+class BasicCreator(BaseModel):
     r"""Contains fields for all Creators.
 
     Attributes:
@@ -42,24 +40,24 @@ class BaseCreator(BaseModel):
         website: Url to the Creator's website.
     """
 
-    aliases: str | None = None
-    api_url: str = Field(alias="api_detail_url")
-    country: str | None = None
+    aliases: Optional[str] = None
+    api_url: HttpUrl = Field(alias="api_detail_url")
+    country: Optional[str] = None
     date_added: datetime
     date_last_updated: datetime
-    date_of_birth: date | None = Field(alias="birth", default=None)
-    date_of_death: date | None = Field(alias="death", default=None)
-    description: str | None = None
-    email: str | None = None
+    date_of_birth: Optional[date] = Field(alias="birth", default=None)
+    date_of_death: Optional[date] = Field(alias="death", default=None)
+    description: Optional[str] = None
+    email: Optional[str] = None
     gender: int
-    hometown: str | None = None
+    hometown: Optional[str] = None
     id: int
-    image: Image
-    issue_count: int | None = Field(alias="count_of_isssue_appearances", default=None)
+    image: Images
+    issue_count: Optional[int] = Field(alias="count_of_isssue_appearances", default=None)
     name: str
-    site_url: str = Field(alias="site_detail_url")
-    summary: str | None = Field(alias="deck", default=None)
-    website: str | None = None
+    site_url: HttpUrl = Field(alias="site_detail_url")
+    summary: Optional[str] = Field(alias="deck", default=None)
+    website: Optional[HttpUrl] = None
 
     def __init__(self, **data: Any):
         if data.get("death"):
@@ -69,8 +67,8 @@ class BaseCreator(BaseModel):
         super().__init__(**data)
 
 
-class Creator(BaseCreator):
-    r"""Extends BaseCreator by including all the list references of a creator.
+class Creator(BasicCreator):
+    r"""Extends BasicCreator by including all the list references of a creator.
 
     Attributes:
         characters: List of characters the Creator has created.
@@ -83,7 +81,3 @@ class Creator(BaseCreator):
     issues: list[GenericEntry] = Field(default_factory=list)
     story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
     volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
-
-
-class CreatorEntry(BaseCreator):
-    """Contains all the fields available when viewing a list of Creators."""

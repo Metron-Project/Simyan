@@ -1,20 +1,26 @@
 """The GenericEntries module.
 
 This module provides the following classes:
-
-- GenericEntry
-- CountEntry
-- IssueEntry
-- CreatorEntry
-- Image
 - AssociatedImage
+- GenericCount
+- GenericCreator
+- GenericEntry
+- GenericIssue
+- Images
 """
 
-from __future__ import annotations
+__all__ = [
+    "AssociatedImage",
+    "GenericCount",
+    "GenericCreator",
+    "GenericEntry",
+    "GenericIssue",
+    "Images",
+]
 
-__all__ = ["GenericEntry", "CountEntry", "IssueEntry", "CreatorEntry", "Image", "AssociatedImage"]
+from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
 
@@ -29,13 +35,13 @@ class GenericEntry(BaseModel, extra="forbid"):
         site_url: Url to the resource in Comicvine.
     """
 
-    api_url: str = Field(alias="api_detail_url")
+    api_url: HttpUrl = Field(alias="api_detail_url")
     id: int
-    name: str | None = None
-    site_url: str | None = Field(default=None, alias="site_detail_url")
+    name: Optional[str] = None
+    site_url: Optional[HttpUrl] = Field(default=None, alias="site_detail_url")
 
 
-class CountEntry(GenericEntry):
+class GenericCount(GenericEntry):
     r"""Extends GenericEntry by including attributes for tracking counts.
 
     Attributes:
@@ -45,17 +51,17 @@ class CountEntry(GenericEntry):
     count: int
 
 
-class IssueEntry(GenericEntry):
+class GenericIssue(GenericEntry):
     r"""Extends GenericEntry by including attributes of an Issue.
 
     Attributes:
         number:
     """
 
-    number: str | None = Field(default=None, alias="issue_number")
+    number: Optional[str] = Field(default=None, alias="issue_number")
 
 
-class CreatorEntry(GenericEntry):
+class GenericCreator(GenericEntry):
     r"""Extends GenericEntry by including attributes of a Creator.
 
     Attributes:
@@ -65,8 +71,8 @@ class CreatorEntry(GenericEntry):
     roles: str = Field(alias="role")
 
 
-class Image(BaseModel, extra="forbid"):
-    """The Image object contains image information.
+class Images(BaseModel, extra="forbid"):
+    """The Images object contains image information.
 
     Attributes:
         icon_url: Url to an image at icon size.
@@ -81,16 +87,16 @@ class Image(BaseModel, extra="forbid"):
         tags:
     """
 
-    icon_url: str
-    large_screen_url: str = Field(alias="screen_large_url")
-    medium_url: str
-    original_url: str
-    screen_url: str
-    small_url: str
-    super_url: str
-    thumbnail: str = Field(alias="thumb_url")
-    tiny_url: str
-    tags: str | None = Field(default=None, alias="image_tags")
+    icon_url: HttpUrl
+    large_screen_url: HttpUrl = Field(alias="screen_large_url")
+    medium_url: HttpUrl
+    original_url: HttpUrl
+    screen_url: HttpUrl
+    small_url: HttpUrl
+    super_url: HttpUrl
+    thumbnail: HttpUrl = Field(alias="thumb_url")
+    tiny_url: HttpUrl
+    tags: Optional[str] = Field(default=None, alias="image_tags")
 
 
 class AssociatedImage(BaseModel, extra="forbid"):
@@ -103,7 +109,7 @@ class AssociatedImage(BaseModel, extra="forbid"):
         tags:
     """
 
-    url: str = Field(alias="original_url")
+    url: HttpUrl = Field(alias="original_url")
     id: int
-    caption: str | None = None
-    tags: str | None = Field(default=None, alias="image_tags")
+    caption: Optional[str] = None
+    tags: Optional[str] = Field(default=None, alias="image_tags")

@@ -1,22 +1,21 @@
 """The Origin module.
 
 This module provides the following classes:
-
+- BasicOrigin
 - Origin
-- OriginEntry
 """
 
-from __future__ import annotations
+__all__ = ["BasicOrigin", "Origin"]
 
-__all__ = ["Origin", "OriginEntry"]
+from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
 from simyan.schemas.generic_entries import GenericEntry
 
 
-class BaseOrigin(BaseModel):
+class BasicOrigin(BaseModel):
     r"""Contains fields for all Origins.
 
     Attributes:
@@ -26,25 +25,21 @@ class BaseOrigin(BaseModel):
         site_url: Url to the resource in Comicvine.
     """
 
-    api_url: str = Field(alias="api_detail_url")
+    api_url: HttpUrl = Field(alias="api_detail_url")
     id: int
     name: str
-    site_url: str = Field(alias="site_detail_url")
+    site_url: HttpUrl = Field(alias="site_detail_url")
 
 
-class Origin(BaseOrigin):
-    r"""Extends BaseOrigin by including all the list references of a origin.
+class Origin(BasicOrigin):
+    r"""Extends BasicOrigin by including all the list references of a origin.
 
     Attributes:
-        character_set: Unknown field
+        character_set:
         characters: List of characters with the Origin.
-        profiles: Unknown field
+        profiles:
     """
 
-    character_set: int | None = None
+    character_set: Optional[int] = None
     characters: list[GenericEntry] = Field(default_factory=list)
     profiles: list[int] = Field(default_factory=list)
-
-
-class OriginEntry(BaseOrigin):
-    """Contains all the fields available when viewing a list of Origins."""

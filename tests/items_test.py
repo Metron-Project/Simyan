@@ -1,6 +1,6 @@
 """The Items test module.
 
-This module contains tests for Item and ItemEntry objects.
+This module contains tests for Item and BasicItem objects.
 """
 
 from datetime import datetime
@@ -9,62 +9,55 @@ import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.item import ItemEntry
+from simyan.schemas.item import BasicItem
 
 
-def test_item(session: Comicvine) -> None:
-    """Test using the item endpoint with a valid item_id."""
+def test_get_item(session: Comicvine) -> None:
+    """Test the get_item function with a valid id."""
     result = session.get_item(item_id=41361)
     assert result is not None
     assert result.id == 41361
 
-    assert result.api_url == "https://comicvine.gamespot.com/api/object/4055-41361/"
-    assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 27, 50).astimezone()
-    assert result.first_issue.id == 123898
-    assert result.issue_count == 3238
-    assert len(result.issues) == 3238
-    assert result.name == "Green Power Ring"
-    assert result.site_url == "https://comicvine.gamespot.com/green-power-ring/4055-41361/"
-    assert result.start_year == 1940
-    assert len(result.story_arcs) == 578
-    assert len(result.volumes) == 967
+    assert len(result.issues) == 3308
+    assert len(result.story_arcs) == 454
+    assert len(result.volumes) == 993
 
 
-def test_item_fail(session: Comicvine) -> None:
-    """Test using the item endpoint with an invalid item_id."""
+def test_get_item_fail(session: Comicvine) -> None:
+    """Test the get_item function with an invalid id."""
     with pytest.raises(ServiceError):
         session.get_item(item_id=-1)
 
 
-def test_item_list(session: Comicvine) -> None:
-    """Test using the list items endpoint with a valid search query."""
+def test_list_items(session: Comicvine) -> None:
+    """Test the list_items function with a valid search query."""
     search_results = session.list_items({"filter": "name:Green Power Ring"})
     assert len(search_results) != 0
     result = next(x for x in search_results if x.id == 41361)
     assert result is not None
 
-    assert result.api_url == "https://comicvine.gamespot.com/api/object/4055-41361/"
-    assert result.date_added.astimezone() == datetime(2008, 6, 6, 11, 27, 50).astimezone()
+    assert str(result.api_url) == "https://comicvine.gamespot.com/api/object/4055-41361/"
+    assert result.date_added == datetime(2008, 6, 6, 11, 27, 50)
     assert result.first_issue.id == 123898
-    assert result.issue_count == 3238
+    assert result.issue_count == 3308
     assert result.name == "Green Power Ring"
-    assert result.site_url == "https://comicvine.gamespot.com/green-power-ring/4055-41361/"
+    assert str(result.site_url) == "https://comicvine.gamespot.com/green-power-ring/4055-41361/"
     assert result.start_year == 1940
 
 
-def test_item_list_empty(session: Comicvine) -> None:
-    """Test using the list items endpoint with an invalid search query."""
+def test_list_items_empty(session: Comicvine) -> None:
+    """Test the list_items function with an invalid search query."""
     results = session.list_items({"filter": "name:INVALID"})
     assert len(results) == 0
 
 
-def test_item_list_max_results(session: Comicvine) -> None:
-    """Test list items endpoint with max results."""
+def test_list_items_max_results(session: Comicvine) -> None:
+    """Test the list_items function with max results."""
     results = session.list_items(max_results=10)
     assert len(results) == 10
 
 
 def test_search_item(session: Comicvine) -> None:
-    """Test using the search endpoint for a list of Items."""
+    """Test the search function for a list of Items."""
     results = session.search(resource=ComicvineResource.ITEM, query="Ring")
-    assert all(isinstance(x, ItemEntry) for x in results)
+    assert all(isinstance(x, BasicItem) for x in results)

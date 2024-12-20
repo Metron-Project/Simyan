@@ -1,5 +1,4 @@
 # Origin
 
-::: simyan.schemas.origin.BaseOrigin
+::: simyan.schemas.origin.BasicOrigin
 ::: simyan.schemas.origin.Origin
-::: simyan.schemas.origin.OriginEntry

@@ -1,23 +1,22 @@
 """The Publisher module.
 
 This module provides the following classes:
-
+- BasicPublisher
 - Publisher
-- PublisherEntry
 """
 
-from __future__ import annotations
+__all__ = ["BasicPublisher", "Publisher"]
 
-__all__ = ["Publisher", "PublisherEntry"]
 from datetime import datetime
+from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, Image
+from simyan.schemas.generic_entries import GenericEntry, Images
 
 
-class BasePublisher(BaseModel):
+class BasicPublisher(BaseModel):
     r"""Contains fields for all Publishers.
 
     Attributes:
@@ -36,23 +35,23 @@ class BasePublisher(BaseModel):
         summary: Short description of the Publisher.
     """
 
-    aliases: str | None = None
-    api_url: str = Field(alias="api_detail_url")
+    aliases: Optional[str] = None
+    api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: str | None = None
+    description: Optional[str] = None
     id: int
-    image: Image
-    location_address: str | None = None
-    location_city: str | None = None
-    location_state: str | None = None
+    image: Images
+    location_address: Optional[str] = None
+    location_city: Optional[str] = None
+    location_state: Optional[str] = None
     name: str
-    site_url: str = Field(alias="site_detail_url")
-    summary: str | None = Field(default=None, alias="deck")
+    site_url: HttpUrl = Field(alias="site_detail_url")
+    summary: Optional[str] = Field(alias="deck", default=None)
 
 
-class Publisher(BasePublisher):
-    r"""Extends BasePublisher by including all the list references of a publisher.
+class Publisher(BasicPublisher):
+    r"""Extends BasicPublisher by including all the list references of a publisher.
 
     Attributes:
         characters: List of characters the Publisher created.
@@ -65,7 +64,3 @@ class Publisher(BasePublisher):
     story_arcs: list[GenericEntry] = Field(default_factory=list)
     teams: list[GenericEntry] = Field(default_factory=list)
     volumes: list[GenericEntry] = Field(default_factory=list)
-
-
-class PublisherEntry(BasePublisher):
-    """Contains all the fields available when viewing a list of Publishers."""

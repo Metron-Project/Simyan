@@ -1,23 +1,22 @@
 """The Concept module.
 
 This module provides the following classes:
-
+- BasicConcept
 - Concept
-- ConceptEntry
 """
 
-from __future__ import annotations
+__all__ = ["BasicConcept", "Concept"]
 
-__all__ = ["Concept", "ConceptEntry"]
 from datetime import datetime
+from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, Image, IssueEntry
+from simyan.schemas.generic_entries import GenericEntry, GenericIssue, Images
 
 
-class BaseConcept(BaseModel):
+class BasicConcept(BaseModel):
     r"""Contains fields for all Concepts.
 
     Attributes:
@@ -36,32 +35,28 @@ class BaseConcept(BaseModel):
         summary: Short description of the Concept.
     """
 
-    aliases: str | None = None
-    api_url: str = Field(alias="api_detail_url")
+    aliases: Optional[str] = None
+    api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: str | None = None
-    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
+    description: Optional[str] = None
+    first_issue: Optional[GenericIssue] = Field(alias="first_appeared_in_issue", default=None)
     id: int
-    image: Image
+    image: Images
     issue_count: int = Field(alias="count_of_isssue_appearances")
     name: str
-    site_url: str = Field(alias="site_detail_url")
-    start_year: int | None = None
-    summary: str | None = Field(alias="deck", default=None)
+    site_url: HttpUrl = Field(alias="site_detail_url")
+    start_year: Optional[int] = None
+    summary: Optional[str] = Field(alias="deck", default=None)
 
 
-class Concept(BaseConcept):
-    r"""Extends BaseConcept by including all the list references of a concept.
+class Concept(BasicConcept):
+    r"""Extends BasicConcept by including all the list references of a concept.
 
     Attributes:
         issues: List of issues the Concept appears.
         volumes: List of volumes the Concept appears.
     """
 
-    issues: list[IssueEntry] = Field(alias="issue_credits", default_factory=list)
+    issues: list[GenericIssue] = Field(alias="issue_credits", default_factory=list)
     volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
-
-
-class ConceptEntry(BaseConcept):
-    """Contains all the fields available when viewing a list of Concepts."""

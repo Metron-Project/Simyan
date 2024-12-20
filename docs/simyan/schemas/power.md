@@ -1,5 +1,4 @@
 # Power
 
-::: simyan.schemas.power.BasePower
+::: simyan.schemas.power.BasicPower
 ::: simyan.schemas.power.Power
-::: simyan.schemas.power.PowerEntry
