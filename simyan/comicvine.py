@@ -178,7 +178,7 @@ class Comicvine:
         cache_key = re.sub(r"(.+api_key=)(.+?)(&.+)", r"\1*****\3", cache_key)
 
         if self.cache and not skip_cache:
-            cached_response = self.cache.select(url=cache_key)
+            cached_response = self.cache.select(query=cache_key)
             if cached_response:
                 return cached_response
 
@@ -187,7 +187,7 @@ class Comicvine:
             raise ServiceError(response["error"])
 
         if self.cache and not skip_cache:
-            self.cache.insert(url=cache_key, response=response)
+            self.cache.insert(query=cache_key, response=response)
 
         return response
 

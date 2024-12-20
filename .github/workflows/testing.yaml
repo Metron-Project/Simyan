@@ -38,7 +38,7 @@ jobs:
       - name: Setup Python
         run: uv python install ${{ matrix.python-version }}
       - name: Install project
-        run: uv sync --dev
+        run: uv sync --group tests
       - name: Run tests
         env:
           COMICVINE__API_KEY: IGNORED

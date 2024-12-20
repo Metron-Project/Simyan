@@ -103,4 +103,12 @@ class Issue(BasicIssue):
         mode="before",
     )
     def handle_blank_list(cls, value: Union[str, list, None]) -> list:
+        """Convert a blank or None value to an empty list.
+
+        Args:
+            value: The value to check.
+
+        Returns:
+            An empty list if the value is None or an empty string, otherwise the original list.
+        """
         return value or []
