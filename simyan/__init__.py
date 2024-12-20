@@ -1,7 +1,7 @@
 """simyan package entry file."""
 
 __all__ = ["__version__", "get_cache_root"]
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import os
 from pathlib import Path
