@@ -1,23 +1,22 @@
 """The Power module.
 
 This module provides the following classes:
-
+- BasicPower
 - Power
-- PowerEntry
 """
 
-from __future__ import annotations
+__all__ = ["BasicPower", "Power"]
 
-__all__ = ["Power", "PowerEntry"]
 from datetime import datetime
+from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
 from simyan.schemas.generic_entries import GenericEntry
 
 
-class BasePower(BaseModel):
+class BasicPower(BaseModel):
     r"""Contains fields for all Powers.
 
     Attributes:
@@ -31,25 +30,21 @@ class BasePower(BaseModel):
         site_url: Url to the resource in Comicvine.
     """
 
-    aliases: str | None = None
-    api_url: str = Field(alias="api_detail_url")
+    aliases: Optional[str] = None
+    api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: str | None = None
+    description: Optional[str] = None
     id: int
     name: str
-    site_url: str = Field(alias="site_detail_url")
+    site_url: HttpUrl = Field(alias="site_detail_url")
 
 
-class Power(BasePower):
-    r"""Extends BasePower by including all the list references of a power.
+class Power(BasicPower):
+    r"""Extends BasicPower by including all the list references of a power.
 
     Attributes:
         characters: List of characters with the Power.
     """
 
     characters: list[GenericEntry] = Field(default_factory=list)
-
-
-class PowerEntry(BasePower):
-    """Contains all the fields available when viewing a list of Powers."""

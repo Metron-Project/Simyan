@@ -1,7 +1,6 @@
 """simyan.schemas package entry file.
 
 This module provides the following classes:
-
 - BaseModel
 """
 
@@ -18,4 +17,4 @@ class BaseModel(
     revalidate_instances="always",
     extra="ignore",
 ):
-    """Base model for simyan resources."""
+    """Base model for Simyan resources."""

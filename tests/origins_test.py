@@ -1,60 +1,57 @@
 """The Origins test module.
 
-This module contains tests for Origin and OriginEntry objects.
+This module contains tests for Origin and BasicOrigin objects.
 """
 
 import pytest
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.exceptions import ServiceError
-from simyan.schemas.origin import OriginEntry
+from simyan.schemas.origin import BasicOrigin
 
 
-def test_origin(session: Comicvine) -> None:
-    """Test using the origin endpoint with a valid origin_id."""
+def test_get_origin(session: Comicvine) -> None:
+    """Test the get_origin function with a valid id."""
     result = session.get_origin(origin_id=1)
     assert result is not None
     assert result.id == 1
 
-    assert result.api_url == "https://comicvine.gamespot.com/api/origin/4030-1/"
     assert result.character_set is None
-    assert len(result.characters) == 4307
-    assert result.name == "Mutant"
-    assert result.profiles == []
-    assert result.site_url == "https://comicvine.gamespot.com/mutant/4030-1/"
+    assert len(result.characters) == 4399
+    assert len(result.profiles) == 0
 
 
-def test_origin_fail(session: Comicvine) -> None:
-    """Test using the origin endpoint with an invalid origin_id."""
+def test_get_origin_fail(session: Comicvine) -> None:
+    """Test the get_origin function with an invalid id."""
     with pytest.raises(ServiceError):
         session.get_origin(origin_id=-1)
 
 
-def test_origin_list(session: Comicvine) -> None:
-    """Test using the list origins endpoint with a valid search query."""
+def test_list_origins(session: Comicvine) -> None:
+    """Test the list_origins function with a valid search query."""
     search_results = session.list_origins({"filter": "name:Mutant"})
     assert len(search_results) != 0
     result = next(x for x in search_results if x.id == 1)
     assert result is not None
 
-    assert result.api_url == "https://comicvine.gamespot.com/api/origin/4030-1/"
+    assert str(result.api_url) == "https://comicvine.gamespot.com/api/origin/4030-1/"
     assert result.name == "Mutant"
-    assert result.site_url == "https://comicvine.gamespot.com/mutant/4030-1/"
+    assert str(result.site_url) == "https://comicvine.gamespot.com/mutant/4030-1/"
 
 
-def test_origin_list_empty(session: Comicvine) -> None:
-    """Test using the list origins endpoint with an invalid search query."""
+def test_list_origins_empty(session: Comicvine) -> None:
+    """Test the list_origins function with an invalid search query."""
     results = session.list_origins({"filter": "name:INVALID"})
     assert len(results) == 0
 
 
-def test_origin_list_max_results(session: Comicvine) -> None:
-    """Test list origins endpoint with max results."""
-    results = session.list_origins(max_results=10)
-    assert len(results) == 10
+def test_list_origins_max_results(session: Comicvine) -> None:
+    """Test the list_origins function with max results."""
+    results = session.list_origins(max_results=3)
+    assert len(results) == 3
 
 
 def test_search_origin(session: Comicvine) -> None:
-    """Test using the search endpoint for a list of Origins."""
+    """Test the search function for a list of Origins."""
     results = session.search(resource=ComicvineResource.ORIGIN, query="Mutant")
-    assert all(isinstance(x, OriginEntry) for x in results)
+    assert all(isinstance(x, BasicOrigin) for x in results)

@@ -1,24 +1,22 @@
 """The Character module.
 
 This module provides the following classes:
-
+- BasicCharacter
 - Character
-- CharacterEntry
 """
 
-from __future__ import annotations
+__all__ = ["BasicCharacter", "Character"]
 
-__all__ = ["Character", "CharacterEntry"]
 from datetime import date, datetime
-from typing import Any
+from typing import Any, Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, Image, IssueEntry
+from simyan.schemas.generic_entries import GenericEntry, GenericIssue, Images
 
 
-class BaseCharacter(BaseModel):
+class BasicCharacter(BaseModel):
     r"""Contains fields for all Characters.
 
     Attributes:
@@ -41,23 +39,23 @@ class BaseCharacter(BaseModel):
         summary: Short description of the Character.
     """
 
-    aliases: str | None = None
-    api_url: str = Field(alias="api_detail_url")
+    aliases: Optional[str] = None
+    api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    date_of_birth: date | None = Field(alias="birth", default=None)
-    description: str | None = None
-    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
+    date_of_birth: Optional[date] = Field(alias="birth", default=None)
+    description: Optional[str] = None
+    first_issue: Optional[GenericIssue] = Field(alias="first_appeared_in_issue", default=None)
     gender: int
     id: int
-    image: Image
+    image: Images
     issue_count: int = Field(alias="count_of_issue_appearances")
     name: str
-    origin: GenericEntry | None = None
-    publisher: GenericEntry | None = None
-    real_name: str | None = None
-    site_url: str = Field(alias="site_detail_url")
-    summary: str | None = Field(alias="deck", default=None)
+    origin: Optional[GenericEntry] = None
+    publisher: Optional[GenericEntry] = None
+    real_name: Optional[str] = None
+    site_url: HttpUrl = Field(alias="site_detail_url")
+    summary: Optional[str] = Field(alias="deck", default=None)
 
     def __init__(self, **data: Any):
         if data.get("birth"):
@@ -65,8 +63,8 @@ class BaseCharacter(BaseModel):
         super().__init__(**data)
 
 
-class Character(BaseCharacter):
-    r"""Extends BaseCharacter by including all the list references of a character.
+class Character(BasicCharacter):
+    r"""Extends BasicCharacter by including all the list references of a character.
 
     Attributes:
         creators: List of creators which worked on the Character.
@@ -93,7 +91,3 @@ class Character(BaseCharacter):
     story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
     teams: list[GenericEntry] = Field(default_factory=list)
     volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
-
-
-class CharacterEntry(BaseCharacter):
-    """Contains all the fields available when viewing a list of Characters."""

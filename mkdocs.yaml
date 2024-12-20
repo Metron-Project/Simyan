@@ -10,7 +10,6 @@ repo_name: Metron-Project/Simyan
 
 theme:
   name: material
-  favicon: img/favicon.ico
   features:
     - content.code.copy
     - navigation.expand

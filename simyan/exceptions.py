@@ -1,13 +1,11 @@
 """The Exceptions module.
 
 This module provides the following classes:
-
-- ServiceError
 - AuthenticationError
-- CacheError
+- ServiceError
 """
 
-__all__ = ["ServiceError", "AuthenticationError", "CacheError"]
+__all__ = ["AuthenticationError", "ServiceError"]
 
 
 class ServiceError(Exception):
@@ -16,7 +14,3 @@ class ServiceError(Exception):
 
 class AuthenticationError(ServiceError):
     """Class for any authentication errors."""
-
-
-class CacheError(ServiceError):
-    """Class for any database cache errors."""

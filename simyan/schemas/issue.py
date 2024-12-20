@@ -1,24 +1,22 @@
 """The Issue module.
 
 This module provides the following classes:
-
+- BasicIssue
 - Issue
-- IssueEntry
 """
 
-from __future__ import annotations
+__all__ = ["BasicIssue", "Issue"]
 
-__all__ = ["Issue", "IssueEntry"]
 from datetime import date, datetime
-from typing import Any
+from typing import Optional, Union
 
-from pydantic import Field
+from pydantic import Field, HttpUrl, field_validator
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import AssociatedImage, CreatorEntry, GenericEntry, Image
+from simyan.schemas.generic_entries import AssociatedImage, GenericCreator, GenericEntry, Images
 
 
-class BaseIssue(BaseModel):
+class BasicIssue(BaseModel):
     r"""Contains fields for all Issues.
 
     Attributes:
@@ -39,25 +37,25 @@ class BaseIssue(BaseModel):
         volume: The volume the Issue is in.
     """
 
-    aliases: str | None = None
+    aliases: Optional[str] = None
     associated_images: list[AssociatedImage] = Field(default_factory=list)
-    api_url: str = Field(alias="api_detail_url")
-    cover_date: date | None = None
+    api_url: HttpUrl = Field(alias="api_detail_url")
+    cover_date: Optional[date] = None
     date_added: datetime
     date_last_updated: datetime
-    description: str | None = None
+    description: Optional[str] = None
     id: int
-    image: Image
-    name: str | None = None
-    number: str | None = Field(alias="issue_number", default=None)
-    site_url: str = Field(alias="site_detail_url")
-    store_date: date | None = None
-    summary: str | None = Field(alias="deck", default=None)
+    image: Images
+    name: Optional[str] = None
+    number: Optional[str] = Field(alias="issue_number", default=None)
+    site_url: HttpUrl = Field(alias="site_detail_url")
+    store_date: Optional[date] = None
+    summary: Optional[str] = Field(alias="deck", default=None)
     volume: GenericEntry
 
 
-class Issue(BaseIssue):
-    r"""Extends BaseIssue by including all the list references of an issue.
+class Issue(BasicIssue):
+    r"""Extends BasicIssue by including all the list references of an issue.
 
     Attributes:
         characters: List of characters in the Issue.
@@ -79,7 +77,7 @@ class Issue(BaseIssue):
 
     characters: list[GenericEntry] = Field(alias="character_credits", default_factory=list)
     concepts: list[GenericEntry] = Field(alias="concept_credits", default_factory=list)
-    creators: list[CreatorEntry] = Field(alias="person_credits", default_factory=list)
+    creators: list[GenericCreator] = Field(alias="person_credits", default_factory=list)
     deaths: list[GenericEntry] = Field(alias="character_died_in", default_factory=list)
     first_appearance_characters: list[GenericEntry] = Field(default_factory=list)
     first_appearance_concepts: list[GenericEntry] = Field(default_factory=list)
@@ -95,21 +93,14 @@ class Issue(BaseIssue):
     teams: list[GenericEntry] = Field(alias="team_credits", default_factory=list)
     teams_disbanded: list[GenericEntry] = Field(alias="team_disbanded_in", default_factory=list)
 
-    def __init__(self, **data: Any):
-        if "first_appearance_characters" in data and not data["first_appearance_characters"]:
-            data["first_appearance_characters"] = []
-        if "first_appearance_concepts" in data and not data["first_appearance_concepts"]:
-            data["first_appearance_concepts"] = []
-        if "first_appearance_locations" in data and not data["first_appearance_locations"]:
-            data["first_appearance_locations"] = []
-        if "first_appearance_objects" in data and not data["first_appearance_objects"]:
-            data["first_appearance_objects"] = []
-        if "first_appearance_storyarcs" in data and not data["first_appearance_storyarcs"]:
-            data["first_appearance_storyarcs"] = []
-        if "first_appearance_teams" in data and not data["first_appearance_teams"]:
-            data["first_appearance_teams"] = []
-        super().__init__(**data)
-
-
-class IssueEntry(BaseIssue):
-    """Contains all the fields available when viewing a list of Issues."""
+    @field_validator(
+        "first_appearance_characters",
+        "first_appearance_concepts",
+        "first_appearance_locations",
+        "first_appearance_objects",
+        "first_appearance_story_arcs",
+        "first_appearance_teams",
+        mode="before",
+    )
+    def handle_blank_list(cls, value: Union[str, list, None]) -> list:
+        return value or []

@@ -12,16 +12,6 @@ max_line_length = 100
 [*.bat]
 indent_style = tab
 
-[*.cs]
-indent_size = 4
-indent_style = tab
-insert_final_newline = false
-
-[*.java]
-indent_size = 4
-indent_style = tab
-insert_final_newline = false
-
 [*.json]
 insert_final_newline = false
 

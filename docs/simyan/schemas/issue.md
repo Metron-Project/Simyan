@@ -1,5 +1,4 @@
 # Issue
 
-::: simyan.schemas.issue.BaseIssue
+::: simyan.schemas.issue.BasicIssue
 ::: simyan.schemas.issue.Issue
-::: simyan.schemas.issue.IssueEntry

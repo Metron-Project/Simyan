@@ -1,23 +1,22 @@
 """The Team module.
 
 This module provides the following classes:
-
+- BasicTeam
 - Team
-- TeamEntry
 """
 
-from __future__ import annotations
+__all__ = ["BasicTeam", "Team"]
 
-__all__ = ["Team", "TeamEntry"]
 from datetime import datetime
+from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, Image, IssueEntry
+from simyan.schemas.generic_entries import GenericEntry, GenericIssue, Images
 
 
-class BaseTeam(BaseModel):
+class BasicTeam(BaseModel):
     r"""Contains fields for all Teams.
 
     Attributes:
@@ -37,24 +36,24 @@ class BaseTeam(BaseModel):
         summary: Short description of the Team.
     """
 
-    aliases: str | None = None
-    api_url: str = Field(alias="api_detail_url")
+    aliases: Optional[str] = None
+    api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: str | None = None
-    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
+    description: Optional[str] = None
+    first_issue: Optional[GenericIssue] = Field(alias="first_appeared_in_issue", default=None)
     id: int
-    image: Image
+    image: Images
     issue_count: int = Field(alias="count_of_isssue_appearances")
     member_count: int = Field(alias="count_of_team_members")
     name: str
-    publisher: GenericEntry | None = None
-    site_url: str = Field(alias="site_detail_url")
-    summary: str | None = Field(alias="deck", default=None)
+    publisher: Optional[GenericEntry] = None
+    site_url: HttpUrl = Field(alias="site_detail_url")
+    summary: Optional[str] = Field(alias="deck", default=None)
 
 
-class Team(BaseTeam):
-    r"""Extends BaseTeam by including all the list references of a team.
+class Team(BasicTeam):
+    r"""Extends BasicTeam by including all the list references of a team.
 
     Attributes:
         enemies: List of enemies of the Team.
@@ -75,7 +74,3 @@ class Team(BaseTeam):
     members: list[GenericEntry] = Field(alias="characters", default_factory=list)
     story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
     volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
-
-
-class TeamEntry(BaseTeam):
-    """Contains all the fields available when viewing a list of Teams."""

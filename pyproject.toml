@@ -2,6 +2,23 @@
 build-backend = "hatchling.build"
 requires = ["hatchling"]
 
+[dependency-groups]
+dev = [
+  "pre-commit >= 4.0.1"
+]
+docs = [
+  "mkdocs >= 1.6.1",
+  "mkdocs-include-markdown-plugin >= 7.1.2",
+  "mkdocs-material >= 9.5.48",
+  "mkdocstrings[python] >= 0.27.0"
+]
+tests = [
+  "pytest >= 8.3.4",
+  "pytest-cov >= 6.0.0",
+  "tox >= 4.23.2",
+  "tox-uv >= 1.16.1"
+]
+
 [project]
 authors = [
   {email = "BuriedInCode@tuta.io", name = "BuriedInCode"}
@@ -25,29 +42,21 @@ classifiers = [
   "Typing :: Typed"
 ]
 dependencies = [
-  "eval-type-backport >= 0.2.0; python_version < \"3.10\"",
-  "pydantic >= 2.9.2",
+  "eval-type-backport >= 0.2.0; python_version < '3.10'",
+  "pydantic >= 2.10.4",
   "ratelimit >= 2.2.1",
   "requests >= 2.32.3"
 ]
 description = "A Python wrapper for the Comicvine API."
 dynamic = ["version"]
 keywords = ["comic", "comics", "metadata"]
-license = "GPL-3.0-or-later"
+license = {text = "GPL-3.0-or-later"}
 maintainers = [
   {email = "BuriedInCode@tuta.io", name = "BuriedInCode"}
 ]
 name = "Simyan"
 readme = "README.md"
 requires-python = ">= 3.9"
-
-[project.optional-dependencies]
-docs = [
-  "mkdocs >= 1.6.1",
-  "mkdocs-include-markdown-plugin >= 6.2.2",
-  "mkdocs-material >= 9.5.39",
-  "mkdocstrings[python] >= 0.26.1"
-]
 
 [project.urls]
 Documentation = "https://simyan.readthedocs.io/en/latest/"
@@ -60,6 +69,9 @@ show_missing = true
 
 [tool.coverage.run]
 source = ["simyan"]
+
+[tool.hatch.build.targets.sdist]
+exclude = [".github/"]
 
 [tool.hatch.version]
 path = "simyan/__init__.py"
@@ -83,10 +95,13 @@ skip-magic-trailing-comma = true
 ignore = [
   "COM812",
   "D107",
-  "EXE",
+  "DTZ001",
+  "EM101",
+  "EM102",
   "FBT",
   "PLR2004",
-  "TCH"
+  "TCH",
+  "TRY003"
 ]
 select = ["ALL"]
 
@@ -108,7 +123,7 @@ split-on-trailing-comma = false
 classmethod-decorators = ["classmethod", "pydantic.field_validator"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101"]
+"tests/*" = ["PLR2004", "S101"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -116,11 +131,16 @@ convention = "google"
 [tool.ruff.lint.pyupgrade]
 keep-runtime-typing = true
 
-[tool.uv]
-dev-dependencies = [
-  "pre-commit >= 3.8.0",
-  "pytest >= 8.3.3",
-  "pytest-cov >= 5.0.0",
-  "tox >= 4.21.1",
-  "tox-uv >= 1.13.0"
-]
+[tool.tomlsort]
+all = true
+overrides."tool.tox.env_list".inline_arrays = false
+overrides."tool.tox.testenv.commands".inline_arrays = false
+
+[tool.tox]
+env_list = ["3.9", "3.10", "3.11", "3.12", "3.13"]
+min_version = "4.22"
+
+[tool.tox.env_run_base]
+commands = [["pytest"]]
+dependency_groups = ["tests"]
+passenv = ["COMICVINE__API_KEY"]

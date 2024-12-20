@@ -1,24 +1,22 @@
 """The Location module.
 
 This module provides the following classes:
-
+- BasicLocation
 - Location
-- LocationEntry
 """
 
-from __future__ import annotations
-
-__all__ = ["Location", "LocationEntry"]
+__all__ = ["BasicLocation", "Location"]
 
 from datetime import datetime
+from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, Image, IssueEntry
+from simyan.schemas.generic_entries import GenericEntry, GenericIssue, Images
 
 
-class BaseLocation(BaseModel):
+class BasicLocation(BaseModel):
     r"""Contains fields for all Locations.
 
     Attributes:
@@ -37,23 +35,23 @@ class BaseLocation(BaseModel):
         summary: Short description of the Location.
     """
 
-    aliases: str | None = None
-    api_url: str = Field(alias="api_detail_url")
+    aliases: Optional[str] = None
+    api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: str | None = None
-    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
+    description: Optional[str] = None
+    first_issue: Optional[GenericIssue] = Field(alias="first_appeared_in_issue", default=None)
     id: int
-    image: Image
-    issue_count: int | None = Field(alias="count_of_issue_appearances", default=None)
+    image: Images
+    issue_count: Optional[int] = Field(alias="count_of_issue_appearances", default=None)
     name: str
     site_url: str = Field(alias="site_detail_url")
-    start_year: int | None = None
-    summary: str | None = Field(alias="deck", default=None)
+    start_year: Optional[int] = None
+    summary: Optional[str] = Field(alias="deck", default=None)
 
 
-class Location(BaseLocation):
-    r"""Extends BaseLocation by including all the list references of a location.
+class Location(BasicLocation):
+    r"""Extends BasicLocation by including all the list references of a location.
 
     Attributes:
         issues: List of issues the Location appears in.
@@ -61,10 +59,6 @@ class Location(BaseLocation):
         volumes: List of volumes the Location appears in.
     """
 
-    issues: list[IssueEntry] = Field(alias="issue_credits", default_factory=list)
+    issues: list[GenericIssue] = Field(alias="issue_credits", default_factory=list)
     story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
     volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
-
-
-class LocationEntry(BaseLocation):
-    """Contains all the fields available when viewing a list of Locations."""

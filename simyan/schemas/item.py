@@ -1,23 +1,22 @@
 """The Item module.
 
 This module provides the following classes:
-
+- BasicItem
 - Item
-- ItemEntry
 """
 
-from __future__ import annotations
+__all__ = ["BasicItem", "Item"]
 
-__all__ = ["Item", "ItemEntry"]
 from datetime import datetime
+from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, Image, IssueEntry
+from simyan.schemas.generic_entries import GenericEntry, GenericIssue, Images
 
 
-class BaseItem(BaseModel):
+class BasicItem(BaseModel):
     r"""Contains fields for all Items.
 
     Attributes:
@@ -36,23 +35,23 @@ class BaseItem(BaseModel):
         summary: Short description of the Item.
     """
 
-    aliases: str | None = None
-    api_url: str = Field(alias="api_detail_url")
+    aliases: Optional[str] = None
+    api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: str | None = None
-    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
+    description: Optional[str] = None
+    first_issue: Optional[GenericIssue] = Field(alias="first_appeared_in_issue", default=None)
     id: int
-    image: Image
+    image: Images
     issue_count: int = Field(alias="count_of_issue_appearances")
     name: str
-    site_url: str = Field(alias="site_detail_url")
-    start_year: int | None = None
-    summary: str | None = Field(alias="deck", default=None)
+    site_url: HttpUrl = Field(alias="site_detail_url")
+    start_year: Optional[int] = None
+    summary: Optional[str] = Field(alias="deck", default=None)
 
 
-class Item(BaseItem):
-    r"""Extends BaseItem by including all the list references of a item.
+class Item(BasicItem):
+    r"""Extends BasicItem by including all the list references of a item.
 
     Attributes:
         issues: List of issues the Item appears in.
@@ -63,7 +62,3 @@ class Item(BaseItem):
     issues: list[GenericEntry] = Field(alias="issue_credits", default_factory=list)
     story_arcs: list[GenericEntry] = Field(alias="story_arc_credits", default_factory=list)
     volumes: list[GenericEntry] = Field(alias="volume_credits", default_factory=list)
-
-
-class ItemEntry(BaseItem):
-    """Contains all the fields available when viewing a list of Items."""

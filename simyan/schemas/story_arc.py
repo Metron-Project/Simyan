@@ -1,23 +1,22 @@
 """The StoryArc module.
 
 This module provides the following classes:
-
+- BasicStoryArc
 - StoryArc
-- StoryArcEntry
 """
 
-from __future__ import annotations
+__all__ = ["BasicStoryArc", "StoryArc"]
 
-__all__ = ["StoryArc", "StoryArcEntry"]
 from datetime import datetime
+from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 
 from simyan.schemas import BaseModel
-from simyan.schemas.generic_entries import GenericEntry, Image, IssueEntry
+from simyan.schemas.generic_entries import GenericEntry, GenericIssue, Images
 
 
-class BaseStoryArc(BaseModel):
+class BasicStoryArc(BaseModel):
     r"""Contains fields for all Story Arcs.
 
     Attributes:
@@ -36,30 +35,26 @@ class BaseStoryArc(BaseModel):
         summary: Short description of the Story Arc.
     """
 
-    aliases: str | None = None
-    api_url: str = Field(alias="api_detail_url")
+    aliases: Optional[str] = None
+    api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: str | None = None
-    first_issue: IssueEntry | None = Field(alias="first_appeared_in_issue", default=None)
+    description: Optional[str] = None
+    first_issue: Optional[GenericIssue] = Field(alias="first_appeared_in_issue", default=None)
     id: int
-    image: Image
+    image: Images
     issue_count: int = Field(alias="count_of_isssue_appearances")
     name: str
-    publisher: GenericEntry | None = None
-    site_url: str = Field(alias="site_detail_url")
-    summary: str | None = Field(alias="deck", default=None)
+    publisher: Optional[GenericEntry] = None
+    site_url: HttpUrl = Field(alias="site_detail_url")
+    summary: Optional[str] = Field(alias="deck", default=None)
 
 
-class StoryArc(BaseStoryArc):
-    r"""Extends BaseStoryArc by including all the list references of a story arc.
+class StoryArc(BasicStoryArc):
+    r"""Extends BasicStoryArc by including all the list references of a story arc.
 
     Attributes:
         issues: List of issues in the Story Arc.
     """
 
     issues: list[GenericEntry] = Field(default_factory=list)
-
-
-class StoryArcEntry(BaseStoryArc):
-    """Contains all the fields available when viewing a list of Story Arcs."""
