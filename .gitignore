@@ -145,3 +145,4 @@ cython_debug/
 # Custom
 .ruff_cache/
 uv.lock
+.envrc
