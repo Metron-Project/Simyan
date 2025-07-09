@@ -10,11 +10,11 @@ __all__ = ["Comicvine", "ComicvineResource"]
 import platform
 import re
 from enum import Enum
-from typing import Any, Optional, TypeVar, Union
-from urllib.parse import urlencode
+from typing import Any, ClassVar, Final, Optional, TypeVar, Union
+from urllib.parse import urlencode, urlparse
 
 from pydantic import TypeAdapter, ValidationError
-from ratelimit import limits, sleep_and_retry
+from pyrate_limiter import Duration, Limiter, Rate, SQLiteBucket
 from requests import get
 from requests.exceptions import (
     ConnectionError,  # noqa: A004
@@ -39,8 +39,23 @@ from simyan.schemas.team import BasicTeam, Team
 from simyan.schemas.volume import BasicVolume, Volume
 from simyan.sqlite_cache import SQLiteCache
 
-MINUTE = 60
+# Constants
+SECOND_RATE: Final[int] = 1
+HOUR_RATE: Final[int] = 200
 T = TypeVar("T")
+
+
+def rate_mapping(*args: Any, **kwargs: Any) -> tuple[str, int]:
+    if kwargs and "url" in kwargs:
+        url = kwargs["url"]
+    else:
+        return "comicvine", 1
+    parts = urlparse(url).path.strip("/").split("/")
+    if not parts or len(parts) < 2:
+        return "comicvine", 1
+    if len(parts) == 3:
+        return f"get_{parts[1]}", 1
+    return parts[1], 1
 
 
 class ComicvineResource(Enum):
@@ -98,6 +113,14 @@ class Comicvine:
 
     API_URL = "https://comicvine.gamespot.com/api"
 
+    _second_rate = Rate(SECOND_RATE, Duration.SECOND)
+    _hour_rate = Rate(HOUR_RATE, Duration.HOUR)
+    _rates: ClassVar[list[Rate]] = [_second_rate, _hour_rate]
+    _bucket = SQLiteBucket.init_from_file(_rates)  # Save between sessions
+    # Can a `BucketFullException` be raised when used as a decorator?
+    _limiter = Limiter(_bucket, raise_when_fail=False, max_delay=Duration.DAY)
+    decorator = _limiter.as_decorator()
+
     def __init__(self, api_key: str, timeout: int = 30, cache: Optional[SQLiteCache] = None):
         self.headers = {
             "Accept": "application/json",
@@ -107,8 +130,7 @@ class Comicvine:
         self.timeout = timeout
         self.cache = cache
 
-    @sleep_and_retry
-    @limits(calls=20, period=MINUTE)
+    @decorator(rate_mapping)
     def _perform_get_request(
         self, url: str, params: Optional[dict[str, str]] = None
     ) -> dict[str, Any]:
