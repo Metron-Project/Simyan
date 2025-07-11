@@ -14,14 +14,14 @@ from simyan.schemas.publisher import BasicPublisher
 
 def test_get_publisher(session: Comicvine) -> None:
     """Test the get_publisher function with a valid id."""
-    result = session.get_publisher(publisher_id=10)
+    result = session.get_publisher(publisher_id=364)
     assert result is not None
-    assert result.id == 10
+    assert result.id == 364
 
-    assert len(result.characters) == 24149
-    assert len(result.story_arcs) == 895
-    assert len(result.teams) == 1869
-    assert len(result.volumes) == 9416
+    assert len(result.characters) == 775
+    assert len(result.story_arcs) == 38
+    assert len(result.teams) == 42
+    assert len(result.volumes) == 4693
 
 
 def test_get_publisher_fail(session: Comicvine) -> None:

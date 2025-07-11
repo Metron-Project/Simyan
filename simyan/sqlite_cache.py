@@ -7,6 +7,8 @@ This module provides the following classes:
 __all__ = ["SQLiteCache"]
 import json
 import sqlite3
+from collections.abc import Generator
+from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Optional
@@ -26,25 +28,32 @@ class SQLiteCache:
         self._db_path = path or (get_cache_root() / "cache.sqlite")
         self._expiry = expiry
         self.initialize()
+        self.cleanup()
 
-    def _connect(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self._db_path)
-        conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys = ON")
-        return conn
+    @contextmanager
+    def _connect(self) -> Generator[sqlite3.Connection]:
+        conn = None
+        try:
+            conn = sqlite3.connect(self._db_path)
+            conn.row_factory = sqlite3.Row
+            conn.execute("PRAGMA foreign_keys = ON")
+            yield conn
+        finally:
+            if conn:
+                conn.close()
 
     def initialize(self) -> None:
+        """Create the cache table if it doesn't exist."""
         with self._connect() as conn:
             conn.execute(
                 """
-                CREATE TABLE IF NOT EXISTS queries (
+                CREATE TABLE IF NOT EXISTS cache (
                     query TEXT NOT NULL PRIMARY KEY,
                     response TEXT,
-                    query_date DATE
+                    timestamp TIMESTAMP
                 );
                 """
             )
-        self.cleanup()
 
     def select(self, query: str) -> dict[str, Any]:
         """Retrieve data from the cache database.
@@ -57,15 +66,13 @@ class SQLiteCache:
         """
         with self._connect() as conn:
             if self._expiry:
-                expiry = datetime.now(tz=timezone.utc).astimezone().date() - timedelta(
-                    days=self._expiry
-                )
+                expiry = datetime.now(tz=timezone.utc) - timedelta(days=self._expiry)
                 row = conn.execute(
-                    "SELECT * FROM queries WHERE query = ? and query_date > ?;",
+                    "SELECT * FROM cache WHERE query = ? and timestamp > ?;",
                     (query, expiry.isoformat()),
                 ).fetchone()
             else:
-                row = conn.execute("SELECT * FROM queries WHERE query = ?;", (query,)).fetchone()
+                row = conn.execute("SELECT * FROM cache WHERE query = ?;", (query,)).fetchone()
             return json.loads(row["response"]) if row else {}
 
     def insert(self, query: str, response: dict[str, Any]) -> None:
@@ -77,12 +84,8 @@ class SQLiteCache:
         """
         with self._connect() as conn:
             conn.execute(
-                "INSERT INTO queries (query, response, query_date) VALUES (?, ?, ?);",
-                (
-                    query,
-                    json.dumps(response),
-                    datetime.now(tz=timezone.utc).astimezone().date().isoformat(),
-                ),
+                "INSERT INTO cache (query, response, timestamp) VALUES (?, ?, ?);",
+                (query, json.dumps(response), datetime.now(tz=timezone.utc).isoformat()),
             )
 
     def delete(self, query: str) -> None:
@@ -92,12 +95,12 @@ class SQLiteCache:
           query: Url string used as key.
         """
         with self._connect() as conn:
-            conn.execute("DELETE FROM queries WHERE query = ?;", (query,))
+            conn.execute("DELETE FROM cache WHERE query = ?;", (query,))
 
     def cleanup(self) -> None:
         """Remove all expired entries from the cache database."""
         if not self._expiry:
             return
-        expiry = datetime.now(tz=timezone.utc).astimezone().date() - timedelta(days=self._expiry)
+        expiry = datetime.now(tz=timezone.utc) - timedelta(days=self._expiry)
         with self._connect() as conn:
-            conn.execute("DELETE FROM queries WHERE query_date < ?;", (expiry.isoformat(),))
+            conn.execute("DELETE FROM cache WHERE timestamp < ?;", (expiry.isoformat(),))

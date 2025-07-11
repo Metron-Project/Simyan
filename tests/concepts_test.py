@@ -18,7 +18,7 @@ def test_get_concept(session: Comicvine) -> None:
     assert result is not None
     assert result.id == 41148
 
-    assert len(result.issues) == 2589
+    assert len(result.issues) == 2652
     assert len(result.volumes) == 1
 
 
@@ -38,7 +38,7 @@ def test_list_concepts(session: Comicvine) -> None:
     assert str(result.api_url) == "https://comicvine.gamespot.com/api/concept/4015-41148/"
     assert result.date_added == datetime(2008, 6, 6, 11, 27, 52)
     assert result.first_issue.id == 144069
-    assert result.issue_count == 2589
+    assert result.issue_count == 2652
     assert result.name == "Green Lantern"
     assert str(result.site_url) == "https://comicvine.gamespot.com/green-lantern/4015-41148/"
     assert result.start_year == 1940
