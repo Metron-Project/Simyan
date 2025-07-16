@@ -54,6 +54,7 @@ class SQLiteCache:
                 );
                 """
             )
+            conn.commit()
 
     def select(self, query: str) -> dict[str, Any]:
         """Retrieve data from the cache database.
@@ -87,6 +88,7 @@ class SQLiteCache:
                 "INSERT INTO cache (query, response, timestamp) VALUES (?, ?, ?);",
                 (query, json.dumps(response), datetime.now(tz=timezone.utc).isoformat()),
             )
+            conn.commit()
 
     def delete(self, query: str) -> None:
         """Remove entry from the cache with the provided url.
@@ -96,6 +98,7 @@ class SQLiteCache:
         """
         with self._connect() as conn:
             conn.execute("DELETE FROM cache WHERE query = ?;", (query,))
+            conn.commit()
 
     def cleanup(self) -> None:
         """Remove all expired entries from the cache database."""
@@ -104,3 +107,4 @@ class SQLiteCache:
         expiry = datetime.now(tz=timezone.utc) - timedelta(days=self._expiry)
         with self._connect() as conn:
             conn.execute("DELETE FROM cache WHERE timestamp < ?;", (expiry.isoformat(),))
+            conn.commit()
