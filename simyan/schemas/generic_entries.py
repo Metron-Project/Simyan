@@ -18,7 +18,6 @@ __all__ = [
     "Images",
 ]
 
-from typing import Optional
 
 from pydantic import Field, HttpUrl
 
@@ -37,8 +36,8 @@ class GenericEntry(BaseModel, extra="forbid"):
 
     api_url: HttpUrl = Field(alias="api_detail_url")
     id: int
-    name: Optional[str] = None
-    site_url: Optional[HttpUrl] = Field(default=None, alias="site_detail_url")
+    name: str | None = None
+    site_url: HttpUrl | None = Field(default=None, alias="site_detail_url")
 
 
 class GenericCount(GenericEntry):
@@ -58,7 +57,7 @@ class GenericIssue(GenericEntry):
         number:
     """
 
-    number: Optional[str] = Field(default=None, alias="issue_number")
+    number: str | None = Field(default=None, alias="issue_number")
 
 
 class GenericCreator(GenericEntry):
@@ -96,7 +95,7 @@ class Images(BaseModel, extra="forbid"):
     super_url: HttpUrl
     thumbnail: HttpUrl = Field(alias="thumb_url")
     tiny_url: HttpUrl
-    tags: Optional[str] = Field(default=None, alias="image_tags")
+    tags: str | None = Field(default=None, alias="image_tags")
 
 
 class AssociatedImage(BaseModel, extra="forbid"):
@@ -111,5 +110,5 @@ class AssociatedImage(BaseModel, extra="forbid"):
 
     url: HttpUrl = Field(alias="original_url")
     id: int
-    caption: Optional[str] = None
-    tags: Optional[str] = Field(default=None, alias="image_tags")
+    caption: str | None = None
+    tags: str | None = Field(default=None, alias="image_tags")

@@ -8,7 +8,6 @@ This module provides the following classes:
 __all__ = ["BasicPublisher", "Publisher"]
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import Field, HttpUrl
 
@@ -35,19 +34,19 @@ class BasicPublisher(BaseModel):
         summary: Short description of the Publisher.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
+    description: str | None = None
     id: int
     image: Images
-    location_address: Optional[str] = None
-    location_city: Optional[str] = None
-    location_state: Optional[str] = None
+    location_address: str | None = None
+    location_city: str | None = None
+    location_state: str | None = None
     name: str
     site_url: HttpUrl = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(alias="deck", default=None)
+    summary: str | None = Field(alias="deck", default=None)
 
 
 class Publisher(BasicPublisher):

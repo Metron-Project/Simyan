@@ -10,7 +10,7 @@ __all__ = ["Comicvine", "ComicvineResource"]
 import platform
 import re
 from enum import Enum
-from typing import Any, ClassVar, Final, Optional, TypeVar, Union
+from typing import Any, ClassVar, Final, TypeVar
 from urllib.parse import urlencode, urlparse
 
 from pydantic import TypeAdapter, ValidationError
@@ -121,7 +121,7 @@ class Comicvine:
     _limiter = Limiter(_bucket, raise_when_fail=False, max_delay=Duration.DAY)
     decorator = _limiter.as_decorator()
 
-    def __init__(self, api_key: str, timeout: int = 30, cache: Optional[SQLiteCache] = None):
+    def __init__(self, api_key: str, timeout: int = 30, cache: SQLiteCache | None = None):
         self.headers = {
             "Accept": "application/json",
             "User-Agent": f"Simyan/{__version__}/{platform.system()}: {platform.release()}",
@@ -132,7 +132,7 @@ class Comicvine:
 
     @decorator(rate_mapping)
     def _perform_get_request(
-        self, url: str, params: Optional[dict[str, str]] = None
+        self, url: str, params: dict[str, str] | None = None
     ) -> dict[str, Any]:
         """Make GET request to Comicvine API endpoint.
 
@@ -173,7 +173,7 @@ class Comicvine:
             raise ServiceError("Service took too long to respond") from err
 
     def _get_request(
-        self, endpoint: str, params: Optional[dict[str, str]] = None, skip_cache: bool = False
+        self, endpoint: str, params: dict[str, str] | None = None, skip_cache: bool = False
     ) -> dict[str, Any]:
         """Check cache or make GET request to Comicvine API endpoint.
 
@@ -214,7 +214,7 @@ class Comicvine:
         return response
 
     def _get_offset_request(
-        self, endpoint: str, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, endpoint: str, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[dict[str, Any]]:
         """Get results from offset requests.
 
@@ -242,7 +242,7 @@ class Comicvine:
         return results[:max_results]
 
     def _get_paged_request(
-        self, endpoint: str, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, endpoint: str, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[dict[str, Any]]:
         """Get results from paged requests.
 
@@ -271,7 +271,7 @@ class Comicvine:
         return results[:max_results]
 
     def list_publishers(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicPublisher]:
         """Request a list of Publishers.
 
@@ -314,7 +314,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_volumes(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicVolume]:
         """Request a list of Volumes.
 
@@ -357,7 +357,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_issues(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicIssue]:
         """Request a list of Issues.
 
@@ -400,7 +400,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_story_arcs(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicStoryArc]:
         """Request a list of Story Arcs.
 
@@ -443,7 +443,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_creators(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicCreator]:
         """Request a list of Creators.
 
@@ -486,7 +486,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_characters(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicCharacter]:
         """Request a list of Characters.
 
@@ -529,7 +529,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_teams(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicTeam]:
         """Request a list of Teams.
 
@@ -572,7 +572,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_locations(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicLocation]:
         """Request a list of Locations.
 
@@ -615,7 +615,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_concepts(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicConcept]:
         """Request a list of Concepts.
 
@@ -658,7 +658,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_powers(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicPower]:
         """Request a list of Powers.
 
@@ -701,7 +701,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_origins(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicOrigin]:
         """Request a list of Origins.
 
@@ -744,7 +744,7 @@ class Comicvine:
             raise ServiceError(err) from err
 
     def list_items(
-        self, params: Optional[dict[str, Any]] = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int = 500
     ) -> list[BasicItem]:
         """Request a list of Items.
 
@@ -788,20 +788,20 @@ class Comicvine:
 
     def search(
         self, resource: ComicvineResource, query: str, max_results: int = 500
-    ) -> Union[
-        list[BasicPublisher],
-        list[BasicVolume],
-        list[BasicIssue],
-        list[BasicStoryArc],
-        list[BasicCreator],
-        list[BasicCharacter],
-        list[BasicTeam],
-        list[BasicLocation],
-        list[BasicConcept],
-        list[BasicPower],
-        list[BasicOrigin],
-        list[BasicItem],
-    ]:
+    ) -> (
+        list[BasicPublisher]
+        | list[BasicVolume]
+        | list[BasicIssue]
+        | list[BasicStoryArc]
+        | list[BasicCreator]
+        | list[BasicCharacter]
+        | list[BasicTeam]
+        | list[BasicLocation]
+        | list[BasicConcept]
+        | list[BasicPower]
+        | list[BasicOrigin]
+        | list[BasicItem]
+    ):
         """Request a list of search results filtered by provided resource.
 
         Args:

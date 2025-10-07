@@ -8,7 +8,6 @@ This module provides the following classes:
 __all__ = ["BasicTeam", "Team"]
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import Field, HttpUrl
 
@@ -36,20 +35,20 @@ class BasicTeam(BaseModel):
         summary: Short description of the Team.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[GenericIssue] = Field(alias="first_appeared_in_issue", default=None)
+    description: str | None = None
+    first_issue: GenericIssue | None = Field(alias="first_appeared_in_issue", default=None)
     id: int
     image: Images
     issue_count: int = Field(alias="count_of_isssue_appearances")
     member_count: int = Field(alias="count_of_team_members")
     name: str
-    publisher: Optional[GenericEntry] = None
+    publisher: GenericEntry | None = None
     site_url: HttpUrl = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(alias="deck", default=None)
+    summary: str | None = Field(alias="deck", default=None)
 
 
 class Team(BasicTeam):

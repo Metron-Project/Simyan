@@ -8,7 +8,6 @@ This module provides the following classes:
 __all__ = ["BasicIssue", "Issue"]
 
 from datetime import date, datetime
-from typing import Optional, Union
 
 from pydantic import Field, HttpUrl, field_validator
 
@@ -37,20 +36,20 @@ class BasicIssue(BaseModel):
         volume: The volume the Issue is in.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     associated_images: list[AssociatedImage] = Field(default_factory=list)
     api_url: HttpUrl = Field(alias="api_detail_url")
-    cover_date: Optional[date] = None
+    cover_date: date | None = None
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
+    description: str | None = None
     id: int
     image: Images
-    name: Optional[str] = None
-    number: Optional[str] = Field(alias="issue_number", default=None)
+    name: str | None = None
+    number: str | None = Field(alias="issue_number", default=None)
     site_url: HttpUrl = Field(alias="site_detail_url")
-    store_date: Optional[date] = None
-    summary: Optional[str] = Field(alias="deck", default=None)
+    store_date: date | None = None
+    summary: str | None = Field(alias="deck", default=None)
     volume: GenericEntry
 
 
@@ -102,7 +101,7 @@ class Issue(BasicIssue):
         "first_appearance_teams",
         mode="before",
     )
-    def handle_blank_list(cls, value: Union[str, list, None]) -> list:
+    def handle_blank_list(cls, value: str | list | None) -> list:
         """Convert a blank or None value to an empty list.
 
         Args:

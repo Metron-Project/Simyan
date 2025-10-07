@@ -8,7 +8,7 @@ This module provides the following classes:
 __all__ = ["BasicCreator", "Creator"]
 
 from datetime import date, datetime
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import Field, HttpUrl
 
@@ -40,24 +40,24 @@ class BasicCreator(BaseModel):
         website: Url to the Creator's website.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: HttpUrl = Field(alias="api_detail_url")
-    country: Optional[str] = None
+    country: str | None = None
     date_added: datetime
     date_last_updated: datetime
-    date_of_birth: Optional[date] = Field(alias="birth", default=None)
-    date_of_death: Optional[date] = Field(alias="death", default=None)
-    description: Optional[str] = None
-    email: Optional[str] = None
+    date_of_birth: date | None = Field(alias="birth", default=None)
+    date_of_death: date | None = Field(alias="death", default=None)
+    description: str | None = None
+    email: str | None = None
     gender: int
-    hometown: Optional[str] = None
+    hometown: str | None = None
     id: int
     image: Images
-    issue_count: Optional[int] = Field(alias="count_of_isssue_appearances", default=None)
+    issue_count: int | None = Field(alias="count_of_isssue_appearances", default=None)
     name: str
     site_url: HttpUrl = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(alias="deck", default=None)
-    website: Optional[HttpUrl] = None
+    summary: str | None = Field(alias="deck", default=None)
+    website: HttpUrl | None = None
 
     def __init__(self, **data: Any):
         if data.get("death"):
