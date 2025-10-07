@@ -8,7 +8,7 @@ This module provides the following classes:
 __all__ = ["BasicCharacter", "Character"]
 
 from datetime import date, datetime
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import Field, HttpUrl
 
@@ -39,23 +39,23 @@ class BasicCharacter(BaseModel):
         summary: Short description of the Character.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    date_of_birth: Optional[date] = Field(alias="birth", default=None)
-    description: Optional[str] = None
-    first_issue: Optional[GenericIssue] = Field(alias="first_appeared_in_issue", default=None)
+    date_of_birth: date | None = Field(alias="birth", default=None)
+    description: str | None = None
+    first_issue: GenericIssue | None = Field(alias="first_appeared_in_issue", default=None)
     gender: int
     id: int
     image: Images
     issue_count: int = Field(alias="count_of_issue_appearances")
     name: str
-    origin: Optional[GenericEntry] = None
-    publisher: Optional[GenericEntry] = None
-    real_name: Optional[str] = None
+    origin: GenericEntry | None = None
+    publisher: GenericEntry | None = None
+    real_name: str | None = None
     site_url: HttpUrl = Field(alias="site_detail_url")
-    summary: Optional[str] = Field(alias="deck", default=None)
+    summary: str | None = Field(alias="deck", default=None)
 
     def __init__(self, **data: Any):
         if data.get("birth"):

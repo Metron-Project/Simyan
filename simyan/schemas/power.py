@@ -8,7 +8,6 @@ This module provides the following classes:
 __all__ = ["BasicPower", "Power"]
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import Field, HttpUrl
 
@@ -30,11 +29,11 @@ class BasicPower(BaseModel):
         site_url: Url to the resource in Comicvine.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
+    description: str | None = None
     id: int
     name: str
     site_url: HttpUrl = Field(alias="site_detail_url")

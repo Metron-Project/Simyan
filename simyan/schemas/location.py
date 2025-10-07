@@ -8,7 +8,6 @@ This module provides the following classes:
 __all__ = ["BasicLocation", "Location"]
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import Field, HttpUrl
 
@@ -35,19 +34,19 @@ class BasicLocation(BaseModel):
         summary: Short description of the Location.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[GenericIssue] = Field(alias="first_appeared_in_issue", default=None)
+    description: str | None = None
+    first_issue: GenericIssue | None = Field(alias="first_appeared_in_issue", default=None)
     id: int
     image: Images
-    issue_count: Optional[int] = Field(alias="count_of_issue_appearances", default=None)
+    issue_count: int | None = Field(alias="count_of_issue_appearances", default=None)
     name: str
     site_url: str = Field(alias="site_detail_url")
-    start_year: Optional[int] = None
-    summary: Optional[str] = Field(alias="deck", default=None)
+    start_year: int | None = None
+    summary: str | None = Field(alias="deck", default=None)
 
 
 class Location(BasicLocation):

@@ -8,7 +8,6 @@ This module provides the following classes:
 __all__ = ["BasicConcept", "Concept"]
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import Field, HttpUrl
 
@@ -35,19 +34,19 @@ class BasicConcept(BaseModel):
         summary: Short description of the Concept.
     """
 
-    aliases: Optional[str] = None
+    aliases: str | None = None
     api_url: HttpUrl = Field(alias="api_detail_url")
     date_added: datetime
     date_last_updated: datetime
-    description: Optional[str] = None
-    first_issue: Optional[GenericIssue] = Field(alias="first_appeared_in_issue", default=None)
+    description: str | None = None
+    first_issue: GenericIssue | None = Field(alias="first_appeared_in_issue", default=None)
     id: int
     image: Images
     issue_count: int = Field(alias="count_of_isssue_appearances")
     name: str
     site_url: HttpUrl = Field(alias="site_detail_url")
-    start_year: Optional[int] = None
-    summary: Optional[str] = Field(alias="deck", default=None)
+    start_year: int | None = None
+    summary: str | None = Field(alias="deck", default=None)
 
 
 class Concept(BasicConcept):

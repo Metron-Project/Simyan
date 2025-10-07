@@ -7,7 +7,6 @@ This module provides the following classes:
 
 __all__ = ["BasicOrigin", "Origin"]
 
-from typing import Optional
 
 from pydantic import Field, HttpUrl
 
@@ -40,6 +39,6 @@ class Origin(BasicOrigin):
         profiles:
     """
 
-    character_set: Optional[int] = None
+    character_set: int | None = None
     characters: list[GenericEntry] = Field(default_factory=list)
     profiles: list[int] = Field(default_factory=list)

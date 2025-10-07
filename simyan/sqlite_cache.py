@@ -11,7 +11,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from simyan import get_cache_root
 
@@ -24,7 +24,7 @@ class SQLiteCache:
         expiry: How long to keep cache results.
     """
 
-    def __init__(self, path: Optional[Path] = None, expiry: Optional[int] = 14):
+    def __init__(self, path: Path | None = None, expiry: int | None = 14):
         self._db_path = path or (get_cache_root() / "cache.sqlite")
         self._expiry = expiry
         self.initialize()
