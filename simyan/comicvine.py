@@ -109,6 +109,7 @@ class Comicvine:
         api_key: User's API key to access the Comicvine API.
         timeout: Set how long requests will wait for a response (in seconds).
         cache: SQLiteCache to use if set.
+        user_agent: Custom User-Agent string. If None, uses default Simyan User-Agent.
     """
 
     API_URL = "https://comicvine.gamespot.com/api"
@@ -121,10 +122,17 @@ class Comicvine:
     _limiter = Limiter(_bucket, raise_when_fail=False, max_delay=Duration.DAY)
     decorator = _limiter.as_decorator()
 
-    def __init__(self, api_key: str, timeout: int = 30, cache: SQLiteCache | None = None):
+    def __init__(
+        self,
+        api_key: str,
+        timeout: int = 30,
+        cache: SQLiteCache | None = None,
+        user_agent: str | None = None,
+    ):
         self.headers = {
             "Accept": "application/json",
-            "User-Agent": f"Simyan/{__version__}/{platform.system()}: {platform.release()}",
+            "User-Agent": user_agent
+            or f"Simyan/{__version__}/{platform.system()}: {platform.release()}",
         }
         self.api_key = api_key
         self.timeout = timeout
