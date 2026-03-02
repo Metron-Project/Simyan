@@ -222,7 +222,7 @@ class Comicvine:
             response = self._get_request(endpoint=endpoint, params={**params, "page": str(page)})
             results.extend(response["results"])
             page += 1
-            if len(results) >= response["number_of_total_results"] or len(results) >= max_results:
+            if not response["results"] or len(results) >= max_results:
                 break
         return results[:max_results]
 
@@ -239,7 +239,7 @@ class Comicvine:
             )
             results.extend(response["results"])
             offset += int(params["limit"])
-            if len(results) >= response["number_of_total_results"] or len(results) >= max_results:
+            if not response["results"] or len(results) >= max_results:
                 break
         return results[:max_results]
 
