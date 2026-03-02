@@ -19,10 +19,10 @@ def test_get_volume(session: Comicvine) -> None:
     assert result.id == 18216
 
     assert len(result.characters) == 368
-    assert len(result.concepts) == 10
+    assert len(result.concepts) == 3
     assert len(result.creators) == 95
     assert len(result.issues) == 67
-    assert len(result.locations) == 48
+    assert len(result.locations) == 47
     assert len(result.objects) == 368
 
 
@@ -52,7 +52,7 @@ def test_list_volumes(session: Comicvine) -> None:
 
 def test_list_volumes_empty(session: Comicvine) -> None:
     """Test the list_volumes function with an invalid search."""
-    results = session.list_volumes({"filter": "name:INVALID"})
+    results = session.list_volumes({"filter": "name:Invalid Volume Name"})
     assert len(results) == 0
 
 

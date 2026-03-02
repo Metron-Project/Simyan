@@ -4,24 +4,26 @@ requires = ["hatchling"]
 
 [dependency-groups]
 dev = [
-  "pre-commit >= 4.3.0"
+  "pre-commit >= 4.5.0",
 ]
 docs = [
   "mkdocs >= 1.6.0",
   "mkdocs-include-markdown-plugin >= 7.2.0",
-  "mkdocs-material >= 9.6.0",
-  "mkdocstrings[python] >= 0.30.0"
+  "mkdocs-material >= 9.7.0",
+  "mkdocstrings[python] >= 1.0.0",
 ]
 tests = [
-  "pytest >= 8.4.0",
+  "pytest >= 9.0.0",
   "pytest-cov >= 7.0.0",
-  "tox >= 4.30.0",
-  "tox-uv >= 1.28.0"
+  "pytest-freezer >= 0.4.0",
+  "pytest-httpx >= 0.36.0",
+  "tox >= 4.47.0",
+  "tox-uv >= 1.33.0",
 ]
 
 [project]
 authors = [
-  {email = "BuriedInCode@tuta.io", name = "BuriedInCode"}
+  {email = "BuriedInCode@tuta.io", name = "BuriedInCode"},
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -37,12 +39,12 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Programming Language :: Python",
   "Topic :: Internet",
-  "Typing :: Typed"
+  "Typing :: Typed",
 ]
 dependencies = [
+  "httpx >= 0.28.0",
   "pydantic >= 2.12.0",
-  "pyrate-limiter >= 3.9.0",
-  "requests >= 2.32.0"
+  "pyrate-limiter >= 4.0.0",
 ]
 description = "A Python wrapper for the Comicvine API."
 dynamic = ["version"]
@@ -50,7 +52,7 @@ keywords = ["comic", "comics", "metadata"]
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 maintainers = [
-  {email = "BuriedInCode@tuta.io", name = "BuriedInCode"}
+  {email = "BuriedInCode@tuta.io", name = "BuriedInCode"},
 ]
 name = "Simyan"
 readme = "README.md"
@@ -92,14 +94,15 @@ skip-magic-trailing-comma = true
 [tool.ruff.lint]
 ignore = [
   "COM812",
+  "D100",
+  "D104",
   "D107",
-  "DTZ001",
-  "EM101",
-  "EM102",
+  "EM",
   "FBT",
+  "PLR0913",
   "PLR2004",
   "TCH",
-  "TRY003"
+  "TRY003",
 ]
 select = ["ALL"]
 
@@ -121,7 +124,7 @@ split-on-trailing-comma = false
 classmethod-decorators = ["classmethod", "pydantic.field_validator"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["PLR2004", "S101"]
+"tests/*" = ["D", "DTZ001", "PLR2004", "S101", "SLF001"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -131,6 +134,8 @@ keep-runtime-typing = true
 
 [tool.tomlsort]
 all = true
+ignore_case = true
+trailing_comma_inline_array = true
 overrides."tool.tox.env_list".inline_arrays = false
 overrides."tool.tox.env_run_base.commands".inline_arrays = false
 

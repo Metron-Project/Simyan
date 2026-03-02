@@ -5,7 +5,7 @@ This module provides the following classes:
 - ServiceError
 """
 
-__all__ = ["AuthenticationError", "ServiceError"]
+__all__ = ["AuthenticationError", "RateLimitError", "ServiceError"]
 
 
 class ServiceError(Exception):
@@ -14,3 +14,7 @@ class ServiceError(Exception):
 
 class AuthenticationError(ServiceError):
     """Class for any authentication errors."""
+
+
+class RateLimitError(ServiceError):
+    """Class for any ratelimit errors."""

@@ -1,4 +1,5 @@
 # Exceptions
 
-::: simyan.exceptions.AuthenticationError
 ::: simyan.exceptions.ServiceError
+::: simyan.exceptions.AuthenticationError
+::: simyan.exceptions.RateLimitError
