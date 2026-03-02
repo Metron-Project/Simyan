@@ -12,7 +12,7 @@ import platform
 from enum import Enum
 from json import JSONDecodeError
 from typing import Any, Final, TypeVar
-from urllib.parse import urlencode, urlparse
+from urllib.parse import urlencode
 
 from httpx import (
     Client,
@@ -66,19 +66,6 @@ class RateLimiterTransport(HTTPTransport):
         self.limiter.try_acquire(name)
         LOGGER.debug("Acquired lock")
         return super().handle_request(request, **kwargs)
-
-
-def rate_mapping(*args: Any, **kwargs: Any) -> tuple[str, int]:
-    if kwargs and "url" in kwargs:
-        url = kwargs["url"]
-    else:
-        return "comicvine", 1
-    parts = urlparse(url).path.strip("/").split("/")
-    if not parts or len(parts) < 2:
-        return "comicvine", 1
-    if len(parts) == 3:
-        return f"get_{parts[1]}", 1
-    return parts[1], 1
 
 
 class ComicvineResource(Enum):
@@ -170,19 +157,18 @@ class Comicvine:
         except RequestError as err:
             raise ServiceError(f"Unable to connect to '{self._base_url}{endpoint}'") from err
         except HTTPStatusError as err:
+            status_code = err.response.status_code
             try:
-                if err.response.status_code == 401:
+                if status_code == 401:
                     raise AuthenticationError(err.response.json()["error"]) from err
-                if err.response.status_code == 404:
+                if status_code == 404:
                     raise ServiceError("Resource not found") from err
-                if err.response.status_code in (420, 429):
+                if status_code in (420, 429):
                     raise RateLimitError(err.response.json()["error"]) from err
-                if err.response.status_code in (500, 502, 503):
-                    raise ServiceError("Service error, retry again later") from err
                 raise ServiceError(err.response.json()["error"]) from err
             except JSONDecodeError as err:
                 raise ServiceError(
-                    f"Unable to parse response from '{self._base_url}{endpoint}' as Json"
+                    f"{status_code}: Unable to parse response from '{self._base_url}{endpoint}' as Json"  # noqa: E501
                 ) from err
         except JSONDecodeError as err:
             raise ServiceError(
