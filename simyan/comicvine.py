@@ -8,23 +8,17 @@ This module provides the following classes:
 __all__ = ["Comicvine", "ComicvineResource"]
 
 import platform
-import re
 from enum import Enum
+from json import JSONDecodeError
 from typing import Any, ClassVar, Final, TypeVar
 from urllib.parse import urlencode, urlparse
 
+from httpx import Client, HTTPStatusError, RequestError, TimeoutException
 from pydantic import TypeAdapter, ValidationError
 from pyrate_limiter import Duration, Limiter, Rate, SQLiteBucket
-from requests import get
-from requests.exceptions import (
-    ConnectionError,  # noqa: A004
-    HTTPError,
-    JSONDecodeError,
-    ReadTimeout,
-)
 
 from simyan import __version__
-from simyan.exceptions import AuthenticationError, ServiceError
+from simyan.exceptions import AuthenticationError, RateLimitError, ServiceError
 from simyan.schemas.character import BasicCharacter, Character
 from simyan.schemas.concept import BasicConcept, Concept
 from simyan.schemas.creator import BasicCreator, Creator
@@ -112,8 +106,6 @@ class Comicvine:
         user_agent: Custom User-Agent string. If None, uses default Simyan User-Agent.
     """
 
-    API_URL = "https://comicvine.gamespot.com/api"
-
     _second_rate = Rate(SECOND_RATE, Duration.SECOND)
     _hour_rate = Rate(HOUR_RATE, Duration.HOUR)
     _rates: ClassVar[list[Rate]] = [_second_rate, _hour_rate]
@@ -125,157 +117,104 @@ class Comicvine:
     def __init__(
         self,
         api_key: str,
-        timeout: int = 30,
-        cache: SQLiteCache | None = None,
-        user_agent: str | None = None,
+        cache: SQLiteCache | None,
+        base_url: str = "https://comicvine.gamespot.com/api",
+        user_agent: str = f"Simyan/{__version__} ({platform.system()}: {platform.release()}; Python v{platform.python_version()})",  # noqa: E501
+        timeout: float = 30,
     ):
-        self.headers = {
-            "Accept": "application/json",
-            "User-Agent": user_agent
-            or f"Simyan/{__version__}/{platform.system()}: {platform.release()}",
-        }
-        self.api_key = api_key
-        self.timeout = timeout
-        self.cache = cache
+        self._base_url = base_url
+        self._client = Client(
+            base_url=self._base_url,
+            headers={"Accept": "application/json", "User-Agent": user_agent},
+            params={"api_key": api_key, "format": "json"},
+            timeout=timeout,
+        )
+        self._cache = cache
 
     @decorator(rate_mapping)
     def _perform_get_request(
-        self, url: str, params: dict[str, str] | None = None
+        self, endpoint: str, params: dict[str, str] | None = None
     ) -> dict[str, Any]:
-        """Make GET request to Comicvine API endpoint.
-
-        Args:
-            url: The url to request information from.
-            params: Parameters to add to the request.
-
-        Returns:
-            Json response from the Comicvine API.
-
-        Raises:
-            ServiceError: If there is an issue with the request or response from the Comicvine API.
-        """
-        if params is None:
-            params = {}
+        params: dict[str, str] = params or {}
 
         try:
-            response = get(url, params=params, headers=self.headers, timeout=self.timeout)
+            response = self._client.get(endpoint, params=params)
             response.raise_for_status()
             return response.json()
-        except ConnectionError as err:
-            raise ServiceError(f"Unable to connect to '{url}'") from err
-        except HTTPError as err:
+        except RequestError as err:
+            raise ServiceError(f"Unable to connect to '{self._base_url}{endpoint}'") from err
+        except HTTPStatusError as err:
             try:
-                if err.response.status_code in (401, 420):
-                    # This should be 429 but CV uses 420 for ratelimiting
+                if err.response.status_code == 401:
                     raise AuthenticationError(err.response.json()["error"]) from err
                 if err.response.status_code == 404:
-                    raise ServiceError("404: Not Found") from err
-                if err.response.status_code in (502, 503):
+                    raise ServiceError("Not Found") from err
+                if err.response.status_code in (420, 429):
+                    raise RateLimitError(err.response.json()["error"]) from err
+                if err.response.status_code in (500, 502, 503):
                     raise ServiceError("Service error, retry again later") from err
                 raise ServiceError(err.response.json()["error"]) from err
             except JSONDecodeError as err:
-                raise ServiceError(f"Unable to parse response from '{url}' as Json") from err
+                raise ServiceError(
+                    f"Unable to parse response from '{self._base_url}{endpoint}' as Json"
+                ) from err
         except JSONDecodeError as err:
-            raise ServiceError(f"Unable to parse response from '{url} as Json") from err
-        except ReadTimeout as err:
+            raise ServiceError(
+                f"Unable to parse response from '{self._base_url}{endpoint}' as Json"
+            ) from err
+        except TimeoutException as err:
             raise ServiceError("Service took too long to respond") from err
 
-    def _get_request(
-        self, endpoint: str, params: dict[str, str] | None = None, skip_cache: bool = False
-    ) -> dict[str, Any]:
-        """Check cache or make GET request to Comicvine API endpoint.
-
-        Args:
-            endpoint: The endpoint to request information from.
-            params: Parameters to add to the request.
-            skip_cache: Skip read and writing to the cache.
-
-        Returns:
-            Json response from the Comicvine API.
-
-        Raises:
-            ServiceError: If there is an issue with the request or response from the Comicvine API.
-            AuthenticationError: If Comicvine returns with an invalid API key response.
-        """
-        if params is None:
-            params = {}
-        params["api_key"] = self.api_key
-        params["format"] = "json"
-
-        url = self.API_URL + endpoint + "/"
+    def _get_request(self, endpoint: str, params: dict[str, str] | None = None) -> dict[str, Any]:
+        params: dict[str, str] = params or {}
+        url = f"{self._base_url}{endpoint}/"
         cache_params = f"?{urlencode({k: params[k] for k in sorted(params)})}"
-        cache_key = f"{url}{cache_params}"
-        cache_key = re.sub(r"(.+api_key=)(.+?)(&.+)", r"\1*****\3", cache_key)
+        cache_key = url + cache_params
 
-        if self.cache and not skip_cache:
-            cached_response = self.cache.select(query=cache_key)
-            if cached_response:
-                return cached_response
-
-        response = self._perform_get_request(url=url, params=params)
+        if self._cache:
+            cache_data = self._cache.select(query=cache_key)
+            if cache_data:
+                return cache_data
+        response = self._perform_get_request(endpoint=endpoint + "/", params=params)
         if "error" in response and response["error"] != "OK":
             raise ServiceError(response["error"])
-
-        if self.cache and not skip_cache:
-            self.cache.insert(query=cache_key, response=response)
-
+        if self._cache:
+            self._cache.insert(query=cache_key, response=response)
         return response
 
-    def _get_offset_request(
-        self, endpoint: str, params: dict[str, Any] | None = None, max_results: int = 500
+    def _fetch_item(self, endpoint: str) -> dict[str, Any]:
+        return self._get_request(endpoint=endpoint)["results"]
+
+    def _fetch_paged_list(
+        self, endpoint: str, max_results: int, params: dict[str, str] | None = None
     ) -> list[dict[str, Any]]:
-        """Get results from offset requests.
-
-        Args:
-            endpoint: The endpoint to request information from.
-            params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
-
-        Returns:
-            A list of Json response results.
-        """
-        if params is None:
-            params = {}
-        params["limit"] = 100
-        response = self._get_request(endpoint=endpoint, params=params)
-        results = response["results"]
-        while (
-            response["results"]
-            and len(results) < response["number_of_total_results"]
-            and len(results) < max_results
-        ):
-            params["offset"] = len(results)
-            response = self._get_request(endpoint=endpoint, params=params)
+        params: dict[str, str] = params or {}
+        params["limit"] = params.get("limit", "100")
+        results: list[dict[str, Any]] = []
+        page = int(params.get("page", "1"))
+        while True:
+            response = self._get_request(endpoint=endpoint, params={**params, "page": str(page)})
             results.extend(response["results"])
+            page += 1
+            if len(results) >= response["number_of_total_results"] or len(results) >= max_results:
+                break
         return results[:max_results]
 
-    def _get_paged_request(
-        self, endpoint: str, params: dict[str, Any] | None = None, max_results: int = 500
+    def _fetch_offset_list(
+        self, endpoint: str, max_results: int, params: dict[str, str] | None = None
     ) -> list[dict[str, Any]]:
-        """Get results from paged requests.
-
-        Args:
-            endpoint: The endpoint to request information from.
-            params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
-
-        Returns:
-            A list of Json response results.
-        """
-        if params is None:
-            params = {}
-        params["page"] = 1
-        params["limit"] = 100
-        response = self._get_request(endpoint=endpoint, params=params)
-        results = response["results"]
-        while (
-            response["results"]
-            and len(results) < response["number_of_total_results"]
-            and len(results) < max_results
-        ):
-            params["page"] += 1
-            response = self._get_request(endpoint=endpoint, params=params)
+        params: dict[str, str] = params or {}
+        params["limit"] = params.get("limit", "100")
+        results: list[dict[str, Any]] = []
+        offset = int(params.get("offset", "0"))
+        while True:
+            response = self._get_request(
+                endpoint=endpoint, params={**params, "offset": str(offset)}
+            )
             results.extend(response["results"])
+            offset += int(params["limit"])
+            if len(results) >= response["number_of_total_results"] or len(results) >= max_results:
+                break
         return results[:max_results]
 
     def list_publishers(
@@ -294,7 +233,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/publishers", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicPublisher]).validate_python(results)
@@ -314,9 +253,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/publisher/{ComicvineResource.PUBLISHER.resource_id}-{publisher_id}"
-            )["results"]
+            )
             return TypeAdapter(Publisher).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -337,7 +276,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/volumes", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicVolume]).validate_python(results)
@@ -357,9 +296,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/volume/{ComicvineResource.VOLUME.resource_id}-{volume_id}"
-            )["results"]
+            )
             return TypeAdapter(Volume).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -380,7 +319,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/issues", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicIssue]).validate_python(results)
@@ -400,9 +339,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/issue/{ComicvineResource.ISSUE.resource_id}-{issue_id}"
-            )["results"]
+            )
             return TypeAdapter(Issue).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -423,7 +362,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/story_arcs", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicStoryArc]).validate_python(results)
@@ -443,9 +382,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/story_arc/{ComicvineResource.STORY_ARC.resource_id}-{story_arc_id}"
-            )["results"]
+            )
             return TypeAdapter(StoryArc).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -466,7 +405,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/people", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicCreator]).validate_python(results)
@@ -486,9 +425,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/person/{ComicvineResource.CREATOR.resource_id}-{creator_id}"
-            )["results"]
+            )
             return TypeAdapter(Creator).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -509,7 +448,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/characters", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicCharacter]).validate_python(results)
@@ -529,9 +468,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/character/{ComicvineResource.CHARACTER.resource_id}-{character_id}"
-            )["results"]
+            )
             return TypeAdapter(Character).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -552,7 +491,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/teams", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicTeam]).validate_python(results)
@@ -572,9 +511,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/team/{ComicvineResource.TEAM.resource_id}-{team_id}"
-            )["results"]
+            )
             return TypeAdapter(Team).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -595,7 +534,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/locations", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicLocation]).validate_python(results)
@@ -615,9 +554,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/location/{ComicvineResource.LOCATION.resource_id}-{location_id}"
-            )["results"]
+            )
             return TypeAdapter(Location).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -638,7 +577,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/concepts", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicConcept]).validate_python(results)
@@ -658,9 +597,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/concept/{ComicvineResource.CONCEPT.resource_id}-{concept_id}"
-            )["results"]
+            )
             return TypeAdapter(Concept).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -681,7 +620,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/powers", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicPower]).validate_python(results)
@@ -701,9 +640,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/power/{ComicvineResource.POWER.resource_id}-{power_id}"
-            )["results"]
+            )
             return TypeAdapter(Power).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -724,7 +663,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/origins", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicOrigin]).validate_python(results)
@@ -744,9 +683,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/origin/{ComicvineResource.ORIGIN.resource_id}-{origin_id}"
-            )["results"]
+            )
             return TypeAdapter(Origin).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -767,7 +706,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_offset_request(
+            results = self._fetch_offset_list(
                 endpoint="/objects", params=params, max_results=max_results
             )
             return TypeAdapter(list[BasicItem]).validate_python(results)
@@ -787,9 +726,9 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            result = self._get_request(
+            result = self._fetch_item(
                 endpoint=f"/object/{ComicvineResource.ITEM.resource_id}-{item_id}"
-            )["results"]
+            )
             return TypeAdapter(Item).validate_python(result)
         except ValidationError as err:
             raise ServiceError(err) from err
@@ -824,7 +763,7 @@ class Comicvine:
             ServiceError: If there is an issue with validating the response.
         """
         try:
-            results = self._get_paged_request(
+            results = self._fetch_paged_list(
                 endpoint="/search",
                 params={"query": query, "resources": resource.search_resource},
                 max_results=max_results,

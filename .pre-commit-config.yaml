@@ -1,20 +1,20 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.0
+    rev: v0.15.2
     hooks:
       - id: ruff-format
       - id: ruff-check
-  - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.22
+  - repo: https://github.com/hukkin/mdformat
+    rev: 1.0.0
     hooks:
       - id: mdformat
         additional_dependencies:
           - mdformat-gfm
-          - mdformat-tables
+          - mdformat-ruff
         args:
           - --number
           - --wrap=keep
-        exclude: ".github\/ISSUE_TEMPLATE\/.*.md"
+        exclude: "(.github\/ISSUE_TEMPLATE\/.*).md"
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
