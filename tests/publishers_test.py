@@ -19,9 +19,9 @@ def test_get_publisher(session: Comicvine) -> None:
     assert result.id == 364
 
     assert len(result.characters) == 779
-    assert len(result.story_arcs) == 38
+    assert len(result.story_arcs) == 37
     assert len(result.teams) == 42
-    assert len(result.volumes) == 4692
+    assert len(result.volumes) == 4738
 
 
 def test_get_publisher_fail(session: Comicvine) -> None:

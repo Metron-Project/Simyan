@@ -15,6 +15,7 @@ docs = [
 tests = [
   "pytest >= 9.0.0",
   "pytest-cov >= 7.0.0",
+  "pytest-freezer >= 0.4.0",
   "pytest-httpx >= 0.36.0",
   "tox >= 4.47.0",
   "tox-uv >= 1.33.0",
@@ -43,7 +44,7 @@ classifiers = [
 dependencies = [
   "httpx >= 0.28.0",
   "pydantic >= 2.12.0",
-  "pyrate-limiter >= 3.9.0, < 4",
+  "pyrate-limiter >= 4.0.0",
 ]
 description = "A Python wrapper for the Comicvine API."
 dynamic = ["version"]
@@ -99,6 +100,7 @@ ignore = [
   "EM",
   "FBT",
   "PLR0913",
+  "PLR2004",
   "TCH",
   "TRY003",
 ]
@@ -122,7 +124,7 @@ split-on-trailing-comma = false
 classmethod-decorators = ["classmethod", "pydantic.field_validator"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["D", "PLR2004", "S101"]
+"tests/*" = ["D", "DTZ001", "PLR2004", "S101", "SLF001"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

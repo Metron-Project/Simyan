@@ -7,15 +7,24 @@ This module provides the following classes:
 
 __all__ = ["Comicvine", "ComicvineResource"]
 
+import logging
 import platform
 from enum import Enum
 from json import JSONDecodeError
-from typing import Any, ClassVar, Final, TypeVar
+from typing import Any, Final, TypeVar
 from urllib.parse import urlencode, urlparse
 
-from httpx import Client, HTTPStatusError, RequestError, TimeoutException
+from httpx import (
+    Client,
+    HTTPStatusError,
+    HTTPTransport,
+    Request,
+    RequestError,
+    Response,
+    TimeoutException,
+)
 from pydantic import TypeAdapter, ValidationError
-from pyrate_limiter import Duration, Limiter, Rate, SQLiteBucket
+from pyrate_limiter import AbstractBucket, Duration, Limiter, Rate, SQLiteBucket
 
 from simyan import __version__
 from simyan.exceptions import AuthenticationError, RateLimitError, ServiceError
@@ -34,9 +43,29 @@ from simyan.schemas.volume import BasicVolume, Volume
 from simyan.sqlite_cache import SQLiteCache
 
 # Constants
-SECOND_RATE: Final[int] = 1
-HOUR_RATE: Final[int] = 200
+LOGGER = logging.getLogger(__name__)
 T = TypeVar("T")
+RATELIMIT_BUCKET: Final[AbstractBucket] = SQLiteBucket.init_from_file(
+    [Rate(1, Duration.SECOND), Rate(200, Duration.HOUR)]
+)
+
+
+class RateLimiterTransport(HTTPTransport):
+    def __init__(self, limiter: Limiter, **kwargs):  # noqa: ANN003
+        super().__init__(**kwargs)
+        self.limiter = limiter
+
+    def handle_request(self, request: Request, **kwargs) -> Response:  # noqa: ANN003
+        parts = request.url.path.strip("/").split("/")
+        if len(parts) == 3:
+            name = f"get_{parts[1]}"
+        elif len(parts) == 2:
+            name = parts[1]
+        else:
+            name = "comicvine"
+        self.limiter.try_acquire(name)
+        LOGGER.debug("Acquired lock")
+        return super().handle_request(request, **kwargs)
 
 
 def rate_mapping(*args: Any, **kwargs: Any) -> tuple[str, int]:
@@ -106,32 +135,29 @@ class Comicvine:
         user_agent: Custom User-Agent string. If None, uses default Simyan User-Agent.
     """
 
-    _second_rate = Rate(SECOND_RATE, Duration.SECOND)
-    _hour_rate = Rate(HOUR_RATE, Duration.HOUR)
-    _rates: ClassVar[list[Rate]] = [_second_rate, _hour_rate]
-    _bucket = SQLiteBucket.init_from_file(_rates)  # Save between sessions
-    # Can a `BucketFullException` be raised when used as a decorator?
-    _limiter = Limiter(_bucket, raise_when_fail=False, max_delay=Duration.DAY)
-    decorator = _limiter.as_decorator()
-
     def __init__(
         self,
         api_key: str,
         cache: SQLiteCache | None,
         base_url: str = "https://comicvine.gamespot.com/api",
-        user_agent: str = f"Simyan/{__version__} ({platform.system()}: {platform.release()}; Python v{platform.python_version()})",  # noqa: E501
+        user_agent: str | None = None,
         timeout: float = 30,
+        limiter: Limiter = Limiter(RATELIMIT_BUCKET),  # noqa: B008
     ):
         self._base_url = base_url
         self._client = Client(
             base_url=self._base_url,
-            headers={"Accept": "application/json", "User-Agent": user_agent},
+            headers={
+                "Accept": "application/json",
+                "User-Agent": user_agent
+                or f"Simyan/{__version__} ({platform.system()}: {platform.release()}; Python v{platform.python_version()})",  # noqa: E501
+            },
             params={"api_key": api_key, "format": "json"},
             timeout=timeout,
+            transport=RateLimiterTransport(limiter),
         )
         self._cache = cache
 
-    @decorator(rate_mapping)
     def _perform_get_request(
         self, endpoint: str, params: dict[str, str] | None = None
     ) -> dict[str, Any]:
@@ -148,7 +174,7 @@ class Comicvine:
                 if err.response.status_code == 401:
                     raise AuthenticationError(err.response.json()["error"]) from err
                 if err.response.status_code == 404:
-                    raise ServiceError("Not Found") from err
+                    raise ServiceError("Resource not found") from err
                 if err.response.status_code in (420, 429):
                     raise RateLimitError(err.response.json()["error"]) from err
                 if err.response.status_code in (500, 502, 503):

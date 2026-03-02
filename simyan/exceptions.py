@@ -15,5 +15,6 @@ class ServiceError(Exception):
 class AuthenticationError(ServiceError):
     """Class for any authentication errors."""
 
+
 class RateLimitError(ServiceError):
     """Class for any ratelimit errors."""

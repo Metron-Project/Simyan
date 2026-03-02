@@ -110,4 +110,6 @@ class Issue(BasicIssue):
         Returns:
             An empty list if the value is None or an empty string, otherwise the original list.
         """
+        if isinstance(value, str):
+            return []
         return value or []

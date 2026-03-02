@@ -22,7 +22,7 @@ def test_get_volume(session: Comicvine) -> None:
     assert len(result.concepts) == 3
     assert len(result.creators) == 95
     assert len(result.issues) == 67
-    assert len(result.locations) == 48
+    assert len(result.locations) == 47
     assert len(result.objects) == 368
 
 

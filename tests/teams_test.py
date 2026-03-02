@@ -24,7 +24,7 @@ def test_get_team(session: Comicvine) -> None:
     assert len(result.issues_disbanded_in) == 1
     assert len(result.members) == 19
     assert len(result.story_arcs) == 0
-    assert len(result.volumes) == 65
+    assert len(result.volumes) == 67
 
 
 def test_get_team_fail(session: Comicvine) -> None:
