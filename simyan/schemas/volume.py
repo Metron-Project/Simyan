@@ -1,17 +1,10 @@
-"""The Volume module.
-
-This module provides the following classes:
-- BasicVolume
-- Volume
-"""
-
 __all__ = ["BasicVolume", "Volume"]
 
 from datetime import datetime
 
 from pydantic import Field, HttpUrl, field_validator
 
-from simyan.schemas import BaseModel
+from simyan.schemas._base import BaseModel
 from simyan.schemas.generic_entries import GenericCount, GenericEntry, GenericIssue, Images
 
 

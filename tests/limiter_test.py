@@ -8,9 +8,9 @@ from freezegun.api import FrozenDateTimeFactory
 from pyrate_limiter import Duration, InMemoryBucket, Limiter, Rate
 from pytest_httpx import HTTPXMock
 
+from simyan.cache import SQLiteCache
 from simyan.comicvine import Comicvine
-from simyan.exceptions import RateLimitError
-from simyan.sqlite_cache import SQLiteCache
+from simyan.errors import RateLimitError
 
 SLEEP_TARGET: Final[str] = "pyrate_limiter.limiter.sleep"
 TEST_ENDPOINT: Final[str] = "/rate-limited/"

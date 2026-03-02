@@ -1,14 +1,3 @@
-"""The GenericEntries module.
-
-This module provides the following classes:
-- AssociatedImage
-- GenericCount
-- GenericCreator
-- GenericEntry
-- GenericIssue
-- Images
-"""
-
 __all__ = [
     "AssociatedImage",
     "GenericCount",
@@ -21,7 +10,7 @@ __all__ = [
 
 from pydantic import Field, HttpUrl
 
-from simyan.schemas import BaseModel
+from simyan.schemas._base import BaseModel
 
 
 class GenericEntry(BaseModel, extra="forbid"):

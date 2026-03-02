@@ -1,17 +1,10 @@
-"""The StoryArc module.
-
-This module provides the following classes:
-- BasicStoryArc
-- StoryArc
-"""
-
 __all__ = ["BasicStoryArc", "StoryArc"]
 
 from datetime import datetime
 
 from pydantic import Field, HttpUrl
 
-from simyan.schemas import BaseModel
+from simyan.schemas._base import BaseModel
 from simyan.schemas.generic_entries import GenericEntry, GenericIssue, Images
 
 

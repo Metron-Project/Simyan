@@ -1,16 +1,9 @@
-"""The Origin module.
-
-This module provides the following classes:
-- BasicOrigin
-- Origin
-"""
-
 __all__ = ["BasicOrigin", "Origin"]
 
 
 from pydantic import Field, HttpUrl
 
-from simyan.schemas import BaseModel
+from simyan.schemas._base import BaseModel
 from simyan.schemas.generic_entries import GenericEntry
 
 
