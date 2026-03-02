@@ -1,10 +1,3 @@
-"""The Character module.
-
-This module provides the following classes:
-- BasicCharacter
-- Character
-"""
-
 __all__ = ["BasicCharacter", "Character"]
 
 from datetime import date, datetime
@@ -12,7 +5,7 @@ from typing import Any
 
 from pydantic import Field, HttpUrl
 
-from simyan.schemas import BaseModel
+from simyan.schemas._base import BaseModel
 from simyan.schemas.generic_entries import GenericEntry, GenericIssue, Images
 
 

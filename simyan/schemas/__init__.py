@@ -1,20 +1,39 @@
-"""simyan.schemas package entry file.
+__all__ = [
+    "BasicCharacter",
+    "BasicConcept",
+    "BasicCreator",
+    "BasicIssue",
+    "BasicItem",
+    "BasicLocation",
+    "BasicOrigin",
+    "BasicPower",
+    "BasicPublisher",
+    "BasicStoryArc",
+    "BasicTeam",
+    "BasicVolume",
+    "Character",
+    "Concept",
+    "Creator",
+    "Issue",
+    "Item",
+    "Location",
+    "Origin",
+    "Power",
+    "Publisher",
+    "StoryArc",
+    "Team",
+    "Volume",
+]
 
-This module provides the following classes:
-- BaseModel
-"""
-
-__all__ = ["BaseModel"]
-
-from pydantic import BaseModel as PydanticModel
-
-
-class BaseModel(
-    PydanticModel,
-    populate_by_name=True,
-    str_strip_whitespace=True,
-    validate_assignment=True,
-    revalidate_instances="always",
-    extra="ignore",
-):
-    """Base model for Simyan resources."""
+from simyan.schemas.character import BasicCharacter, Character
+from simyan.schemas.concept import BasicConcept, Concept
+from simyan.schemas.creator import BasicCreator, Creator
+from simyan.schemas.issue import BasicIssue, Issue
+from simyan.schemas.item import BasicItem, Item
+from simyan.schemas.location import BasicLocation, Location
+from simyan.schemas.origin import BasicOrigin, Origin
+from simyan.schemas.power import BasicPower, Power
+from simyan.schemas.publisher import BasicPublisher, Publisher
+from simyan.schemas.story_arc import BasicStoryArc, StoryArc
+from simyan.schemas.team import BasicTeam, Team
+from simyan.schemas.volume import BasicVolume, Volume

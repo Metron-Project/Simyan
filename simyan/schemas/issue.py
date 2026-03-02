@@ -1,17 +1,10 @@
-"""The Issue module.
-
-This module provides the following classes:
-- BasicIssue
-- Issue
-"""
-
 __all__ = ["BasicIssue", "Issue"]
 
 from datetime import date, datetime
 
 from pydantic import Field, HttpUrl, field_validator
 
-from simyan.schemas import BaseModel
+from simyan.schemas._base import BaseModel
 from simyan.schemas.generic_entries import AssociatedImage, GenericCreator, GenericEntry, Images
 
 

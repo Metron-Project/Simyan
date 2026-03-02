@@ -14,7 +14,7 @@ repos:
         args:
           - --number
           - --wrap=keep
-        exclude: "(.github\/ISSUE_TEMPLATE\/.*).md"
+        exclude: "(.github\/ISSUE_TEMPLATE\/.*|docs\/simyan\/schemas\/_base).md"
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
@@ -23,16 +23,16 @@ repos:
       - id: check-builtin-literals
       - id: check-case-conflict
       - id: check-docstring-first
-#      - id: check-executables-have-shebangs
+      #      - id: check-executables-have-shebangs
       - id: check-illegal-windows-names
-#      - id: check-json
+      #      - id: check-json
       - id: check-merge-conflict
         args:
           - --assume-in-merge
       - id: check-shebang-scripts-are-executable
       - id: check-toml
       - id: check-vcs-permalinks
-#      - id: check-xml
+      #      - id: check-xml
       - id: check-yaml
         args:
           - --allow-multiple-documents
@@ -47,10 +47,10 @@ repos:
         args:
           - --fix=auto
       - id: name-tests-test
-#      - id: pretty-format-json
-#        args:
-#          - --autofix
-#          - --indent=2
+      #      - id: pretty-format-json
+      #        args:
+      #          - --autofix
+      #          - --indent=2
       - id: trailing-whitespace
         args:
           - --markdown-linebreak-ext=md
@@ -63,6 +63,7 @@ repos:
         args:
           - --in-place
           - --all
+        exclude: ".*\\.lock"
   - repo: meta
     hooks:
       - id: check-hooks-apply

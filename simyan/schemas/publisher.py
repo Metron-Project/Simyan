@@ -1,17 +1,10 @@
-"""The Publisher module.
-
-This module provides the following classes:
-- BasicPublisher
-- Publisher
-"""
-
 __all__ = ["BasicPublisher", "Publisher"]
 
 from datetime import datetime
 
 from pydantic import Field, HttpUrl
 
-from simyan.schemas import BaseModel
+from simyan.schemas._base import BaseModel
 from simyan.schemas.generic_entries import GenericEntry, Images
 
 

@@ -8,25 +8,24 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-informational?logo=pre-commit&style=flat-square)](https://github.com/pre-commit/pre-commit)
 [![Ruff](https://img.shields.io/badge/ruff-enabled-informational?logo=ruff&style=flat-square)](https://github.com/astral-sh/ruff)
 
-[![Github - Contributors](https://img.shields.io/github/contributors/Metron-Project/Simyan.svg?logo=Github&label=Contributors&style=flat-square)](https://github.com/Metron-Project/Simyan/graphs/contributors)
-[![Github Action - Testing](https://img.shields.io/github/actions/workflow/status/Metron-Project/Simyan/testing.yaml?branch=main&logo=Github&label=Testing&style=flat-square)](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml)
-[![Github Action - Publishing](https://img.shields.io/github/actions/workflow/status/Metron-Project/Simyan/publishing.yaml?branch=main&logo=Github&label=Publishing&style=flat-square)](https://github.com/Metron-Project/Simyan/actions/workflows/publishing.yaml)
-
-[![Read the Docs](https://img.shields.io/readthedocs/simyan?label=Read-the-Docs&logo=Read-the-Docs&style=flat-square)](https://simyan.readthedocs.io/en/stable)
+[![Linting](https://github.com/Metron-Project/Simyan/actions/workflows/linting.yaml/badge.svg)](https://github.com/Metron-Project/Simyan/actions/workflows/linting.yaml)
+[![Testing](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml/badge.svg)](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml)
+[![Publishing](https://github.com/Metron-Project/Simyan/actions/workflows/publishing.yaml/badge.svg)](https://github.com/Metron-Project/Simyan/actions/workflows/publishing.yaml)
+[![Read the Docs](https://img.shields.io/readthedocs/simyan?label=Read-the-Docs&logo=Read-the-Docs)](https://simyan.readthedocs.io/en/stable)
 
 A [Python](https://www.python.org/) wrapper for the [Comicvine API](https://comicvine.gamespot.com/api/).
 
 ## Installation
 
-```console
-pip install --user Simyan
+```sh
+pip install Simyan
 ```
 
 ### Example Usage
 
 ```python
+from simyan.cache import SQLiteCache
 from simyan.comicvine import Comicvine
-from simyan.sqlite_cache import SQLiteCache
 
 session = Comicvine(api_key="Comicvine API Key", cache=SQLiteCache())
 

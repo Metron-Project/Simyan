@@ -1,10 +1,3 @@
-"""The Comicvine module.
-
-This module provides the following classes:
-- Comicvine
-- ComicvineResource
-"""
-
 __all__ = ["Comicvine", "ComicvineResource"]
 
 import logging
@@ -27,20 +20,34 @@ from pydantic import TypeAdapter, ValidationError
 from pyrate_limiter import AbstractBucket, Duration, Limiter, Rate, SQLiteBucket
 
 from simyan import __version__
-from simyan.exceptions import AuthenticationError, RateLimitError, ServiceError
-from simyan.schemas.character import BasicCharacter, Character
-from simyan.schemas.concept import BasicConcept, Concept
-from simyan.schemas.creator import BasicCreator, Creator
-from simyan.schemas.issue import BasicIssue, Issue
-from simyan.schemas.item import BasicItem, Item
-from simyan.schemas.location import BasicLocation, Location
-from simyan.schemas.origin import BasicOrigin, Origin
-from simyan.schemas.power import BasicPower, Power
-from simyan.schemas.publisher import BasicPublisher, Publisher
-from simyan.schemas.story_arc import BasicStoryArc, StoryArc
-from simyan.schemas.team import BasicTeam, Team
-from simyan.schemas.volume import BasicVolume, Volume
-from simyan.sqlite_cache import SQLiteCache
+from simyan.cache import SQLiteCache
+from simyan.errors import AuthenticationError, RateLimitError, ServiceError
+from simyan.schemas import (
+    BasicCharacter,
+    BasicConcept,
+    BasicCreator,
+    BasicIssue,
+    BasicItem,
+    BasicLocation,
+    BasicOrigin,
+    BasicPower,
+    BasicPublisher,
+    BasicStoryArc,
+    BasicTeam,
+    BasicVolume,
+    Character,
+    Concept,
+    Creator,
+    Issue,
+    Item,
+    Location,
+    Origin,
+    Power,
+    Publisher,
+    StoryArc,
+    Team,
+    Volume,
+)
 
 # Constants
 LOGGER = logging.getLogger(__name__)
@@ -69,32 +76,35 @@ class RateLimiterTransport(HTTPTransport):
 
 
 class ComicvineResource(Enum):
-    """Enum class for Comicvine Resources."""
+    """Enum class for Comicvine Resources.
+
+    Attributes:
+        ISSUE:
+        CHARACTER:
+        PUBLISHER:
+        CONCEPT:
+        LOCATION:
+        ORIGIN:
+        POWER:
+        CREATOR:
+        STORY_ARC:
+        VOLUME:
+        ITEM:
+        TEAM:
+    """
 
     ISSUE = (4000, "issue", list[BasicIssue])
-    """"""
     CHARACTER = (4005, "character", list[BasicCharacter])
-    """"""
     PUBLISHER = (4010, "publisher", list[BasicPublisher])
-    """"""
     CONCEPT = (4015, "concept", list[BasicConcept])
-    """"""
     LOCATION = (4020, "location", list[BasicLocation])
-    """"""
     ORIGIN = (4030, "origin", list[BasicOrigin])
-    """"""
     POWER = (4035, "power", list[BasicPower])
-    """"""
     CREATOR = (4040, "person", list[BasicCreator])
-    """"""
     STORY_ARC = (4045, "story_arc", list[BasicStoryArc])
-    """"""
     VOLUME = (4050, "volume", list[BasicVolume])
-    """"""
     ITEM = (4055, "object", list[BasicItem])
-    """"""
     TEAM = (4060, "team", list[BasicTeam])
-    """"""
 
     @property
     def resource_id(self) -> int:
@@ -117,9 +127,11 @@ class Comicvine:
 
     Args:
         api_key: User's API key to access the Comicvine API.
-        timeout: Set how long requests will wait for a response (in seconds).
-        cache: SQLiteCache to use if set.
-        user_agent: Custom User-Agent string. If None, uses default Simyan User-Agent.
+        cache: Cache object to store and retrieve responses.
+        base_url: Root URL of the Comicvine API.
+        user_agent: Value sent in the `User-Agent` request header.
+        timeout: Number of seconds to wait for a server response before timing out.
+        limiter: Set a custom limiter, used for testing.
     """
 
     def __init__(
@@ -242,7 +254,9 @@ class Comicvine:
             A list of Publisher objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -262,7 +276,9 @@ class Comicvine:
             A Publisher object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -285,7 +301,9 @@ class Comicvine:
             A list of Volume objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -305,7 +323,9 @@ class Comicvine:
             A Volume object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -328,7 +348,9 @@ class Comicvine:
             A list of Issue objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -348,7 +370,9 @@ class Comicvine:
             A Issue object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -371,7 +395,9 @@ class Comicvine:
             A list of StoryArc objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -391,7 +417,9 @@ class Comicvine:
             A StoryArc object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -414,7 +442,9 @@ class Comicvine:
             A list of Creator objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -434,7 +464,9 @@ class Comicvine:
             A Creator object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -457,7 +489,9 @@ class Comicvine:
             A list of Character objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -477,7 +511,9 @@ class Comicvine:
             A Character object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -500,7 +536,9 @@ class Comicvine:
             A list of Team objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -520,7 +558,9 @@ class Comicvine:
             A Team object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -543,7 +583,9 @@ class Comicvine:
             A list of Location objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -563,7 +605,9 @@ class Comicvine:
             A Location object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -586,7 +630,9 @@ class Comicvine:
             A list of Concept objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -606,7 +652,9 @@ class Comicvine:
             A Concept object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -629,7 +677,9 @@ class Comicvine:
             A list of Power objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -649,7 +699,9 @@ class Comicvine:
             A Power object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -672,7 +724,9 @@ class Comicvine:
             A list of Origin objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -692,7 +746,9 @@ class Comicvine:
             An Origin object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -715,7 +771,9 @@ class Comicvine:
             A list of Item objects.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_offset_list(
@@ -735,7 +793,9 @@ class Comicvine:
             An Item object or None if not found.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             result = self._fetch_item(
@@ -772,7 +832,9 @@ class Comicvine:
             A list of results, mapped to the given resource.
 
         Raises:
-            ServiceError: If there is an issue with validating the response.
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
         """
         try:
             results = self._fetch_paged_list(

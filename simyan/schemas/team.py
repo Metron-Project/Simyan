@@ -1,17 +1,10 @@
-"""The Team module.
-
-This module provides the following classes:
-- BasicTeam
-- Team
-"""
-
 __all__ = ["BasicTeam", "Team"]
 
 from datetime import datetime
 
 from pydantic import Field, HttpUrl
 
-from simyan.schemas import BaseModel
+from simyan.schemas._base import BaseModel
 from simyan.schemas.generic_entries import GenericEntry, GenericIssue, Images
 
 

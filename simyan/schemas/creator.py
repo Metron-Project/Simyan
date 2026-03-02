@@ -1,10 +1,3 @@
-"""The Creator module.
-
-This module provides the following classes:
-- BasicCreator
-- Creator
-"""
-
 __all__ = ["BasicCreator", "Creator"]
 
 from datetime import date, datetime
@@ -12,7 +5,7 @@ from typing import Any
 
 from pydantic import Field, HttpUrl
 
-from simyan.schemas import BaseModel
+from simyan.schemas._base import BaseModel
 from simyan.schemas.generic_entries import GenericEntry, Images
 
 

@@ -1,17 +1,10 @@
-"""The Item module.
-
-This module provides the following classes:
-- BasicItem
-- Item
-"""
-
 __all__ = ["BasicItem", "Item"]
 
 from datetime import datetime
 
 from pydantic import Field, HttpUrl
 
-from simyan.schemas import BaseModel
+from simyan.schemas._base import BaseModel
 from simyan.schemas.generic_entries import GenericEntry, GenericIssue, Images
 
 

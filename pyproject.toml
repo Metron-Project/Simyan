@@ -59,7 +59,7 @@ readme = "README.md"
 requires-python = ">= 3.10"
 
 [project.urls]
-Documentation = "https://simyan.readthedocs.io/en/latest/"
+Documentation = "https://simyan.readthedocs.io/en/stable/"
 Homepage = "https://pypi.org/project/Simyan"
 Issues = "https://github.com/Metron-Project/Simyan/issues"
 Source = "https://github.com/Metron-Project/Simyan"
