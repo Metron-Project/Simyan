@@ -18,8 +18,10 @@ TEST_URL: Final[str] = f"https://comicvine.gamespot.com/api{TEST_ENDPOINT}"
 SUCCESS_JSON: Final[dict] = {"results": []}
 FAILURE_JSON: Final[dict] = {"error": "Rate Limited"}
 REQUEST_DURATION: Final[float] = 0.1
-MAX_SECOND: Final[float] = 1
-MIN_DAY: Final[float] = 3600
+MIN_SECOND: Final[float] = 1 * 0.85
+MAX_SECOND: Final[float] = 1 * 1.15
+MIN_HOUR: Final[float] = 3_600 * 0.85
+MAX_HOUR: Final[float] = 3_600 * 1.15
 
 
 def add_200_response(mock: HTTPXMock) -> None:
@@ -46,13 +48,13 @@ def second_session() -> Comicvine:
 
 
 @pytest.fixture
-def day_session() -> Comicvine:
-    return make_session(limiter=make_limiter(Rate(5, Duration.DAY)))
+def hour_session() -> Comicvine:
+    return make_session(limiter=make_limiter(Rate(5, Duration.HOUR)))
 
 
 @pytest.fixture
 def dual_session() -> Comicvine:
-    return make_session(limiter=make_limiter(Rate(2, Duration.SECOND), Rate(5, Duration.DAY)))
+    return make_session(limiter=make_limiter(Rate(2, Duration.SECOND), Rate(5, Duration.HOUR)))
 
 
 class TestSecondLimit:
@@ -80,7 +82,7 @@ class TestSecondLimit:
 
         mock_sleep.assert_called_once()
         sleep_duration = mock_sleep.call_args[0][0]
-        assert sleep_duration < MAX_SECOND
+        assert MIN_SECOND <= sleep_duration <= MAX_SECOND
 
     def test_two_full_requests_require_one_sleep(
         self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, second_session: Comicvine
@@ -98,7 +100,7 @@ class TestSecondLimit:
                 freezer.tick(REQUEST_DURATION)
 
         assert len(sleep_calls) == 1
-        assert sleep_calls[0] < MAX_SECOND
+        assert MIN_SECOND <= sleep_calls[0] <= MAX_SECOND
 
     def test_refills_after_sleep(
         self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, second_session: Comicvine
@@ -117,64 +119,95 @@ class TestSecondLimit:
         mock_sleep.assert_not_called()
 
 
-class TestDayLimit:
+class TestHourLimit:
     def test_within_limit_not_delayed(
-        self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, day_session: Comicvine
+        self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, hour_session: Comicvine
     ) -> None:
         add_200_response(mock=httpx_mock)
 
         with patch(SLEEP_TARGET) as mock_sleep:
             for _ in range(5):
-                day_session._perform_get_request(endpoint=TEST_ENDPOINT)
+                hour_session._perform_get_request(endpoint=TEST_ENDPOINT)
                 freezer.tick(REQUEST_DURATION)
 
         mock_sleep.assert_not_called()
 
     def test_exceeding_limit_sleep(
-        self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, day_session: Comicvine
+        self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, hour_session: Comicvine
     ) -> None:
         add_200_response(mock=httpx_mock)
 
         with patch(SLEEP_TARGET) as mock_sleep:
             for _ in range(6):
-                day_session._perform_get_request(endpoint=TEST_ENDPOINT)
+                hour_session._perform_get_request(endpoint=TEST_ENDPOINT)
                 freezer.tick(REQUEST_DURATION)
 
         mock_sleep.assert_called_once()
         sleep_duration = mock_sleep.call_args[0][0]
-        assert sleep_duration > MIN_DAY
+        assert MIN_HOUR <= sleep_duration <= MAX_HOUR
 
     def test_refills_after_sleep(
-        self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, day_session: Comicvine
+        self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, hour_session: Comicvine
     ) -> None:
         add_200_response(mock=httpx_mock)
 
         for _ in range(5):
-            day_session._perform_get_request(endpoint=TEST_ENDPOINT)
+            hour_session._perform_get_request(endpoint=TEST_ENDPOINT)
             freezer.tick(REQUEST_DURATION)
-        freezer.move_to(timedelta(days=1))
+        freezer.move_to(timedelta(hours=1))
         with patch(SLEEP_TARGET) as mock_sleep:
             for _ in range(5):
-                day_session._perform_get_request(endpoint=TEST_ENDPOINT)
+                hour_session._perform_get_request(endpoint=TEST_ENDPOINT)
                 freezer.tick(REQUEST_DURATION)
 
         mock_sleep.assert_not_called()
 
 
 class TestDualLimit:
-    def test_second_limit_still_applies(
+    def test_fails_second_passes_hour(
         self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, dual_session: Comicvine
     ) -> None:
         add_200_response(mock=httpx_mock)
+        sleep_calls: list[float] = []
 
-        with patch(SLEEP_TARGET) as mock_sleep:
+        def _fake_sleep(duration: float) -> None:
+            sleep_calls.append(duration)
+            freezer.tick(duration)
+
+        with patch(SLEEP_TARGET, side_effect=_fake_sleep):
             for _ in range(3):
                 dual_session._perform_get_request(endpoint=TEST_ENDPOINT)
                 freezer.tick(REQUEST_DURATION)
 
-        mock_sleep.assert_called_once()
-        sleep_duration = mock_sleep.call_args[0][0]
-        assert sleep_duration < MAX_SECOND
+        long_sleeps = [s for s in sleep_calls if MIN_HOUR <= s <= MAX_HOUR]
+        short_sleeps = [s for s in sleep_calls if MIN_SECOND <= s <= MAX_SECOND]
+
+        assert len(long_sleeps) == 0
+        assert len(short_sleeps) == 1
+
+    def test_passes_second_fails_hour(
+        self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, dual_session: Comicvine
+    ) -> None:
+        add_200_response(mock=httpx_mock)
+        sleep_calls: list[float] = []
+
+        def _fake_sleep(duration: float) -> None:
+            sleep_calls.append(duration)
+            freezer.tick(duration)
+
+        with patch(SLEEP_TARGET, side_effect=_fake_sleep):
+            for _ in range(5):
+                dual_session._perform_get_request(endpoint=TEST_ENDPOINT)
+                freezer.tick(REQUEST_DURATION)
+                freezer.move_to(timedelta(seconds=1))
+            freezer.move_to(timedelta(minutes=1))
+            dual_session._perform_get_request(endpoint=TEST_ENDPOINT)
+
+        long_sleeps = [s for s in sleep_calls if MIN_HOUR <= s <= MAX_HOUR]
+        short_sleeps = [s for s in sleep_calls if MIN_SECOND <= s <= MAX_SECOND]
+
+        assert len(short_sleeps) == 0
+        assert len(long_sleeps) == 1
 
     def test_both_buckets_are_enforced(
         self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, dual_session: Comicvine
@@ -191,16 +224,18 @@ class TestDualLimit:
                 dual_session._perform_get_request(endpoint=TEST_ENDPOINT)
                 freezer.tick(REQUEST_DURATION)
 
-            short_sleeps = [s for s in sleep_calls if s < MAX_SECOND]
-            long_sleeps = [s for s in sleep_calls if s > MIN_DAY]
-            assert len(short_sleeps) == 1
+            long_sleeps = [s for s in sleep_calls if MIN_HOUR <= s <= MAX_HOUR]
+            short_sleeps = [s for s in sleep_calls if MIN_SECOND <= s <= MAX_SECOND]
             assert len(long_sleeps) == 0
+            assert len(short_sleeps) == 1
 
             for _ in range(2):
                 dual_session._perform_get_request(endpoint=TEST_ENDPOINT)
 
-            long_sleeps = [s for s in sleep_calls if s > MIN_DAY]
+            long_sleeps = [s for s in sleep_calls if MIN_HOUR <= s <= MAX_HOUR]
+            short_sleeps = [s for s in sleep_calls if MIN_SECOND <= s <= MAX_SECOND]
             assert len(long_sleeps) == 1
+            assert len(short_sleeps) == 2
 
     def test_no_sleep_within_both_limits(
         self, freezer: FrozenDateTimeFactory, httpx_mock: HTTPXMock, dual_session: Comicvine
