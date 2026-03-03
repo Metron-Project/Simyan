@@ -1,19 +1,15 @@
 # Read the Docs configuration file for MkDocs projects
-# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+# See https://docs.readthedocs.io/en/stable/config-file/index.html for details
 
-# Required
 version: 2
 
-# Set the version of Python and other tools you might need
 build:
-  os: ubuntu-24.04
+  os: ubuntu-lts-latest
   tools:
-    python: "3.13"
-  jobs:
-    post_create_environment:
-      - pip install uv
-    post_install:
-      - UV_PROJECT_ENVIRONMENT=$READTHEDOCS_VIRTUALENV_PATH uv sync --group docs --inexact
-
-mkdocs:
-  configuration: mkdocs.yaml
+    python: latest
+  commands:
+    - pip install uv
+    - uv sync --no-dev --group docs
+    - uv run zensical build --clean
+    - mkdir -p _readthedocs
+    - cp -r site/ _readthedocs/html/

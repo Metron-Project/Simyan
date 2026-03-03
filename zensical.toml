@@ -1,0 +1,110 @@
+[project]
+nav = [
+  "index.md",
+  {"Reference" = [
+    {"simyan" = [
+      "simyan/index.md",
+      {"comicvine" = "simyan/comicvine.md"},
+      {"errors" = "simyan/errors.md"},
+    ]},
+    {"simyan.cache" = [
+      "simyan/cache/index.md",
+      {"sqlite_cache" = "simyan/cache/sqlite_cache.md"},
+    ]},
+    {"simyan.schemas" = [
+      "simyan/schemas/index.md",
+      {"base" = "simyan/schemas/_base.md"},
+      {"character" = "simyan/schemas/character.md"},
+      {"concept" = "simyan/schemas/concept.md"},
+      {"creator" = "simyan/schemas/creator.md"},
+      {"generic_entries" = "simyan/schemas/generic_entries.md"},
+      {"issue" = "simyan/schemas/issue.md"},
+      {"item" = "simyan/schemas/item.md"},
+      {"location" = "simyan/schemas/location.md"},
+      {"origin" = "simyan/schemas/origin.md"},
+      {"power" = "simyan/schemas/power.md"},
+      {"publisher" = "simyan/schemas/publisher.md"},
+      {"story_arc" = "simyan/schemas/story_arc.md"},
+      {"team" = "simyan/schemas/team.md"},
+      {"volume" = "simyan/schemas/volume.md"},
+    ]},
+  ]},
+]
+repo_name = "Metron-Project/Simyan"
+repo_url = "https://github.com/Metron-Project/Simyan"
+site_author = "BuriedInCode"
+site_description = "A Python wrapper for the Comicvine API."
+site_name = "Simyan"
+site_url = "https://simyan.readthedocs.io/en/stable"
+use_directory_urls = true
+
+[[project.extra.social]]
+icon = "simple/github"
+link = "https://github.com/Metron-Project/Simyan"
+
+[[project.extra.social]]
+icon = "simple/pypi"
+link = "https://pypi.org/p/Simyan"
+
+[[project.extra.social]]
+icon = "simple/matrix"
+link = "https://matrix.to/#/#metron-general:matrix.org"
+
+[[project.extra.social]]
+icon = "simple/matrix"
+link = "https://matrix.to/#/#metron-devel:matrix.org"
+
+[project.markdown_extensions.pymdownx.highlight]
+auto_title = true
+
+[project.markdown_extensions.pymdownx.inlinehilite]
+
+[project.markdown_extensions.pymdownx.superfences]
+
+[project.plugins.mkdocstrings]
+default_handler = "python"
+
+[project.plugins.mkdocstrings.handlers.python.options]
+docstring_section_style = "spacy"
+docstring_style = "google"
+line_length = 100
+merge_init_into_class = true
+show_category_heading = true
+show_root_full_path = false
+show_root_heading = true
+show_signature_annotations = true
+show_sources = false
+
+[project.theme]
+features = [
+  "content.code.copy",
+  "navigation.expand",
+  "navigation.indexes",
+  "navigation.path",
+  "navigation.top",
+  "search.highlight",
+]
+variant = "classic"
+
+[project.theme.icon]
+logo = "simple/readthedocs"
+repo = "simple/git"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+primary = "blue grey"
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+primary = "blue grey"
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to system preference"
