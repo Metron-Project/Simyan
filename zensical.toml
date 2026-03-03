@@ -8,11 +8,10 @@ nav = [
       {"errors" = "simyan/errors.md"},
     ]},
     {"simyan.cache" = [
-      "simyan/cache/index.md",
+      {"schemas" = "simyan/cache/schemas.md"},
       {"sqlite_cache" = "simyan/cache/sqlite_cache.md"},
     ]},
     {"simyan.schemas" = [
-      "simyan/schemas/index.md",
       {"base" = "simyan/schemas/_base.md"},
       {"character" = "simyan/schemas/character.md"},
       {"concept" = "simyan/schemas/concept.md"},

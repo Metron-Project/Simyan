@@ -143,8 +143,8 @@ class Comicvine:
         timeout: float = 30,
         limiter: Limiter = Limiter(RATELIMIT_BUCKET),  # noqa: B008
     ):
-        self._base_url = base_url
-        self._client = Client(
+        self._base_url: str = base_url
+        self._client: Client = Client(
             base_url=self._base_url,
             headers={
                 "Accept": "application/json",
@@ -155,7 +155,7 @@ class Comicvine:
             timeout=timeout,
             transport=RateLimiterTransport(limiter),
         )
-        self._cache = cache
+        self._cache: SQLiteCache | None = cache
 
     def _perform_get_request(
         self, endpoint: str, params: dict[str, str] | None = None
@@ -195,15 +195,13 @@ class Comicvine:
         cache_params = f"?{urlencode({k: params[k] for k in sorted(params)})}"
         cache_key = url + cache_params
 
-        if self._cache:
-            cache_data = self._cache.select(query=cache_key)
-            if cache_data:
-                return cache_data
+        if self._cache and (cache_data := self._cache.select(url=cache_key)):
+            return cache_data.response
         response = self._perform_get_request(endpoint=endpoint + "/", params=params)
         if "error" in response and response["error"] != "OK":
             raise ServiceError(response["error"])
         if self._cache:
-            self._cache.insert(query=cache_key, response=response)
+            self._cache.insert(url=cache_key, response=response)
         return response
 
     def _fetch_item(self, endpoint: str) -> dict[str, Any]:
