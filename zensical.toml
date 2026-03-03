@@ -1,6 +1,6 @@
 [project]
 nav = [
-  "index.md",
+  {"Home" = "index.md"},
   {"Reference" = [
     {"simyan" = [
       "simyan/index.md",
