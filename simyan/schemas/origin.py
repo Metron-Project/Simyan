@@ -1,6 +1,5 @@
 __all__ = ["BasicOrigin", "Origin"]
 
-
 from pydantic import Field, HttpUrl
 
 from simyan.schemas._base import BaseModel

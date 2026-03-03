@@ -7,7 +7,6 @@ __all__ = [
     "Images",
 ]
 
-
 from pydantic import Field, HttpUrl
 
 from simyan.schemas._base import BaseModel
