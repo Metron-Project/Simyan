@@ -4,7 +4,13 @@ requires = ["hatchling"]
 
 [dependency-groups]
 dev = [
-  "pre-commit >= 4.5.0",
+  "mdformat >= 1.0.0",
+  "mdformat-gfm >= 1.0.0",
+  "mdformat-ruff >= 0.1.0",
+  "prek >= 0.3.0",
+  "ruff >= 0.15.0",
+  "toml-sort >= 0.24.0",
+  "ty >= 0.0.20",
 ]
 docs = [
   "mkdocstrings[python] >= 1.0.0",
@@ -122,7 +128,9 @@ split-on-trailing-comma = false
 classmethod-decorators = ["classmethod", "pydantic.field_validator"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["D", "DTZ001", "PLR2004", "S101", "SLF001"]
+"tests/*" = ["D", "DTZ001", "PLR2004", "S101"]
+"tests/comicvine_test.py" = ["SLF001"]
+"tests/limiter_test.py" = ["SLF001"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -145,3 +153,7 @@ min_version = "4.22"
 commands = [["pytest"]]
 dependency_groups = ["tests"]
 passenv = ["COMICVINE__API_KEY"]
+
+[tool.ty.src]
+exclude = ["**/tests/"]
+include = ["**/simyan"]

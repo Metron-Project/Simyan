@@ -71,7 +71,8 @@ merge_init_into_class = true
 show_category_heading = true
 show_root_full_path = false
 show_root_heading = true
-show_signature_annotations = true
+show_signature = false
+show_signature_annotations = false
 show_sources = false
 
 [project.theme]
