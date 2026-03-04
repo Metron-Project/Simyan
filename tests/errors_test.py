@@ -12,7 +12,7 @@ def test_unauthorized() -> None:
 
 def test_not_found(session: Comicvine) -> None:
     with pytest.raises(ServiceError):
-        session._perform_get_request(endpoint="/invalid")
+        session._perform_get_request(endpoint="/invalid")  # noqa: SLF001
 
 
 def test_timeout(comicvine_api_key: str) -> None:
