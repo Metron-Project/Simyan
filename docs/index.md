@@ -5,8 +5,9 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/Simyan.svg?logo=Python&label=Version&style=flat-square)](https://pypi.python.org/pypi/Simyan/)
 [![PyPI - License](https://img.shields.io/pypi/l/Simyan.svg?logo=Python&label=License&style=flat-square)](https://opensource.org/licenses/GPL-3.0)
 
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-informational?logo=pre-commit&style=flat-square)](https://github.com/pre-commit/pre-commit)
+[![prek](https://img.shields.io/badge/prek-enabled-informational?logo=prek&style=flat-square)](https://github.com/j178/prek)
 [![Ruff](https://img.shields.io/badge/ruff-enabled-informational?logo=ruff&style=flat-square)](https://github.com/astral-sh/ruff)
+[![Ty](https://img.shields.io/badge/ty-enabled-informational?logo=ruff&style=flat-square)](https://github.com/astral-sh/ty)
 
 [![Linting](https://github.com/Metron-Project/Simyan/actions/workflows/linting.yaml/badge.svg)](https://github.com/Metron-Project/Simyan/actions/workflows/linting.yaml)
 [![Testing](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml/badge.svg)](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml)
