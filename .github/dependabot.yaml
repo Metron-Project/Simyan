@@ -17,3 +17,12 @@ updates:
       python:
         patterns:
           - "*"
+
+  - package-ecosystem: pre-commit
+    directory: /
+    schedule:
+      interval: daily
+    groups:
+      pre-commit:
+        patterns:
+          - "*"
