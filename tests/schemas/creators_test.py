@@ -13,9 +13,9 @@ def test_get_creator(session: Comicvine) -> None:
     assert result.id == 40439
 
     assert len(result.characters) == 339
-    assert len(result.issues) == 1659
+    assert len(result.issues) == 1664
     assert len(result.story_arcs) == 27
-    assert len(result.volumes) == 605
+    assert len(result.volumes) == 607
 
 
 def test_get_creator_fail(session: Comicvine) -> None:
