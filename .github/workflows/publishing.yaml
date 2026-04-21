@@ -46,7 +46,7 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/p/Simyan
-    if: startsWith(github.ref, "refs/tags/")
+    if: startsWith(github.ref, 'refs/tags/')
     needs:
       - build
       - validate
