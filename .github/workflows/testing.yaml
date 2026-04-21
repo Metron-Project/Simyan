@@ -37,8 +37,8 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@v6.0.2
+      - uses: astral-sh/setup-uv@v8.1.0
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install project
@@ -54,7 +54,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check for failures
-        uses: re-actors/alls-green@v1.2.2
+      - uses: re-actors/alls-green@v1.2.2
         with:
           jobs: ${{ toJSON(needs) }}
