@@ -10,19 +10,19 @@ dev = [
   "prek >= 0.3.0",
   "ruff >= 0.15.0",
   "toml-sort >= 0.24.0",
-  "ty >= 0.0.20",
+  "ty >= 0.0.30",
 ]
 docs = [
   "mkdocstrings[python] >= 1.0.0",
-  "zensical >= 0.0.11",
+  "zensical >= 0.0.30",
 ]
 tests = [
   "pytest >= 9.0.0",
-  "pytest-cov >= 7.0.0",
+  "pytest-cov >= 7.1.0",
   "pytest-freezer >= 0.4.0",
   "pytest-httpx >= 0.36.0",
-  "tox >= 4.49.0",
-  "tox-uv >= 1.33.0",
+  "tox >= 4.53.0",
+  "tox-uv >= 1.35.0",
 ]
 
 [project]
@@ -46,9 +46,9 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "httpx >= 0.28.0",
-  "pydantic >= 2.12.0",
-  "pyrate-limiter >= 4.0.0",
+  "httpx[http2] >= 0.28.0",
+  "pydantic >= 2.13.0",
+  "pyrate-limiter >= 4.1.0",
 ]
 description = "A Python wrapper for the Comicvine API."
 dynamic = ["version"]
