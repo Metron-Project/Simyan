@@ -113,11 +113,11 @@ class Comicvine:
         user_agent: Value sent in the `User-Agent` request header.
         timeout: Set how long requests will wait for a response (in seconds).
         cache_path: Path to the SQLite cache file.
-            If not provided, a default path will be used under <cache-root>/cache.sqlite
+            If not provided, a default path will be used under ~/.cache/simyan/cache.sqlite
         cache_expiry: Duration for which cached responses are valid.
             Response cache-headers take precedence.
         ratelimit_path: Path to the SQLite ratelimit file.
-            If not provided, a default path will be used under <cache-root>/ratelimits.sqlite
+            If not provided, a default path will be used under ~/.cache/simyan/ratelimits.sqlite
     """
 
     def __init__(
