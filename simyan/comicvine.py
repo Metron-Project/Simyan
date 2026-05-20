@@ -1,26 +1,21 @@
 __all__ = ["Comicvine", "ComicvineResource"]
 
-import logging
 import platform
+from datetime import timedelta
 from enum import Enum
-from json import JSONDecodeError
+from http import HTTPStatus
+from pathlib import Path
 from typing import Any, Final, TypeVar
-from urllib.parse import urlencode
+from urllib.parse import urlparse
 
-from httpx import (
-    Client,
-    HTTPStatusError,
-    HTTPTransport,
-    Request,
-    RequestError,
-    Response,
-    TimeoutException,
-)
 from pydantic import TypeAdapter, ValidationError
-from pyrate_limiter import AbstractBucket, Duration, Limiter, Rate, SQLiteBucket
+from requests.exceptions import HTTPError, JSONDecodeError, RequestException, Timeout
+from requests.models import PreparedRequest
+from requests.sessions import Session
+from requests_cache import NEVER_EXPIRE, CacheMixin, SQLiteCache
+from requests_ratelimiter import LimiterMixin, SQLiteBucket
 
-from simyan import __version__
-from simyan.cache import SQLiteCache
+from simyan import __version__, get_cache_root
 from simyan.errors import AuthenticationError, RateLimitError, ServiceError
 from simyan.schemas import (
     BasicCharacter,
@@ -49,30 +44,36 @@ from simyan.schemas import (
     Volume,
 )
 
-# Constants
-LOGGER = logging.getLogger(__name__)
 T = TypeVar("T")
-RATELIMIT_BUCKET: Final[AbstractBucket] = SQLiteBucket.init_from_file(
-    [Rate(1, Duration.SECOND), Rate(200, Duration.HOUR)]
-)
+SECONDS_PER_MINUTE: Final[int] = 60
+SECONDS_PER_HOUR: Final[int] = 3_600
 
 
-class RateLimiterTransport(HTTPTransport):
-    def __init__(self, limiter: Limiter, **kwargs):  # noqa: ANN003
-        super().__init__(**kwargs)
-        self.limiter = limiter
-
-    def handle_request(self, request: Request, **kwargs) -> Response:  # noqa: ANN003
-        parts = request.url.path.strip("/").split("/")
+class CachedLimiterSession(CacheMixin, LimiterMixin, Session):
+    def _bucket_name(self, request: PreparedRequest) -> str:
+        parts = urlparse(request.url).path.strip("/").split("/") if request.url else []
         if len(parts) == 3:
-            name = f"get_{parts[1]}"
-        elif len(parts) == 2:
-            name = parts[1]
-        else:
-            name = "comicvine"
-        self.limiter.try_acquire(name)
-        LOGGER.debug("Acquired lock")
-        return super().handle_request(request, **kwargs)
+            return f"get_{parts[1]}"
+        if len(parts) == 2:
+            return parts[1]
+        return self.bucket_name or "comicvine"
+
+
+def format_time(seconds: str | float) -> str:
+    total_seconds = int(seconds)
+    if total_seconds < 0:
+        return "0 seconds"
+    hours = total_seconds // SECONDS_PER_HOUR
+    minutes = (total_seconds % SECONDS_PER_HOUR) // SECONDS_PER_MINUTE
+    remaining_seconds = total_seconds % SECONDS_PER_MINUTE
+    parts = []
+    if hours > 0:
+        parts.append(f"{hours} hour{'s' if hours != 1 else ''}")
+    if minutes > 0:
+        parts.append(f"{minutes} minute{'s' if minutes != 1 else ''}")
+    if remaining_seconds > 0 or not parts:
+        parts.append(f"{remaining_seconds} second{'s' if remaining_seconds != 1 else ''}")
+    return ", ".join(parts)
 
 
 class ComicvineResource(Enum):
@@ -118,7 +119,7 @@ class ComicvineResource(Enum):
 
     @property
     def search_response(self) -> type[T]:
-        """Response type for resource when using a search endpoint."""
+        """Response type for a resource when using a search endpoint."""
         return self.value[2]
 
 
@@ -127,82 +128,87 @@ class Comicvine:
 
     Args:
         api_key: User's API key to access the Comicvine API.
-        cache: Cache object to store and retrieve responses.
+        cache: Path to the SQLite cache file.
+            If not provided, a default path will be used under <cache-root>/cache.sqlite
         base_url: Root URL of the Comicvine API.
         user_agent: Value sent in the `User-Agent` request header.
-        timeout: Number of seconds to wait for a server response before timing out.
-        limiter: Set a custom limiter, used for testing.
+        timeout: Set how long requests will wait for a response (in seconds).
+        cache_expiry: Duration for which cached responses are valid.
+            Response cache-headers take precedence.
     """
 
     def __init__(
         self,
         api_key: str,
-        cache: SQLiteCache | None,
-        base_url: str = "https://comicvine.gamespot.com/api",
+        cache: Path | None = None,
+        base_url: str | None = None,
         user_agent: str | None = None,
-        timeout: float = 30,
-        limiter: Limiter = Limiter(RATELIMIT_BUCKET),  # noqa: B008
+        timeout: float = 20,
+        cache_expiry: timedelta = timedelta(days=14),
     ):
-        self._base_url: str = base_url
-        self._client: Client = Client(
-            base_url=self._base_url,
-            headers={
+        self._base_url = base_url or "https://comicvine.gamespot.com/api"
+        self._session = CachedLimiterSession(
+            backend=SQLiteCache(
+                db_path=cache or (get_cache_root() / "cache.sqlite"), serializer="json"
+            ),
+            expire_after=cache_expiry,
+            cache_control=cache_expiry != NEVER_EXPIRE,
+            ignored_parameters=["api_key"],
+            per_second=1,
+            per_hour=200,
+            max_delay=timeout * 2,
+            bucket_class=SQLiteBucket,
+            per_host=False,
+            bucket_name="comicvine",
+        )
+        self._session.headers.update(
+            {
                 "Accept": "application/json",
                 "User-Agent": user_agent
                 or f"Simyan/{__version__} ({platform.system()}: {platform.release()}; Python v{platform.python_version()})",  # noqa: E501
-            },
-            params={"api_key": api_key, "format": "json"},
-            timeout=timeout,
-            transport=RateLimiterTransport(limiter),
+            }
         )
-        self._cache: SQLiteCache | None = cache
-
-    def _perform_get_request(
-        self, endpoint: str, params: dict[str, str] | None = None
-    ) -> dict[str, Any]:
-        params: dict[str, str] = params or {}
-
-        try:
-            response = self._client.get(endpoint, params=params)
-            response.raise_for_status()
-            return response.json()
-        except RequestError as err:
-            raise ServiceError(f"Unable to connect to '{self._base_url}{endpoint}'") from err
-        except HTTPStatusError as err:
-            status_code = err.response.status_code
-            try:
-                if status_code == 401:
-                    raise AuthenticationError(err.response.json()["error"]) from err
-                if status_code == 404:
-                    raise ServiceError("Resource not found") from err
-                if status_code in (420, 429):
-                    raise RateLimitError(err.response.json()["error"]) from err
-                raise ServiceError(err.response.json()["error"]) from err
-            except JSONDecodeError as err:
-                raise ServiceError(
-                    f"{status_code}: Unable to parse response from '{self._base_url}{endpoint}' as Json"  # noqa: E501
-                ) from err
-        except JSONDecodeError as err:
-            raise ServiceError(
-                f"Unable to parse response from '{self._base_url}{endpoint}' as Json"
-            ) from err
-        except TimeoutException as err:
-            raise ServiceError("Service took too long to respond") from err
+        self._session.params.update({"api_key": api_key, "format": "json"})
+        self._timeout = timeout
 
     def _get_request(self, endpoint: str, params: dict[str, str] | None = None) -> dict[str, Any]:
         params: dict[str, str] = params or {}
-        url = f"{self._base_url}{endpoint}/"
-        cache_params = f"?{urlencode({k: params[k] for k in sorted(params)})}"
-        cache_key = url + cache_params
 
-        if self._cache and (cache_data := self._cache.select(url=cache_key)):
-            return cache_data.response
-        response = self._perform_get_request(endpoint=endpoint + "/", params=params)
-        if "error" in response and response["error"] != "OK":
-            raise ServiceError(response["error"])
-        if self._cache:
-            self._cache.insert(url=cache_key, response=response)
-        return response
+        try:
+            response = self._session.get(
+                url=f"{self._base_url}{endpoint}/", params=params, timeout=self._timeout
+            )
+            response.raise_for_status()
+            return response.json()
+        except HTTPError as err:
+            status_code = (
+                HTTPStatus.INTERNAL_SERVER_ERROR
+                if err.response is None
+                else err.response.status_code
+            )
+            try:
+                response = {} if err.response is None else err.response.json()
+                if status_code == HTTPStatus.UNAUTHORIZED:
+                    raise AuthenticationError(response["detail"]) from err
+                if status_code == HTTPStatus.NOT_FOUND:
+                    raise ServiceError(response["detail"]) from err
+                if status_code in (HTTPStatus.TOO_MANY_REQUESTS, 420):
+                    raise RateLimitError(
+                        f"Too Many API Requests: Need to wait {format_time(seconds=0 if err.response is None else err.response.headers.get('Retry-After', 0))}s."  # noqa: E501
+                    ) from err
+                raise ServiceError(f"{status_code}: {response}") from err
+            except JSONDecodeError as err:
+                raise ServiceError(
+                    f"{status_code}: Unable to parse response from '{self._base_url}{endpoint}/' as Json"  # noqa: E501
+                ) from err
+        except Timeout as err:
+            raise ServiceError("Service took too long to respond") from err
+        except RequestException as err:
+            raise ServiceError(f"Unable to connect to '{self._base_url}{endpoint}/'") from err
+        except JSONDecodeError as err:
+            raise ServiceError(
+                f"Unable to parse response from '{self._base_url}{endpoint}/' as Json"
+            ) from err
 
     def _fetch_item(self, endpoint: str) -> dict[str, Any]:
         return self._get_request(endpoint=endpoint)["results"]
@@ -246,7 +252,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Publisher objects.
@@ -293,7 +299,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Volume objects.
@@ -340,7 +346,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Issue objects.
@@ -387,7 +393,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of StoryArc objects.
@@ -434,7 +440,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Creator objects.
@@ -481,7 +487,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Character objects.
@@ -528,7 +534,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Team objects.
@@ -575,7 +581,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Location objects.
@@ -622,7 +628,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Concept objects.
@@ -669,7 +675,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Power objects.
@@ -716,7 +722,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Origin objects.
@@ -763,7 +769,7 @@ class Comicvine:
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of Item objects.
@@ -819,12 +825,12 @@ class Comicvine:
         | list[BasicOrigin]
         | list[BasicItem]
     ):
-        """Request a list of search results filtered by provided resource.
+        """Request a list of search results filtered by the provided resource.
 
         Args:
             resource: Filter which type of resource to return.
             query: Search query string.
-            max_results: Limits the amount of results looked up and returned.
+            max_results: Limits the number of results looked up and returned.
 
         Returns:
             A list of results, mapped to the given resource.

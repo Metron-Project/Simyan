@@ -1,6 +1,8 @@
 from datetime import datetime
 
 import pytest
+from responses import RequestsMock as Mocker
+from responses.matchers import query_param_matcher
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.errors import ServiceError
@@ -18,16 +20,27 @@ def test_get_character(session: Comicvine) -> None:
     assert len(result.enemy_teams) == 28
     assert len(result.friendly_teams) == 18
     assert len(result.friends) == 238
-    assert len(result.issues) == 1761
+    assert len(result.issues) == 1767
     assert len(result.powers) == 28
     assert len(result.story_arcs) == 0
     assert len(result.teams) == 21
     assert len(result.volumes) == 1
 
 
-def test_get_character_fail(session: Comicvine) -> None:
-    with pytest.raises(ServiceError):
-        session.get_character(character_id=-1)
+def test_get_character_fail(
+    mock_session: Comicvine, mock_params: dict[str, str], mock_params_str: str
+) -> None:
+    with Mocker(assert_all_requests_are_fired=True) as mock:
+        url = f"https://comicvine.gamespot.mock/api/character/{ComicvineResource.CHARACTER.resource_id}--1/"
+        mock.get(
+            url=url,
+            match=[query_param_matcher(mock_params)],
+            status=404,
+            json={"detail": "Not found."},
+        )
+        with pytest.raises(ServiceError):
+            mock_session.get_character(character_id=-1)
+        mock.assert_call_count(f"{url}?{mock_params_str}", 1)
 
 
 def test_list_characters(session: Comicvine) -> None:
@@ -41,7 +54,7 @@ def test_list_characters(session: Comicvine) -> None:
     assert result.date_of_birth is None
     assert result.first_issue.id == 38445
     assert result.gender == 1
-    assert result.issue_count == 1761
+    assert result.issue_count == 1767
     assert result.name == "Kyle Rayner"
     assert result.origin.id == 4
     assert result.publisher.id == 10

@@ -1,19 +1,40 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import pytest
+from requests_cache import NEVER_EXPIRE
 
-from simyan.cache import SQLiteCache
 from simyan.comicvine import Comicvine
 
 
 @pytest.fixture(scope="session")
-def comicvine_api_key() -> str:
-    return os.getenv("COMICVINE__API_KEY", default="IGNORED")
+def api_key() -> str:
+    return os.getenv("COMICVINE__API_KEY", default="UNSET")
 
 
 @pytest.fixture(scope="session")
-def session(comicvine_api_key: str) -> Comicvine:
+def session(api_key: str) -> Comicvine:
     return Comicvine(
-        api_key=comicvine_api_key, cache=SQLiteCache(path=Path("tests/cache.sqlite"), expiry=None)
+        api_key=api_key, cache=Path("tests") / "cache.sqlite", cache_expiry=NEVER_EXPIRE
     )
+
+
+@pytest.fixture
+def mock_session(tmp_path: Path) -> Comicvine:
+    return Comicvine(
+        api_key="UNSET",
+        base_url="https://comicvine.gamespot.mock/api",
+        cache=tmp_path / "simyan.sqlite",
+        cache_expiry=timedelta(seconds=1),
+    )
+
+
+@pytest.fixture
+def mock_params() -> dict[str, str]:
+    return {"api_key": "UNSET", "format": "json"}
+
+
+@pytest.fixture
+def mock_params_str(mock_params: dict[str, str]) -> str:
+    return "&".join(f"{k}={v}" for k, v in mock_params.items())

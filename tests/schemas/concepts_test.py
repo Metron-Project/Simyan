@@ -1,6 +1,8 @@
 from datetime import datetime
 
 import pytest
+from responses import RequestsMock as Mocker
+from responses.matchers import query_param_matcher
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.errors import ServiceError
@@ -12,13 +14,24 @@ def test_get_concept(session: Comicvine) -> None:
     assert result is not None
     assert result.id == 41148
 
-    assert len(result.issues) == 2719
+    assert len(result.issues) == 2726
     assert len(result.volumes) == 1
 
 
-def test_get_concept_fail(session: Comicvine) -> None:
-    with pytest.raises(ServiceError):
-        session.get_concept(concept_id=-1)
+def test_get_concept_fail(
+    mock_session: Comicvine, mock_params: dict[str, str], mock_params_str: str
+) -> None:
+    with Mocker(assert_all_requests_are_fired=True) as mock:
+        url = f"https://comicvine.gamespot.mock/api/concept/{ComicvineResource.CONCEPT.resource_id}--1/"
+        mock.get(
+            url=url,
+            match=[query_param_matcher(mock_params)],
+            status=404,
+            json={"detail": "Not found."},
+        )
+        with pytest.raises(ServiceError):
+            mock_session.get_concept(concept_id=-1)
+        mock.assert_call_count(f"{url}?{mock_params_str}", 1)
 
 
 def test_list_concepts(session: Comicvine) -> None:
@@ -30,7 +43,7 @@ def test_list_concepts(session: Comicvine) -> None:
     assert str(result.api_url) == "https://comicvine.gamespot.com/api/concept/4015-41148/"
     assert result.date_added == datetime(2008, 6, 6, 11, 27, 52)
     assert result.first_issue.id == 144069
-    assert result.issue_count == 2719
+    assert result.issue_count == 2726
     assert result.name == "Green Lantern"
     assert str(result.site_url) == "https://comicvine.gamespot.com/green-lantern/4015-41148/"
     assert result.start_year == 1940
