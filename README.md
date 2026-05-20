@@ -6,8 +6,8 @@
 [![PyPI - License](https://img.shields.io/pypi/l/Simyan.svg?logo=Python&label=License&style=flat-square)](https://opensource.org/licenses/GPL-3.0)
 
 [![prek](https://img.shields.io/badge/prek-enabled-informational?logo=prek&style=flat-square)](https://github.com/j178/prek)
-[![Ruff](https://img.shields.io/badge/ruff-enabled-informational?logo=ruff&style=flat-square)](https://github.com/astral-sh/ruff)
-[![Ty](https://img.shields.io/badge/ty-enabled-informational?logo=ruff&style=flat-square)](https://github.com/astral-sh/ty)
+[![Ruff](https://img.shields.io/badge/Ruff-enabled-informational?logo=ruff&style=flat-square)](https://github.com/astral-sh/ruff)
+[![ty](https://img.shields.io/badge/ty-enabled-informational?logo=ruff&style=flat-square)](https://github.com/astral-sh/ty)
 
 [![Linting](https://github.com/Metron-Project/Simyan/actions/workflows/linting.yaml/badge.svg)](https://github.com/Metron-Project/Simyan/actions/workflows/linting.yaml)
 [![Testing](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml/badge.svg)](https://github.com/Metron-Project/Simyan/actions/workflows/testing.yaml)
@@ -25,10 +25,19 @@ pip install Simyan
 ### Example Usage
 
 ```python
-from simyan.cache import SQLiteCache
+from datetime import timedelta
+from pathlib import Path
+
 from simyan.comicvine import Comicvine
 
-session = Comicvine(api_key="Comicvine API Key", cache=SQLiteCache())
+session = Comicvine(
+    api_key="Comicvine API Key",
+    cache_path=Path("cache.sqlite"),  # Optional, defaults to ~/.cache/simyan/cache.sqlite
+    cache_expiry=timedelta(days=1),  # Optional, defaults to 14 days
+    ratelimit_path=Path(
+        "ratelimits.sqlite"
+    ),  # Optional, defaults to ~/.cache/simyan/ratelimits.sqlite
+)
 
 # Search for Publisher
 results = session.list_publishers(params={"filter": "name:DC Comics"})

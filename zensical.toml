@@ -7,10 +7,6 @@ nav = [
       {"comicvine" = "simyan/comicvine.md"},
       {"errors" = "simyan/errors.md"},
     ]},
-    {"simyan.cache" = [
-      {"schemas" = "simyan/cache/schemas.md"},
-      {"sqlite_cache" = "simyan/cache/sqlite_cache.md"},
-    ]},
     {"simyan.schemas" = [
       {"base" = "simyan/schemas/_base.md"},
       {"character" = "simyan/schemas/character.md"},

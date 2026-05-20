@@ -1,6 +1,8 @@
 from datetime import datetime
 
 import pytest
+from responses import RequestsMock as Mocker
+from responses.matchers import query_param_matcher
 
 from simyan.comicvine import Comicvine, ComicvineResource
 from simyan.errors import ServiceError
@@ -15,12 +17,23 @@ def test_get_publisher(session: Comicvine) -> None:
     assert len(result.characters) == 779
     assert len(result.story_arcs) == 37
     assert len(result.teams) == 43
-    assert len(result.volumes) == 4746
+    assert len(result.volumes) == 4750
 
 
-def test_get_publisher_fail(session: Comicvine) -> None:
-    with pytest.raises(ServiceError):
-        session.get_publisher(publisher_id=-1)
+def test_get_publisher_fail(
+    mock_session: Comicvine, mock_params: dict[str, str], mock_params_str: str
+) -> None:
+    with Mocker(assert_all_requests_are_fired=True) as mock:
+        url = f"https://comicvine.gamespot.mock/api/publisher/{ComicvineResource.PUBLISHER.resource_id}--1/"
+        mock.get(
+            url=url,
+            match=[query_param_matcher(mock_params)],
+            status=404,
+            json={"detail": "Not found."},
+        )
+        with pytest.raises(ServiceError):
+            mock_session.get_publisher(publisher_id=-1)
+        mock.assert_call_count(f"{url}?{mock_params_str}", 1)
 
 
 def test_list_publishers(session: Comicvine) -> None:
