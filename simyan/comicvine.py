@@ -5,7 +5,7 @@ from datetime import timedelta
 from enum import Enum
 from http import HTTPStatus
 from pathlib import Path
-from typing import Any, Final, TypeVar
+from typing import Any, TypeVar
 from urllib.parse import urlparse
 
 from pydantic import TypeAdapter, ValidationError
@@ -45,8 +45,6 @@ from simyan.schemas import (
 )
 
 T = TypeVar("T")
-SECONDS_PER_MINUTE: Final[int] = 60
-SECONDS_PER_HOUR: Final[int] = 3_600
 
 
 class CachedLimiterSession(CacheMixin, LimiterMixin, Session):
@@ -57,23 +55,6 @@ class CachedLimiterSession(CacheMixin, LimiterMixin, Session):
         if len(parts) == 2:
             return parts[1]
         return self.bucket_name or "comicvine"
-
-
-def format_time(seconds: str | float) -> str:
-    total_seconds = int(seconds)
-    if total_seconds < 0:
-        return "0 seconds"
-    hours = total_seconds // SECONDS_PER_HOUR
-    minutes = (total_seconds % SECONDS_PER_HOUR) // SECONDS_PER_MINUTE
-    remaining_seconds = total_seconds % SECONDS_PER_MINUTE
-    parts = []
-    if hours > 0:
-        parts.append(f"{hours} hour{'s' if hours != 1 else ''}")
-    if minutes > 0:
-        parts.append(f"{minutes} minute{'s' if minutes != 1 else ''}")
-    if remaining_seconds > 0 or not parts:
-        parts.append(f"{remaining_seconds} second{'s' if remaining_seconds != 1 else ''}")
-    return ", ".join(parts)
 
 
 class ComicvineResource(Enum):
@@ -128,28 +109,31 @@ class Comicvine:
 
     Args:
         api_key: User's API key to access the Comicvine API.
-        cache: Path to the SQLite cache file.
-            If not provided, a default path will be used under <cache-root>/cache.sqlite
         base_url: Root URL of the Comicvine API.
         user_agent: Value sent in the `User-Agent` request header.
         timeout: Set how long requests will wait for a response (in seconds).
+        cache_path: Path to the SQLite cache file.
+            If not provided, a default path will be used under <cache-root>/cache.sqlite
         cache_expiry: Duration for which cached responses are valid.
             Response cache-headers take precedence.
+        ratelimit_path: Path to the SQLite ratelimit file.
+            If not provided, a default path will be used under <cache-root>/ratelimits.sqlite
     """
 
     def __init__(
         self,
         api_key: str,
-        cache: Path | None = None,
         base_url: str | None = None,
         user_agent: str | None = None,
         timeout: float = 20,
+        cache_path: Path | None = None,
         cache_expiry: timedelta = timedelta(days=14),
+        ratelimit_path: Path | None = None,
     ):
         self._base_url = base_url or "https://comicvine.gamespot.com/api"
         self._session = CachedLimiterSession(
             backend=SQLiteCache(
-                db_path=cache or (get_cache_root() / "cache.sqlite"), serializer="json"
+                db_path=cache_path or (get_cache_root() / "cache.sqlite"), serializer="json"
             ),
             expire_after=cache_expiry,
             cache_control=cache_expiry != NEVER_EXPIRE,
@@ -158,6 +142,7 @@ class Comicvine:
             per_hour=200,
             max_delay=timeout * 2,
             bucket_class=SQLiteBucket,
+            bucket_kwargs={"path": ratelimit_path or (get_cache_root() / "ratelimits.sqlite")},
             per_host=False,
             bucket_name="comicvine",
         )
@@ -189,13 +174,11 @@ class Comicvine:
             try:
                 response = {} if err.response is None else err.response.json()
                 if status_code == HTTPStatus.UNAUTHORIZED:
-                    raise AuthenticationError(response["detail"]) from err
+                    raise AuthenticationError(response.get("error")) from err
                 if status_code == HTTPStatus.NOT_FOUND:
-                    raise ServiceError(response["detail"]) from err
+                    raise ServiceError("Resource not found") from err
                 if status_code in (HTTPStatus.TOO_MANY_REQUESTS, 420):
-                    raise RateLimitError(
-                        f"Too Many API Requests: Need to wait {format_time(seconds=0 if err.response is None else err.response.headers.get('Retry-After', 0))}s."  # noqa: E501
-                    ) from err
+                    raise RateLimitError(response.get("error")) from err
                 raise ServiceError(f"{status_code}: {response}") from err
             except JSONDecodeError as err:
                 raise ServiceError(

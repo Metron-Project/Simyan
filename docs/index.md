@@ -32,8 +32,11 @@ from simyan.comicvine import Comicvine
 
 session = Comicvine(
     api_key="Comicvine API Key",
-    cache=Path("cache.sqlite"),  # Optional, defaults to ~/.cache/simyan/cache.sqlite
+    cache_path=Path("cache.sqlite"),  # Optional, defaults to ~/.cache/simyan/cache.sqlite
     cache_expiry=timedelta(days=1),  # Optional, defaults to 14 days
+    ratelimit_path=Path(
+        "ratelimits.sqlite"
+    ),  # Optional, defaults to ~/.cache/simyan/ratelimits.sqlite
 )
 
 # Search for Publisher

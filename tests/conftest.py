@@ -13,10 +13,13 @@ def api_key() -> str:
     return os.getenv("COMICVINE__API_KEY", default="UNSET")
 
 
-@pytest.fixture(scope="session")
-def session(api_key: str) -> Comicvine:
+@pytest.fixture
+def session(api_key: str, tmp_path: Path) -> Comicvine:
     return Comicvine(
-        api_key=api_key, cache=Path("tests") / "cache.sqlite", cache_expiry=NEVER_EXPIRE
+        api_key=api_key,
+        cache_path=Path("tests") / "cache.sqlite",
+        cache_expiry=NEVER_EXPIRE,
+        ratelimit_path=tmp_path / "simyan-ratelimit.sqlite",
     )
 
 
@@ -25,8 +28,9 @@ def mock_session(tmp_path: Path) -> Comicvine:
     return Comicvine(
         api_key="UNSET",
         base_url="https://comicvine.gamespot.mock/api",
-        cache=tmp_path / "simyan.sqlite",
+        cache_path=tmp_path / "simyan.sqlite",
         cache_expiry=timedelta(seconds=1),
+        ratelimit_path=tmp_path / "simyan-ratelimit.sqlite",
     )
 
 
