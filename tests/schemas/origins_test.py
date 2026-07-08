@@ -56,6 +56,12 @@ def test_list_origins_max_results(session: Comicvine) -> None:
     assert len(results) == 3
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.ORIGIN, query="Mutant")
+        assert all(isinstance(x, BasicOrigin) for x in results)
+
+
 def test_search_origin(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.ORIGIN, query="Mutant")
+    results = session.search_origins(query="Mutant")
     assert all(isinstance(x, BasicOrigin) for x in results)

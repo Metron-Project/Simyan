@@ -5,7 +5,7 @@ from datetime import timedelta
 from enum import Enum
 from http import HTTPStatus
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, Literal, TypeVar
 from urllib.parse import urlparse
 
 from pydantic import TypeAdapter, ValidationError
@@ -44,7 +44,13 @@ from simyan.schemas import (
     Volume,
 )
 
+try:
+    from typing import deprecated  # Python >= 3.13  # ty:ignore[unresolved-import]
+except ImportError:
+    from typing_extensions import deprecated
+
 T = TypeVar("T")
+HttpMethod = Literal["GET"]
 
 
 class CachedLimiterSession(CacheMixin, LimiterMixin, Session):
@@ -75,33 +81,38 @@ class ComicvineResource(Enum):
         TEAM:
     """
 
-    ISSUE = (4000, "issue", list[BasicIssue])
-    CHARACTER = (4005, "character", list[BasicCharacter])
-    PUBLISHER = (4010, "publisher", list[BasicPublisher])
-    CONCEPT = (4015, "concept", list[BasicConcept])
-    LOCATION = (4020, "location", list[BasicLocation])
-    ORIGIN = (4030, "origin", list[BasicOrigin])
-    POWER = (4035, "power", list[BasicPower])
-    CREATOR = (4040, "person", list[BasicCreator])
-    STORY_ARC = (4045, "story_arc", list[BasicStoryArc])
-    VOLUME = (4050, "volume", list[BasicVolume])
-    ITEM = (4055, "object", list[BasicItem])
-    TEAM = (4060, "team", list[BasicTeam])
+    ISSUE = (4000, "issues", "issue", BasicIssue, Issue)
+    CHARACTER = (4005, "characters", "character", BasicCharacter, Character)
+    PUBLISHER = (4010, "publishers", "publisher", BasicPublisher, Publisher)
+    CONCEPT = (4015, "concepts", "concept", BasicConcept, Concept)
+    LOCATION = (4020, "locations", "location", BasicLocation, Location)
+    ORIGIN = (4030, "origins", "origin", BasicOrigin, Origin)
+    POWER = (4035, "powers", "power", BasicPower, Power)
+    CREATOR = (4040, "people", "person", BasicCreator, Creator)
+    STORY_ARC = (4045, "story_arcs", "story_arc", BasicStoryArc, StoryArc)
+    VOLUME = (4050, "volumes", "volume", BasicVolume, Volume)
+    ITEM = (4055, "objects", "object", BasicItem, Item)
+    TEAM = (4060, "teams", "team", BasicTeam, Team)
 
     @property
-    def resource_id(self) -> int:
-        """Start of id used by Comicvine to create unique ids."""
+    def resource_id(self) -> int:  # noqa: D102
         return self.value[0]
 
     @property
-    def search_resource(self) -> str:
-        """Resource string for filtering searches."""
+    def list_endpoint(self) -> str:  # noqa: D102
         return self.value[1]
 
     @property
-    def search_response(self) -> type[T]:
-        """Response type for a resource when using a search endpoint."""
+    def item_endpoint(self) -> str:  # noqa: D102
         return self.value[2]
+
+    @property
+    def list_type(self) -> type[T]:  # noqa: D102
+        return self.value[3]
+
+    @property
+    def item_type(self) -> type[T]:  # noqa: D102
+        return self.value[4]
 
 
 class Comicvine:
@@ -156,13 +167,15 @@ class Comicvine:
         self._session.params.update({"api_key": api_key, "format": "json"})
         self._timeout = timeout
 
-    def _get_request(self, endpoint: str, params: dict[str, str] | None = None) -> dict[str, Any]:
-        params: dict[str, str] = params or {}
-
+    def _request(
+        self, method: HttpMethod, endpoint: str, params: dict[str, str] | None = None
+    ) -> dict[str, Any]:
+        url = f"{self._base_url}{endpoint}/"
+        kwargs: dict[str, Any] = {"timeout": self._timeout}
+        if params:
+            kwargs["params"] = params
         try:
-            response = self._session.get(
-                url=f"{self._base_url}{endpoint}/", params=params, timeout=self._timeout
-            )
+            response = self._session.request(method=method, url=url, **kwargs)
             response.raise_for_status()
             return response.json()
         except HTTPError as err:
@@ -182,60 +195,90 @@ class Comicvine:
                 raise ServiceError(f"{status_code}: {response}") from err
             except JSONDecodeError as err:
                 raise ServiceError(
-                    f"{status_code}: Unable to parse response from '{self._base_url}{endpoint}/' as Json"  # noqa: E501
+                    f"{status_code}: Unable to parse response from '{url}' as Json"
                 ) from err
         except Timeout as err:
             raise ServiceError("Service took too long to respond") from err
         except RequestException as err:
-            raise ServiceError(f"Unable to connect to '{self._base_url}{endpoint}/'") from err
+            raise ServiceError(f"Unable to connect to '{url}'") from err
         except JSONDecodeError as err:
-            raise ServiceError(
-                f"Unable to parse response from '{self._base_url}{endpoint}/' as Json"
-            ) from err
+            raise ServiceError(f"Unable to parse response from '{url}' as Json") from err
 
-    def _fetch_item(self, endpoint: str) -> dict[str, Any]:
-        return self._get_request(endpoint=endpoint)["results"]
+    @staticmethod
+    def _convert(data: dict[str, Any], type_: type[T]) -> T:
+        try:
+            return TypeAdapter(type_).validate_python(data)
+        except ValidationError as err:
+            raise ServiceError(err) from err
 
-    def _fetch_paged_list(
-        self, endpoint: str, max_results: int, params: dict[str, str] | None = None
+    def _offset(
+        self, endpoint: str, params: dict[str, str] | None = None, max_results: int | None = None
     ) -> list[dict[str, Any]]:
-        params: dict[str, str] = params or {}
-        params["limit"] = params.get("limit", "100")
-        results: list[dict[str, Any]] = []
-        page = int(params.get("page", "1"))
-        while True:
-            response = self._get_request(endpoint=endpoint, params={**params, "page": str(page)})
-            results.extend(response["results"])
-            page += 1
-            if not response["results"] or len(results) >= max_results:
-                break
-        return results[:max_results]
-
-    def _fetch_offset_list(
-        self, endpoint: str, max_results: int, params: dict[str, str] | None = None
-    ) -> list[dict[str, Any]]:
-        params: dict[str, str] = params or {}
-        params["limit"] = params.get("limit", "100")
-        results: list[dict[str, Any]] = []
+        params = params or {}
         offset = int(params.get("offset", "0"))
+        limit = int(params.get("limit", "100"))
+        results = []
         while True:
-            response = self._get_request(
-                endpoint=endpoint, params={**params, "offset": str(offset)}
-            )
+            params["offset"] = str(offset)
+            params["limit"] = str(limit)
+            response = self._request(method="GET", endpoint=endpoint, params=params)
+            if not response["results"]:
+                return results
             results.extend(response["results"])
-            offset += int(params["limit"])
-            if not response["results"] or len(results) >= max_results:
-                break
-        return results[:max_results]
+            if max_results is not None and len(results) >= max_results:
+                return results[:max_results]
+            offset += limit
+
+    def _paginate(
+        self, endpoint: str, params: dict[str, str] | None = None, max_results: int | None = None
+    ) -> list[dict[str, Any]]:
+        params = params or {}
+        page = int(params.get("page", "1"))
+        results = []
+        while True:
+            params["page"] = str(page)
+            response = self._request(method="GET", endpoint=endpoint, params=params)
+            if not response["results"]:
+                return results
+            results.extend(response["results"])
+            if max_results is not None and len(results) >= max_results:
+                return results[:max_results]
+            page += 1
+
+    def _get_item(self, resource: ComicvineResource, id_: int) -> T:
+        return self._convert(
+            data=self._request(
+                method="GET", endpoint=f"/{resource.item_endpoint}/{resource.resource_id}-{id_}"
+            )["results"],
+            type_=resource.item_type,
+        )
+
+    def _get_list(
+        self,
+        resource: ComicvineResource,
+        params: dict[str, str] | None = None,
+        max_results: int | None = None,
+    ) -> list[T]:
+        data = self._offset(
+            endpoint=f"/{resource.list_endpoint}", params=params, max_results=max_results
+        )
+        return [self._convert(data=x, type_=resource.list_type) for x in data]
+
+    def _search(
+        self, resource: ComicvineResource, query: str, max_results: int | None = None
+    ) -> list[T]:
+        params = {"query": query, "resources": resource.item_endpoint}
+        data = self._paginate(endpoint="/search", params=params, max_results=max_results)
+        return [self._convert(data=x, type_=resource.list_type) for x in data]
 
     def list_publishers(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicPublisher]:
         """Request a list of Publishers.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Publisher objects.
@@ -245,13 +288,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/publishers", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicPublisher]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.PUBLISHER, params=params, max_results=max_results
+        )
 
     def get_publisher(self, publisher_id: int) -> Publisher:
         """Request a Publisher using its id.
@@ -267,22 +306,35 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/publisher/{ComicvineResource.PUBLISHER.resource_id}-{publisher_id}"
-            )
-            return TypeAdapter(Publisher).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.PUBLISHER, id_=publisher_id)
+
+    def search_publishers(self, query: str, max_results: int | None = 500) -> list[BasicPublisher]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of publisher results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(
+            resource=ComicvineResource.PUBLISHER, query=query, max_results=max_results
+        )
 
     def list_volumes(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicVolume]:
         """Request a list of Volumes.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Volume objects.
@@ -292,13 +344,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/volumes", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicVolume]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.VOLUME, params=params, max_results=max_results
+        )
 
     def get_volume(self, volume_id: int) -> Volume:
         """Request a Volume using its id.
@@ -314,22 +362,33 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/volume/{ComicvineResource.VOLUME.resource_id}-{volume_id}"
-            )
-            return TypeAdapter(Volume).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.VOLUME, id_=volume_id)
+
+    def search_volumes(self, query: str, max_results: int | None = 500) -> list[BasicVolume]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of volume results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(resource=ComicvineResource.VOLUME, query=query, max_results=max_results)
 
     def list_issues(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicIssue]:
         """Request a list of Issues.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Issue objects.
@@ -339,13 +398,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/issues", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicIssue]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.ISSUE, params=params, max_results=max_results
+        )
 
     def get_issue(self, issue_id: int) -> Issue:
         """Request an Issue using its id.
@@ -361,22 +416,33 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/issue/{ComicvineResource.ISSUE.resource_id}-{issue_id}"
-            )
-            return TypeAdapter(Issue).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.ISSUE, id_=issue_id)
+
+    def search_issues(self, query: str, max_results: int | None = 500) -> list[BasicIssue]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of issue results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(resource=ComicvineResource.ISSUE, query=query, max_results=max_results)
 
     def list_story_arcs(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicStoryArc]:
         """Request a list of Story Arcs.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of StoryArc objects.
@@ -386,13 +452,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/story_arcs", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicStoryArc]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.STORY_ARC, params=params, max_results=max_results
+        )
 
     def get_story_arc(self, story_arc_id: int) -> StoryArc:
         """Request a Story Arc using its id.
@@ -408,22 +470,35 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/story_arc/{ComicvineResource.STORY_ARC.resource_id}-{story_arc_id}"
-            )
-            return TypeAdapter(StoryArc).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.STORY_ARC, id_=story_arc_id)
+
+    def search_story_arcs(self, query: str, max_results: int | None = 500) -> list[BasicStoryArc]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of story arc results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(
+            resource=ComicvineResource.STORY_ARC, query=query, max_results=max_results
+        )
 
     def list_creators(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicCreator]:
         """Request a list of Creators.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Creator objects.
@@ -433,13 +508,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/people", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicCreator]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.CREATOR, params=params, max_results=max_results
+        )
 
     def get_creator(self, creator_id: int) -> Creator:
         """Request a Creator using its id.
@@ -455,22 +526,35 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/person/{ComicvineResource.CREATOR.resource_id}-{creator_id}"
-            )
-            return TypeAdapter(Creator).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.CREATOR, id_=creator_id)
+
+    def search_creators(self, query: str, max_results: int | None = 500) -> list[BasicCreator]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of creator results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(
+            resource=ComicvineResource.CREATOR, query=query, max_results=max_results
+        )
 
     def list_characters(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicCharacter]:
         """Request a list of Characters.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Character objects.
@@ -480,13 +564,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/characters", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicCharacter]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.CHARACTER, params=params, max_results=max_results
+        )
 
     def get_character(self, character_id: int) -> Character:
         """Request a Character using its id.
@@ -502,22 +582,35 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/character/{ComicvineResource.CHARACTER.resource_id}-{character_id}"
-            )
-            return TypeAdapter(Character).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.CHARACTER, id_=character_id)
+
+    def search_characters(self, query: str, max_results: int | None = 500) -> list[BasicCharacter]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of character results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(
+            resource=ComicvineResource.CHARACTER, query=query, max_results=max_results
+        )
 
     def list_teams(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicTeam]:
         """Request a list of Teams.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Team objects.
@@ -527,13 +620,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/teams", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicTeam]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.TEAM, params=params, max_results=max_results
+        )
 
     def get_team(self, team_id: int) -> Team:
         """Request a Team using its id.
@@ -549,22 +638,33 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/team/{ComicvineResource.TEAM.resource_id}-{team_id}"
-            )
-            return TypeAdapter(Team).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.TEAM, id_=team_id)
+
+    def search_teams(self, query: str, max_results: int | None = 500) -> list[BasicTeam]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of team results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(resource=ComicvineResource.TEAM, query=query, max_results=max_results)
 
     def list_locations(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicLocation]:
         """Request a list of Locations.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Location objects.
@@ -574,13 +674,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/locations", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicLocation]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.LOCATION, params=params, max_results=max_results
+        )
 
     def get_location(self, location_id: int) -> Location:
         """Request a Location using its id.
@@ -596,22 +692,35 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/location/{ComicvineResource.LOCATION.resource_id}-{location_id}"
-            )
-            return TypeAdapter(Location).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.LOCATION, id_=location_id)
+
+    def search_locations(self, query: str, max_results: int | None = 500) -> list[BasicLocation]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of location results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(
+            resource=ComicvineResource.LOCATION, query=query, max_results=max_results
+        )
 
     def list_concepts(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicConcept]:
         """Request a list of Concepts.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Concept objects.
@@ -621,13 +730,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/concepts", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicConcept]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.CONCEPT, params=params, max_results=max_results
+        )
 
     def get_concept(self, concept_id: int) -> Concept:
         """Request a Concept using its id.
@@ -643,22 +748,35 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/concept/{ComicvineResource.CONCEPT.resource_id}-{concept_id}"
-            )
-            return TypeAdapter(Concept).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.CONCEPT, id_=concept_id)
+
+    def search_concepts(self, query: str, max_results: int | None = 500) -> list[BasicConcept]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of concept results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(
+            resource=ComicvineResource.CONCEPT, query=query, max_results=max_results
+        )
 
     def list_powers(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicPower]:
         """Request a list of Powers.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Power objects.
@@ -668,13 +786,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/powers", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicPower]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.POWER, params=params, max_results=max_results
+        )
 
     def get_power(self, power_id: int) -> Power:
         """Request a Power using its id.
@@ -690,22 +804,33 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/power/{ComicvineResource.POWER.resource_id}-{power_id}"
-            )
-            return TypeAdapter(Power).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.POWER, id_=power_id)
+
+    def search_powers(self, query: str, max_results: int | None = 500) -> list[BasicPower]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of power results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(resource=ComicvineResource.POWER, query=query, max_results=max_results)
 
     def list_origins(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicOrigin]:
         """Request a list of Origins.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Origin objects.
@@ -715,13 +840,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/origins", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicOrigin]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.ORIGIN, params=params, max_results=max_results
+        )
 
     def get_origin(self, origin_id: int) -> Origin:
         """Request an Origin using its id.
@@ -737,22 +858,33 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/origin/{ComicvineResource.ORIGIN.resource_id}-{origin_id}"
-            )
-            return TypeAdapter(Origin).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.ORIGIN, id_=origin_id)
+
+    def search_origins(self, query: str, max_results: int | None = 500) -> list[BasicOrigin]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of origin results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(resource=ComicvineResource.ORIGIN, query=query, max_results=max_results)
 
     def list_items(
-        self, params: dict[str, Any] | None = None, max_results: int = 500
+        self, params: dict[str, Any] | None = None, max_results: int | None = 500
     ) -> list[BasicItem]:
         """Request a list of Items.
 
         Args:
             params: Parameters to add to the request.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of Item objects.
@@ -762,13 +894,9 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_offset_list(
-                endpoint="/objects", params=params, max_results=max_results
-            )
-            return TypeAdapter(list[BasicItem]).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_list(
+            resource=ComicvineResource.ITEM, params=params, max_results=max_results
+        )
 
     def get_item(self, item_id: int) -> Item:
         """Request an Item using its id.
@@ -784,16 +912,28 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            result = self._fetch_item(
-                endpoint=f"/object/{ComicvineResource.ITEM.resource_id}-{item_id}"
-            )
-            return TypeAdapter(Item).validate_python(result)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._get_item(resource=ComicvineResource.ITEM, id_=item_id)
 
+    def search_items(self, query: str, max_results: int | None = 500) -> list[BasicItem]:
+        """Request a list of search results.
+
+        Args:
+            query: Search query string.
+            max_results: If given, return at most this many results.
+
+        Returns:
+            A list of item results.
+
+        Raises:
+            ServiceError: If the API response is invalid or validation fails.
+            AuthenticationError: If credentials are invalid.
+            RateLimitError: If the API rate limit is exceeded.
+        """
+        return self._search(resource=ComicvineResource.ITEM, query=query, max_results=max_results)
+
+    @deprecated("Use the resource specific search functions instead.")
     def search(
-        self, resource: ComicvineResource, query: str, max_results: int = 500
+        self, resource: ComicvineResource, query: str, max_results: int | None = 500
     ) -> (
         list[BasicPublisher]
         | list[BasicVolume]
@@ -810,10 +950,12 @@ class Comicvine:
     ):
         """Request a list of search results filtered by the provided resource.
 
+        **Deprecated:** Use the resource specific search functions instead.
+
         Args:
             resource: Filter which type of resource to return.
             query: Search query string.
-            max_results: Limits the number of results looked up and returned.
+            max_results: If given, return at most this many results.
 
         Returns:
             A list of results, mapped to the given resource.
@@ -823,12 +965,4 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        try:
-            results = self._fetch_paged_list(
-                endpoint="/search",
-                params={"query": query, "resources": resource.search_resource},
-                max_results=max_results,
-            )
-            return TypeAdapter(resource.search_response).validate_python(results)
-        except ValidationError as err:
-            raise ServiceError(err) from err
+        return self._search(resource=resource, query=query, max_results=max_results)

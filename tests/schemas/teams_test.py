@@ -65,6 +65,12 @@ def test_list_teams_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.TEAM, query="Lantern")
+        assert all(isinstance(x, BasicTeam) for x in results)
+
+
 def test_search_team(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.TEAM, query="Lantern")
+    results = session.search_teams(query="Lantern")
     assert all(isinstance(x, BasicTeam) for x in results)

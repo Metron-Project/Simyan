@@ -19,7 +19,7 @@ def test_not_found(
             json={"detail": "Not found."},
         )
         with pytest.raises(ServiceError):
-            mock_session._get_request(endpoint="/invalid")  # noqa: SLF001
+            mock_session._request(method="GET", endpoint="/invalid")  # noqa: SLF001
         mock.assert_call_count(f"{url}?{mock_params_str}", 1)
 
 

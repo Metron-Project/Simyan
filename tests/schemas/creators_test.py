@@ -66,6 +66,12 @@ def test_list_creators_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.CREATOR, query="Geoff")
+        assert all(isinstance(x, BasicCreator) for x in results)
+
+
 def test_search_creator(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.CREATOR, query="Geoff")
+    results = session.search_creators(query="Geoff")
     assert all(isinstance(x, BasicCreator) for x in results)

@@ -67,6 +67,12 @@ def test_list_volumes_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.VOLUME, query="Lantern")
+        assert all(isinstance(x, BasicVolume) for x in results)
+
+
 def test_search_volume(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.VOLUME, query="Lantern")
+    results = session.search_volumes(query="Lantern")
     assert all(isinstance(x, BasicVolume) for x in results)

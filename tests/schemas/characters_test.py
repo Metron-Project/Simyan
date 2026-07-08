@@ -72,6 +72,12 @@ def test_list_characters_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.CHARACTER, query="Kyle Rayner")
+        assert all(isinstance(x, BasicCharacter) for x in results)
+
+
 def test_search_character(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.CHARACTER, query="Kyle Rayner")
+    results = session.search_characters(query="Kyle Rayner")
     assert all(isinstance(x, BasicCharacter) for x in results)

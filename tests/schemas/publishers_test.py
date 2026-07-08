@@ -61,6 +61,12 @@ def test_list_publishers_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.PUBLISHER, query="DC")
+        assert all(isinstance(x, BasicPublisher) for x in results)
+
+
 def test_search_publisher(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.PUBLISHER, query="DC")
+    results = session.search_publishers(query="DC")
     assert all(isinstance(x, BasicPublisher) for x in results)

@@ -59,6 +59,12 @@ def test_list_concepts_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.CONCEPT, query="earth")
+        assert all(isinstance(x, BasicConcept) for x in results)
+
+
 def test_search_concept(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.CONCEPT, query="earth")
+    results = session.search_concepts(query="earth")
     assert all(isinstance(x, BasicConcept) for x in results)

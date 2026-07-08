@@ -61,6 +61,12 @@ def test_list_story_arcs_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.STORY_ARC, query="Blackest Night")
+        assert all(isinstance(x, BasicStoryArc) for x in results)
+
+
 def test_search_story_arc(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.STORY_ARC, query="Blackest Night")
+    results = session.search_story_arcs(query="Blackest Night")
     assert all(isinstance(x, BasicStoryArc) for x in results)

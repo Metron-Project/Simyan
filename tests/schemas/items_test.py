@@ -60,6 +60,12 @@ def test_list_items_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.ITEM, query="Ring")
+        assert all(isinstance(x, BasicItem) for x in results)
+
+
 def test_search_item(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.ITEM, query="Ring")
+    results = session.search_items(query="Ring")
     assert all(isinstance(x, BasicItem) for x in results)
