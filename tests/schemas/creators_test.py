@@ -14,10 +14,10 @@ def test_get_creator(session: Comicvine) -> None:
     assert result is not None
     assert result.id == 40439
 
-    assert len(result.characters) == 340
-    assert len(result.issues) == 1666
+    assert len(result.characters) == 342
+    assert len(result.issues) == 1674
     assert len(result.story_arcs) == 27
-    assert len(result.volumes) == 608
+    assert len(result.volumes) == 610
 
 
 def test_get_creator_fail(
@@ -66,6 +66,12 @@ def test_list_creators_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.CREATOR, query="Geoff")
+        assert all(isinstance(x, BasicCreator) for x in results)
+
+
 def test_search_creator(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.CREATOR, query="Geoff")
+    results = session.search_creators(query="Geoff")
     assert all(isinstance(x, BasicCreator) for x in results)

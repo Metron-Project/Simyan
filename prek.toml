@@ -1,6 +1,6 @@
 [[repos]]
 hooks = [
-  {args = ["--all", "--in-place"], entry = "toml-sort", exclude = ".*.lock", id = "toml-sort", language = "system", name = "toml sort", types = ["toml"]},
+  {args = ["--all", "--ignore-case", "--in-place", "--trailing-comma-inline-array"], entry = "toml-sort", exclude = ".*.lock|pylock.toml", id = "toml-sort", language = "system", name = "toml sort", types = ["toml"]},
   {args = ["--number", "--wrap=keep"], entry = "mdformat", exclude = "(.github/ISSUE_TEMPLATE/.*|docs/simyan/schemas/_base).md", id = "mdformat", language = "system", name = "mdformat", types = ["markdown"]},
   {entry = "ruff check .", id = "ruff-check", language = "system", name = "ruff check", pass_filenames = false, types = ["python"]},
   {entry = "ruff format .", id = "ruff-format", language = "system", name = "ruff format", pass_filenames = false, types = ["python"]},
@@ -10,18 +10,41 @@ repo = "local"
 
 [[repos]]
 hooks = [
+  {id = "check-ast"},
+  {id = "check-builtin-literals"},
+  {id = "check-docstring-first"},
+  {id = "debug-statements"},
+  {id = "forbid-submodules"},
+]
+repo = "https://github.com/pre-commit/pre-commit-hooks"
+rev = "v6.0.0"
+
+[[repos]]
+hooks = [
+  {args = ["--fix=all", "--no-progress", "--persona=auditor"], id = "zizmor"},
+]
+repo = "https://github.com/zizmorcore/zizmor-pre-commit"
+rev = "v1.26.1"
+
+[[repos]]
+hooks = [
   {args = ["--allow-multiple-documents"], id = "check-yaml"},
   {args = ["--assume-in-merge"], id = "check-merge-conflict"},
+  # {args = ["--autofix", "--indent=2", "--no-ensure-ascii"], id = "pretty-format-json"},
   {args = ["--markdown-linebreak-ext=md"], id = "trailing-whitespace"},
   {exclude_types = ["json", "svg", "xml"], id = "end-of-file-fixer"},
   {id = "check-added-large-files"},
   {id = "check-case-conflict"},
-  {id = "check-executables-have-shebangs"},
-  {id = "check-json"},
-  {id = "check-json5"},
-  {id = "check-symlinks"},
+  # {id = "check-executables-have-shebangs"},
+  # {id = "check-illegal-windows-names"},
+  # {id = "check-json"},
+  # {id = "check-json5"},
+  {id = "check-shebang-scripts-are-executable"},
+  # {id = "check-symlinks"},
   {id = "check-toml"},
-  {id = "check-xml"},
+  {id = "check-vcs-permalinks"},
+  # {id = "check-xml"},
+  {id = "destroyed-symlinks"},
   {id = "detect-private-key"},
   {id = "fix-byte-order-marker"},
   {id = "mixed-line-ending"},
@@ -30,24 +53,7 @@ repo = "builtin"
 
 [[repos]]
 hooks = [
-  {args = ["--autofix", "--indent=2"], id = "pretty-format-json"},
-  {id = "check-ast"},
-  {id = "check-builtin-literals"},
-  {id = "check-docstring-first"},
-  {id = "check-illegal-windows-names"},
-  {id = "check-merge-conflict"},
-  {id = "check-shebang-scripts-are-executable"},
-  {id = "check-vcs-permalinks"},
-  {id = "debug-statements"},
-  {id = "forbid-submodules"},
-  {id = "name-tests-test"},
-]
-repo = "https://github.com/pre-commit/pre-commit-hooks"
-rev = "v6.0.0"
-
-[[repos]]
-hooks = [
-  # {id = "check-hooks-apply"},
+  {id = "check-hooks-apply"},
   {id = "check-useless-excludes"},
 ]
 repo = "meta"

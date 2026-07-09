@@ -20,6 +20,8 @@ tests = [
   "pytest >= 9.1.0",
   "pytest-cov >= 7.1.0",
   "responses >= 0.26.0",
+  "tox >= 4.56.0",
+  "tox-uv >= 1.35.0",
 ]
 
 [project]
@@ -140,6 +142,17 @@ keep-runtime-typing = true
 all = true
 ignore_case = true
 trailing_comma_inline_array = true
+overrides."tool.tox.env_list".inline_arrays = false
+overrides."tool.tox.env_run_base.commands".inline_arrays = false
+
+[tool.tox]
+env_list = ["3.10", "3.11", "3.12", "3.13", "3.14"]
+min_version = "4.22"
+
+[tool.tox.env_run_base]
+commands = [["pytest"]]
+dependency_groups = ["tests"]
+passenv = ["COMICVINE__API_KEY"]
 
 [tool.ty.src]
 exclude = ["**/tests/"]

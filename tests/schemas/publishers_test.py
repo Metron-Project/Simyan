@@ -17,7 +17,7 @@ def test_get_publisher(session: Comicvine) -> None:
     assert len(result.characters) == 779
     assert len(result.story_arcs) == 37
     assert len(result.teams) == 43
-    assert len(result.volumes) == 4750
+    assert len(result.volumes) == 4769
 
 
 def test_get_publisher_fail(
@@ -61,6 +61,12 @@ def test_list_publishers_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.PUBLISHER, query="DC")
+        assert all(isinstance(x, BasicPublisher) for x in results)
+
+
 def test_search_publisher(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.PUBLISHER, query="DC")
+    results = session.search_publishers(query="DC")
     assert all(isinstance(x, BasicPublisher) for x in results)

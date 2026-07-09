@@ -59,6 +59,12 @@ def test_list_locations_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
+def test_search_deprecation(session: Comicvine) -> None:
+    with pytest.deprecated_call():
+        results = session.search(resource=ComicvineResource.LOCATION, query="Earth")
+        assert all(isinstance(x, BasicLocation) for x in results)
+
+
 def test_search_location(session: Comicvine) -> None:
-    results = session.search(resource=ComicvineResource.LOCATION, query="Earth")
+    results = session.search_locations(query="Earth")
     assert all(isinstance(x, BasicLocation) for x in results)
