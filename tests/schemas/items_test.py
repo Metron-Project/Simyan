@@ -14,9 +14,9 @@ def test_get_item(session: Comicvine) -> None:
     assert result is not None
     assert result.id == 41361
 
-    assert len(result.issues) == 3404
-    assert len(result.story_arcs) == 456
-    assert len(result.volumes) == 1038
+    assert len(result.issues) == 3416
+    assert len(result.story_arcs) == 460
+    assert len(result.volumes) == 1041
 
 
 def test_get_item_fail(
@@ -44,7 +44,7 @@ def test_list_items(session: Comicvine) -> None:
     assert str(result.api_url) == "https://comicvine.gamespot.com/api/object/4055-41361/"
     assert result.date_added == datetime(2008, 6, 6, 11, 27, 50)
     assert result.first_issue.id == 144069
-    assert result.issue_count == 3404
+    assert result.issue_count == 3416
     assert result.name == "Green Power Ring"
     assert str(result.site_url) == "https://comicvine.gamespot.com/green-power-ring/4055-41361/"
     assert result.start_year == 1940

@@ -14,7 +14,7 @@ def test_get_power(session: Comicvine) -> None:
     assert result is not None
     assert result.id == 1
 
-    assert len(result.characters) == 8426
+    assert len(result.characters) == 8433
 
 
 def test_get_power_fail(

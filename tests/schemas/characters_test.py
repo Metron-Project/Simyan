@@ -16,11 +16,11 @@ def test_get_character(session: Comicvine) -> None:
 
     assert len(result.creators) == 2
     assert len(result.deaths) == 2
-    assert len(result.enemies) == 153
+    assert len(result.enemies) == 154
     assert len(result.enemy_teams) == 28
     assert len(result.friendly_teams) == 18
     assert len(result.friends) == 238
-    assert len(result.issues) == 1767
+    assert len(result.issues) == 1773
     assert len(result.powers) == 28
     assert len(result.story_arcs) == 0
     assert len(result.teams) == 21
@@ -54,7 +54,7 @@ def test_list_characters(session: Comicvine) -> None:
     assert result.date_of_birth is None
     assert result.first_issue.id == 38445
     assert result.gender == 1
-    assert result.issue_count == 1767
+    assert result.issue_count == 1773
     assert result.name == "Kyle Rayner"
     assert result.origin.id == 4
     assert result.publisher.id == 10

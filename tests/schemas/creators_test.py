@@ -14,10 +14,10 @@ def test_get_creator(session: Comicvine) -> None:
     assert result is not None
     assert result.id == 40439
 
-    assert len(result.characters) == 340
-    assert len(result.issues) == 1666
+    assert len(result.characters) == 342
+    assert len(result.issues) == 1674
     assert len(result.story_arcs) == 27
-    assert len(result.volumes) == 608
+    assert len(result.volumes) == 610
 
 
 def test_get_creator_fail(

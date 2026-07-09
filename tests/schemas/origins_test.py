@@ -13,7 +13,7 @@ def test_get_origin(session: Comicvine) -> None:
     assert result.id == 1
 
     assert result.character_set is None
-    assert len(result.characters) == 4548
+    assert len(result.characters) == 4551
     assert len(result.profiles) == 0
 
 
