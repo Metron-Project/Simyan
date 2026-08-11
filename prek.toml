@@ -24,7 +24,7 @@ hooks = [
   {args = ["--fix=all", "--no-progress", "--persona=auditor"], id = "zizmor"},
 ]
 repo = "https://github.com/zizmorcore/zizmor-pre-commit"
-rev = "v1.26.1"
+rev = "v1.29.0"
 
 [[repos]]
 hooks = [
