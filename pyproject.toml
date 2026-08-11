@@ -8,20 +8,20 @@ dev = [
   "mdformat-gfm >= 1.0.0",
   "mdformat-ruff >= 0.1.0",
   "prek >= 0.4.0",
-  "ruff >= 0.15.0",
+  "ruff >= 0.16.0",
   "toml-sort >= 0.24.0",
-  "ty >= 0.0.50",
+  "ty >= 0.0.70",
 ]
 docs = [
   "mkdocstrings[python] >= 1.0.0",
-  "zensical >= 0.0.40",
+  "zensical >= 0.0.50",
 ]
 tests = [
   "pytest >= 9.1.0",
   "pytest-cov >= 7.1.0",
   "responses >= 0.26.0",
-  "tox >= 4.56.0",
-  "tox-uv >= 1.35.0",
+  "tox >= 4.59.0",
+  "tox-uv >= 1.36.0",
 ]
 
 [project]
@@ -49,6 +49,7 @@ dependencies = [
   "requests >= 2.34.0",
   "requests-cache >= 1.3.0",
   "requests-ratelimiter >= 0.10.0",
+  "typing-extensions >= 4.16.0 ; python_version < '3.13'",
 ]
 description = "A Python wrapper for the Comicvine API."
 dynamic = ["version"]
@@ -98,12 +99,16 @@ skip-magic-trailing-comma = true
 [tool.ruff.lint]
 ignore = [
   "COM812",
+  "CPY001",
   "D100",
   "D104",
   "D107",
-  "EM",
-  "FBT",
+  "EM101",
+  "EM102",
+  "FBT001",
+  "FBT002",
   "PLR0913",
+  "PLR0917",
   "PLR2004",
   "TCH",
   "TRY003",
@@ -134,9 +139,6 @@ classmethod-decorators = ["classmethod", "pydantic.field_validator"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-
-[tool.ruff.lint.pyupgrade]
-keep-runtime-typing = true
 
 [tool.tomlsort]
 all = true
