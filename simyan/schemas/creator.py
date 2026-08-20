@@ -9,6 +9,17 @@ from simyan.schemas._base import BaseModel
 from simyan.schemas.generic_entries import GenericEntry, Images
 
 
+class TimezonedDate(BaseModel):
+    date: date
+    timezone: str
+    timezone_type: int
+
+    def __init__(self, **data: Any):
+        if data.get("date"):
+            data["date"] = data["date"].split()[0]
+        super().__init__(**data)
+
+
 class BasicCreator(BaseModel):
     r"""Contains fields for all Creators.
 
@@ -39,7 +50,7 @@ class BasicCreator(BaseModel):
     date_added: datetime
     date_last_updated: datetime
     date_of_birth: date | None = Field(alias="birth", default=None)
-    date_of_death: date | None = Field(alias="death", default=None)
+    date_of_death: TimezonedDate | None = Field(alias="death", default=None)
     description: str | None = None
     email: str | None = None
     gender: int
@@ -53,8 +64,6 @@ class BasicCreator(BaseModel):
     website: HttpUrl | None = None
 
     def __init__(self, **data: Any):
-        if data.get("death"):
-            data["death"] = data["death"]["date"].split()[0]
         if data.get("birth"):
             data["birth"] = data["birth"].split()[0]
         super().__init__(**data)

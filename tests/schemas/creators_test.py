@@ -7,7 +7,7 @@ from responses.matchers import query_param_matcher
 from simyan.comicvine import Comicvine
 from simyan.errors import ServiceError
 from simyan.resources import CREATOR
-from simyan.schemas.creator import BasicCreator
+from simyan.schemas.creator import BasicCreator, TimezonedDate
 
 
 def test_get_creator(session: Comicvine) -> None:
@@ -70,3 +70,13 @@ def test_list_creators_max_results(session: Comicvine) -> None:
 def test_search_creator(session: Comicvine) -> None:
     results = session.search_creators(query="Geoff")
     assert all(isinstance(x, BasicCreator) for x in results)
+
+
+def test_date_of_death_is_object(session: Comicvine) -> None:
+    result = session.get_creator(creator_id=113190)
+
+    assert result.date_of_death is not None
+    assert isinstance(result.date_of_death, TimezonedDate)
+    assert result.date_of_death.date == date(2015, 10, 13)
+    assert result.date_of_death.timezone == "America/Los_Angeles"
+    assert result.date_of_death.timezone_type == 3
