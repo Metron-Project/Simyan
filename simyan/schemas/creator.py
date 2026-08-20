@@ -10,6 +10,14 @@ from simyan.schemas.generic_entries import GenericEntry, Images
 
 
 class TimezonedDate(BaseModel):
+    """Date value paired with timezone metadata from Comicvine.
+
+    Attributes:
+        date: Local date value
+        timezone: Timezone name or identifier
+        timezone_type: Comicvine timezone type value
+    """
+
     date: date
     timezone: str
     timezone_type: int
