@@ -4,9 +4,10 @@ import pytest
 from responses import RequestsMock as Mocker
 from responses.matchers import query_param_matcher
 
-from simyan.comicvine import Comicvine, ComicvineResource
+from simyan.comicvine import Comicvine
 from simyan.errors import ServiceError
-from simyan.schemas.creator import BasicCreator
+from simyan.resources import CREATOR
+from simyan.schemas.creator import BasicCreator, TimezonedDate
 
 
 def test_get_creator(session: Comicvine) -> None:
@@ -24,7 +25,7 @@ def test_get_creator_fail(
     mock_session: Comicvine, mock_params: dict[str, str], mock_params_str: str
 ) -> None:
     with Mocker(assert_all_requests_are_fired=True) as mock:
-        url = f"https://comicvine.gamespot.mock/api/person/{ComicvineResource.CREATOR.resource_id}--1/"
+        url = f"https://comicvine.gamespot.mock/api{CREATOR.singular_endpoint(id_=-1)}"
         mock.get(
             url=url,
             match=[query_param_matcher(mock_params)],
@@ -66,12 +67,16 @@ def test_list_creators_max_results(session: Comicvine) -> None:
     assert len(results) == 10
 
 
-def test_search_deprecation(session: Comicvine) -> None:
-    with pytest.deprecated_call():
-        results = session.search(resource=ComicvineResource.CREATOR, query="Geoff")
-        assert all(isinstance(x, BasicCreator) for x in results)
-
-
 def test_search_creator(session: Comicvine) -> None:
     results = session.search_creators(query="Geoff")
     assert all(isinstance(x, BasicCreator) for x in results)
+
+
+def test_date_of_death_is_object(session: Comicvine) -> None:
+    result = session.get_creator(creator_id=113190)
+
+    assert result.date_of_death is not None
+    assert isinstance(result.date_of_death, TimezonedDate)
+    assert result.date_of_death.date == date(2015, 10, 13)
+    assert result.date_of_death.timezone == "America/Los_Angeles"
+    assert result.date_of_death.timezone_type == 3

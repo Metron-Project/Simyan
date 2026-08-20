@@ -1,8 +1,7 @@
-__all__ = ["Comicvine", "ComicvineResource"]
+__all__ = ["Comicvine"]
 
 import platform
 from datetime import timedelta
-from enum import Enum
 from http import HTTPStatus
 from pathlib import Path
 from typing import Any, Literal, TypeVar
@@ -12,11 +11,28 @@ from pydantic import TypeAdapter, ValidationError
 from requests.exceptions import HTTPError, JSONDecodeError, RequestException, Timeout
 from requests.models import PreparedRequest
 from requests.sessions import Session
-from requests_cache import NEVER_EXPIRE, CacheMixin, SQLiteCache
+from requests_cache import CacheMixin, SQLiteCache
 from requests_ratelimiter import LimiterMixin, SQLiteBucket
 
 from simyan import __version__, get_cache_root
 from simyan.errors import AuthenticationError, RateLimitError, ServiceError
+from simyan.resources import (
+    CHARACTER,
+    CONCEPT,
+    CREATOR,
+    ISSUE,
+    ITEM,
+    LOCATION,
+    ORIGIN,
+    POWER,
+    PUBLISHER,
+    STORY_ARC,
+    TEAM,
+    VOLUME,
+    PluralT,
+    Resource,
+    SingularT,
+)
 from simyan.schemas import (
     BasicCharacter,
     BasicConcept,
@@ -44,11 +60,6 @@ from simyan.schemas import (
     Volume,
 )
 
-try:
-    from typing import deprecated  # Python >= 3.13  # ty:ignore[unresolved-import]
-except ImportError:
-    from typing_extensions import deprecated
-
 T = TypeVar("T")
 HttpMethod = Literal["GET"]
 
@@ -61,58 +72,6 @@ class CachedLimiterSession(CacheMixin, LimiterMixin, Session):
         if len(parts) == 2:
             return parts[1]
         return self.bucket_name or "comicvine"
-
-
-class ComicvineResource(Enum):
-    """Enum class for Comicvine Resources.
-
-    Attributes:
-        ISSUE:
-        CHARACTER:
-        PUBLISHER:
-        CONCEPT:
-        LOCATION:
-        ORIGIN:
-        POWER:
-        CREATOR:
-        STORY_ARC:
-        VOLUME:
-        ITEM:
-        TEAM:
-    """
-
-    ISSUE = (4000, "issues", "issue", BasicIssue, Issue)
-    CHARACTER = (4005, "characters", "character", BasicCharacter, Character)
-    PUBLISHER = (4010, "publishers", "publisher", BasicPublisher, Publisher)
-    CONCEPT = (4015, "concepts", "concept", BasicConcept, Concept)
-    LOCATION = (4020, "locations", "location", BasicLocation, Location)
-    ORIGIN = (4030, "origins", "origin", BasicOrigin, Origin)
-    POWER = (4035, "powers", "power", BasicPower, Power)
-    CREATOR = (4040, "people", "person", BasicCreator, Creator)
-    STORY_ARC = (4045, "story_arcs", "story_arc", BasicStoryArc, StoryArc)
-    VOLUME = (4050, "volumes", "volume", BasicVolume, Volume)
-    ITEM = (4055, "objects", "object", BasicItem, Item)
-    TEAM = (4060, "teams", "team", BasicTeam, Team)
-
-    @property
-    def resource_id(self) -> int:  # noqa: D102
-        return self.value[0]
-
-    @property
-    def list_endpoint(self) -> str:  # noqa: D102
-        return self.value[1]
-
-    @property
-    def item_endpoint(self) -> str:  # noqa: D102
-        return self.value[2]
-
-    @property
-    def list_type(self) -> type[T]:  # noqa: D102
-        return self.value[3]
-
-    @property
-    def item_type(self) -> type[T]:  # noqa: D102
-        return self.value[4]
 
 
 class Comicvine:
@@ -147,7 +106,6 @@ class Comicvine:
                 db_path=cache_path or (get_cache_root() / "cache.sqlite"), serializer="json"
             ),
             expire_after=cache_expiry,
-            cache_control=cache_expiry != NEVER_EXPIRE,
             ignored_parameters=["api_key"],
             per_second=1,
             per_hour=200,
@@ -170,7 +128,7 @@ class Comicvine:
     def _request(
         self, method: HttpMethod, endpoint: str, params: dict[str, str] | None = None
     ) -> dict[str, Any]:
-        url = f"{self._base_url}{endpoint}/"
+        url = f"{self._base_url}{endpoint}"
         kwargs: dict[str, Any] = {"timeout": self._timeout}
         if params:
             kwargs["params"] = params
@@ -245,31 +203,31 @@ class Comicvine:
                 return results[:max_results]
             page += 1
 
-    def _get_item(self, resource: ComicvineResource, id_: int) -> T:
+    def _get_item(self, resource: Resource[SingularT, PluralT], id_: int) -> SingularT:
         return self._convert(
-            data=self._request(
-                method="GET", endpoint=f"/{resource.item_endpoint}/{resource.resource_id}-{id_}"
-            )["results"],
-            type_=resource.item_type,
+            data=self._request(method="GET", endpoint=resource.singular_endpoint(id_=id_))[
+                "results"
+            ],
+            type_=resource.singular_type,
         )
 
     def _get_list(
         self,
-        resource: ComicvineResource,
+        resource: Resource[SingularT, PluralT],
         params: dict[str, str] | None = None,
         max_results: int | None = None,
-    ) -> list[T]:
+    ) -> list[PluralT]:
         data = self._offset(
-            endpoint=f"/{resource.list_endpoint}", params=params, max_results=max_results
+            endpoint=resource.plural_endpoint(), params=params, max_results=max_results
         )
-        return [self._convert(data=x, type_=resource.list_type) for x in data]
+        return [self._convert(data=x, type_=resource.plural_type) for x in data]
 
     def _search(
-        self, resource: ComicvineResource, query: str, max_results: int | None = None
-    ) -> list[T]:
-        params = {"query": query, "resources": resource.item_endpoint}
-        data = self._paginate(endpoint="/search", params=params, max_results=max_results)
-        return [self._convert(data=x, type_=resource.list_type) for x in data]
+        self, resource: Resource[SingularT, PluralT], query: str, max_results: int | None = None
+    ) -> list[PluralT]:
+        params = {"query": query, "resources": resource.singular}
+        data = self._paginate(endpoint="/search/", params=params, max_results=max_results)
+        return [self._convert(data=x, type_=resource.plural_type) for x in data]
 
     def list_publishers(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -288,9 +246,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.PUBLISHER, params=params, max_results=max_results
-        )
+        return self._get_list(resource=PUBLISHER, params=params, max_results=max_results)
 
     def get_publisher(self, publisher_id: int) -> Publisher:
         """Request a Publisher using its id.
@@ -306,7 +262,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.PUBLISHER, id_=publisher_id)
+        return self._get_item(resource=PUBLISHER, id_=publisher_id)
 
     def search_publishers(self, query: str, max_results: int | None = 500) -> list[BasicPublisher]:
         """Request a list of search results.
@@ -323,9 +279,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(
-            resource=ComicvineResource.PUBLISHER, query=query, max_results=max_results
-        )
+        return self._search(resource=PUBLISHER, query=query, max_results=max_results)
 
     def list_volumes(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -344,9 +298,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.VOLUME, params=params, max_results=max_results
-        )
+        return self._get_list(resource=VOLUME, params=params, max_results=max_results)
 
     def get_volume(self, volume_id: int) -> Volume:
         """Request a Volume using its id.
@@ -362,7 +314,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.VOLUME, id_=volume_id)
+        return self._get_item(resource=VOLUME, id_=volume_id)
 
     def search_volumes(self, query: str, max_results: int | None = 500) -> list[BasicVolume]:
         """Request a list of search results.
@@ -379,7 +331,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(resource=ComicvineResource.VOLUME, query=query, max_results=max_results)
+        return self._search(resource=VOLUME, query=query, max_results=max_results)
 
     def list_issues(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -398,9 +350,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.ISSUE, params=params, max_results=max_results
-        )
+        return self._get_list(resource=ISSUE, params=params, max_results=max_results)
 
     def get_issue(self, issue_id: int) -> Issue:
         """Request an Issue using its id.
@@ -416,7 +366,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.ISSUE, id_=issue_id)
+        return self._get_item(resource=ISSUE, id_=issue_id)
 
     def search_issues(self, query: str, max_results: int | None = 500) -> list[BasicIssue]:
         """Request a list of search results.
@@ -433,7 +383,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(resource=ComicvineResource.ISSUE, query=query, max_results=max_results)
+        return self._search(resource=ISSUE, query=query, max_results=max_results)
 
     def list_story_arcs(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -452,9 +402,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.STORY_ARC, params=params, max_results=max_results
-        )
+        return self._get_list(resource=STORY_ARC, params=params, max_results=max_results)
 
     def get_story_arc(self, story_arc_id: int) -> StoryArc:
         """Request a Story Arc using its id.
@@ -470,7 +418,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.STORY_ARC, id_=story_arc_id)
+        return self._get_item(resource=STORY_ARC, id_=story_arc_id)
 
     def search_story_arcs(self, query: str, max_results: int | None = 500) -> list[BasicStoryArc]:
         """Request a list of search results.
@@ -487,9 +435,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(
-            resource=ComicvineResource.STORY_ARC, query=query, max_results=max_results
-        )
+        return self._search(resource=STORY_ARC, query=query, max_results=max_results)
 
     def list_creators(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -508,9 +454,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.CREATOR, params=params, max_results=max_results
-        )
+        return self._get_list(resource=CREATOR, params=params, max_results=max_results)
 
     def get_creator(self, creator_id: int) -> Creator:
         """Request a Creator using its id.
@@ -526,7 +470,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.CREATOR, id_=creator_id)
+        return self._get_item(resource=CREATOR, id_=creator_id)
 
     def search_creators(self, query: str, max_results: int | None = 500) -> list[BasicCreator]:
         """Request a list of search results.
@@ -543,9 +487,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(
-            resource=ComicvineResource.CREATOR, query=query, max_results=max_results
-        )
+        return self._search(resource=CREATOR, query=query, max_results=max_results)
 
     def list_characters(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -564,9 +506,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.CHARACTER, params=params, max_results=max_results
-        )
+        return self._get_list(resource=CHARACTER, params=params, max_results=max_results)
 
     def get_character(self, character_id: int) -> Character:
         """Request a Character using its id.
@@ -582,7 +522,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.CHARACTER, id_=character_id)
+        return self._get_item(resource=CHARACTER, id_=character_id)
 
     def search_characters(self, query: str, max_results: int | None = 500) -> list[BasicCharacter]:
         """Request a list of search results.
@@ -599,9 +539,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(
-            resource=ComicvineResource.CHARACTER, query=query, max_results=max_results
-        )
+        return self._search(resource=CHARACTER, query=query, max_results=max_results)
 
     def list_teams(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -620,9 +558,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.TEAM, params=params, max_results=max_results
-        )
+        return self._get_list(resource=TEAM, params=params, max_results=max_results)
 
     def get_team(self, team_id: int) -> Team:
         """Request a Team using its id.
@@ -638,7 +574,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.TEAM, id_=team_id)
+        return self._get_item(resource=TEAM, id_=team_id)
 
     def search_teams(self, query: str, max_results: int | None = 500) -> list[BasicTeam]:
         """Request a list of search results.
@@ -655,7 +591,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(resource=ComicvineResource.TEAM, query=query, max_results=max_results)
+        return self._search(resource=TEAM, query=query, max_results=max_results)
 
     def list_locations(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -674,9 +610,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.LOCATION, params=params, max_results=max_results
-        )
+        return self._get_list(resource=LOCATION, params=params, max_results=max_results)
 
     def get_location(self, location_id: int) -> Location:
         """Request a Location using its id.
@@ -692,7 +626,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.LOCATION, id_=location_id)
+        return self._get_item(resource=LOCATION, id_=location_id)
 
     def search_locations(self, query: str, max_results: int | None = 500) -> list[BasicLocation]:
         """Request a list of search results.
@@ -709,9 +643,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(
-            resource=ComicvineResource.LOCATION, query=query, max_results=max_results
-        )
+        return self._search(resource=LOCATION, query=query, max_results=max_results)
 
     def list_concepts(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -730,9 +662,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.CONCEPT, params=params, max_results=max_results
-        )
+        return self._get_list(resource=CONCEPT, params=params, max_results=max_results)
 
     def get_concept(self, concept_id: int) -> Concept:
         """Request a Concept using its id.
@@ -748,7 +678,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.CONCEPT, id_=concept_id)
+        return self._get_item(resource=CONCEPT, id_=concept_id)
 
     def search_concepts(self, query: str, max_results: int | None = 500) -> list[BasicConcept]:
         """Request a list of search results.
@@ -765,9 +695,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(
-            resource=ComicvineResource.CONCEPT, query=query, max_results=max_results
-        )
+        return self._search(resource=CONCEPT, query=query, max_results=max_results)
 
     def list_powers(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -786,9 +714,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.POWER, params=params, max_results=max_results
-        )
+        return self._get_list(resource=POWER, params=params, max_results=max_results)
 
     def get_power(self, power_id: int) -> Power:
         """Request a Power using its id.
@@ -804,7 +730,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.POWER, id_=power_id)
+        return self._get_item(resource=POWER, id_=power_id)
 
     def search_powers(self, query: str, max_results: int | None = 500) -> list[BasicPower]:
         """Request a list of search results.
@@ -821,7 +747,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(resource=ComicvineResource.POWER, query=query, max_results=max_results)
+        return self._search(resource=POWER, query=query, max_results=max_results)
 
     def list_origins(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -840,9 +766,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.ORIGIN, params=params, max_results=max_results
-        )
+        return self._get_list(resource=ORIGIN, params=params, max_results=max_results)
 
     def get_origin(self, origin_id: int) -> Origin:
         """Request an Origin using its id.
@@ -858,7 +782,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.ORIGIN, id_=origin_id)
+        return self._get_item(resource=ORIGIN, id_=origin_id)
 
     def search_origins(self, query: str, max_results: int | None = 500) -> list[BasicOrigin]:
         """Request a list of search results.
@@ -875,7 +799,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(resource=ComicvineResource.ORIGIN, query=query, max_results=max_results)
+        return self._search(resource=ORIGIN, query=query, max_results=max_results)
 
     def list_items(
         self, params: dict[str, Any] | None = None, max_results: int | None = 500
@@ -894,9 +818,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_list(
-            resource=ComicvineResource.ITEM, params=params, max_results=max_results
-        )
+        return self._get_list(resource=ITEM, params=params, max_results=max_results)
 
     def get_item(self, item_id: int) -> Item:
         """Request an Item using its id.
@@ -912,7 +834,7 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._get_item(resource=ComicvineResource.ITEM, id_=item_id)
+        return self._get_item(resource=ITEM, id_=item_id)
 
     def search_items(self, query: str, max_results: int | None = 500) -> list[BasicItem]:
         """Request a list of search results.
@@ -929,40 +851,4 @@ class Comicvine:
             AuthenticationError: If credentials are invalid.
             RateLimitError: If the API rate limit is exceeded.
         """
-        return self._search(resource=ComicvineResource.ITEM, query=query, max_results=max_results)
-
-    @deprecated("Use the resource specific search functions instead.")
-    def search(
-        self, resource: ComicvineResource, query: str, max_results: int | None = 500
-    ) -> (
-        list[BasicPublisher]
-        | list[BasicVolume]
-        | list[BasicIssue]
-        | list[BasicStoryArc]
-        | list[BasicCreator]
-        | list[BasicCharacter]
-        | list[BasicTeam]
-        | list[BasicLocation]
-        | list[BasicConcept]
-        | list[BasicPower]
-        | list[BasicOrigin]
-        | list[BasicItem]
-    ):
-        """Request a list of search results filtered by the provided resource.
-
-        **Deprecated:** Use the resource specific search functions instead.
-
-        Args:
-            resource: Filter which type of resource to return.
-            query: Search query string.
-            max_results: If given, return at most this many results.
-
-        Returns:
-            A list of results, mapped to the given resource.
-
-        Raises:
-            ServiceError: If the API response is invalid or validation fails.
-            AuthenticationError: If credentials are invalid.
-            RateLimitError: If the API rate limit is exceeded.
-        """
-        return self._search(resource=resource, query=query, max_results=max_results)
+        return self._search(resource=ITEM, query=query, max_results=max_results)

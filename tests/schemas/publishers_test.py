@@ -4,8 +4,9 @@ import pytest
 from responses import RequestsMock as Mocker
 from responses.matchers import query_param_matcher
 
-from simyan.comicvine import Comicvine, ComicvineResource
+from simyan.comicvine import Comicvine
 from simyan.errors import ServiceError
+from simyan.resources import PUBLISHER
 from simyan.schemas.publisher import BasicPublisher
 
 
@@ -24,7 +25,7 @@ def test_get_publisher_fail(
     mock_session: Comicvine, mock_params: dict[str, str], mock_params_str: str
 ) -> None:
     with Mocker(assert_all_requests_are_fired=True) as mock:
-        url = f"https://comicvine.gamespot.mock/api/publisher/{ComicvineResource.PUBLISHER.resource_id}--1/"
+        url = f"https://comicvine.gamespot.mock/api{PUBLISHER.singular_endpoint(id_=-1)}"
         mock.get(
             url=url,
             match=[query_param_matcher(mock_params)],
@@ -59,12 +60,6 @@ def test_list_publishers_empty(session: Comicvine) -> None:
 def test_list_publishers_max_results(session: Comicvine) -> None:
     results = session.list_publishers(max_results=10)
     assert len(results) == 10
-
-
-def test_search_deprecation(session: Comicvine) -> None:
-    with pytest.deprecated_call():
-        results = session.search(resource=ComicvineResource.PUBLISHER, query="DC")
-        assert all(isinstance(x, BasicPublisher) for x in results)
 
 
 def test_search_publisher(session: Comicvine) -> None:
