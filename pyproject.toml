@@ -20,7 +20,7 @@ tests = [
   "pytest >= 9.1.0",
   "pytest-cov >= 7.1.0",
   "responses >= 0.26.0",
-  "tox >= 4.59.0",
+  "tox >= 4.60.0",
   "tox-uv >= 1.36.0",
 ]
 
@@ -49,7 +49,6 @@ dependencies = [
   "requests >= 2.34.0",
   "requests-cache >= 1.3.0",
   "requests-ratelimiter >= 0.10.0",
-  "typing-extensions >= 4.16.0 ; python_version < '3.13'",
 ]
 description = "A Python wrapper for the Comicvine API."
 dynamic = ["version"]
