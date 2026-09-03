@@ -62,6 +62,7 @@ from simyan.schemas import (
 
 T = TypeVar("T")
 HttpMethod = Literal["GET"]
+STATUS_MAPPING = {100: AuthenticationError, 107: RateLimitError}
 
 
 class CachedLimiterSession(CacheMixin, LimiterMixin, Session):
@@ -125,7 +126,7 @@ class Comicvine:
         self._session.params.update({"api_key": api_key, "format": "json"})
         self._timeout = timeout
 
-    def _request(
+    def _request(  # noqa: C901
         self, method: HttpMethod, endpoint: str, params: dict[str, str] | None = None
     ) -> dict[str, Any]:
         url = f"{self._base_url}{endpoint}"
@@ -135,7 +136,11 @@ class Comicvine:
         try:
             response = self._session.request(method=method, url=url, **kwargs)
             response.raise_for_status()
-            return response.json()
+            body = response.json()
+            if body.get("status_code") != 1:
+                err = STATUS_MAPPING.get(body.get("status_code"), ServiceError)
+                raise err(body.get("error"))
+            return body
         except HTTPError as err:
             status_code = (
                 HTTPStatus.INTERNAL_SERVER_ERROR
