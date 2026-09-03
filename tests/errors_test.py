@@ -66,3 +66,28 @@ def test_ratelimit(
         with pytest.raises(RateLimitError):
             mock_session.get_publisher(publisher_id=1)
         mock.assert_call_count(f"{url}?{mock_params_str}", 1)
+
+
+@pytest.mark.parametrize(
+    ("status_code", "error_class"),
+    [(100, AuthenticationError), (101, ServiceError), (107, RateLimitError), (None, ServiceError)],
+    ids=["100-status", "101-status", "107-status", "None-status"],
+)
+def test_comicvine_error(
+    mock_session: Comicvine,
+    mock_params: dict[str, str],
+    mock_params_str: str,
+    status_code: int | None,
+    error_class: type[ServiceError],
+) -> None:
+    with Mocker(assert_all_requests_are_fired=True) as mock:
+        url = f"https://comicvine.gamespot.mock/api{PUBLISHER.singular_endpoint(id_=1)}"
+        mock.get(
+            url=url,
+            match=[query_param_matcher(mock_params)],
+            status=200,
+            json={"error": "Generic Error Message", "status_code": status_code},
+        )
+        with pytest.raises(error_class):
+            mock_session.get_publisher(publisher_id=1)
+        mock.assert_call_count(f"{url}?{mock_params_str}", 1)
