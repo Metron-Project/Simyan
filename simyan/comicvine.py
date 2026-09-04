@@ -86,7 +86,6 @@ class Comicvine:
         cache_path: Path to the SQLite cache file.
             If not provided, a default path will be used under ~/.cache/simyan/cache.sqlite
         cache_expiry: Duration for which cached responses are valid.
-            Response cache-headers take precedence.
         ratelimit_path: Path to the SQLite ratelimit file.
             If not provided, a default path will be used under ~/.cache/simyan/ratelimits.sqlite
     """
@@ -177,7 +176,7 @@ class Comicvine:
     def _offset(
         self, endpoint: str, params: dict[str, str] | None = None, max_results: int | None = None
     ) -> list[dict[str, Any]]:
-        params = params or {}
+        params = dict(params or {})
         offset = int(params.get("offset", "0"))
         limit = int(params.get("limit", "100"))
         results = []
@@ -185,27 +184,35 @@ class Comicvine:
             params["offset"] = str(offset)
             params["limit"] = str(limit)
             response = self._request(method="GET", endpoint=endpoint, params=params)
-            if not response["results"]:
+            page_results = response["results"]
+            if not page_results:
                 return results
-            results.extend(response["results"])
+            results.extend(page_results)
             if max_results is not None and len(results) >= max_results:
                 return results[:max_results]
+            if len(page_results) < limit or offset + limit >= response.get(
+                "number_of_total_results", 0
+            ):
+                return results
             offset += limit
 
     def _paginate(
         self, endpoint: str, params: dict[str, str] | None = None, max_results: int | None = None
     ) -> list[dict[str, Any]]:
-        params = params or {}
+        params = dict(params or {})
         page = int(params.get("page", "1"))
         results = []
         while True:
             params["page"] = str(page)
             response = self._request(method="GET", endpoint=endpoint, params=params)
-            if not response["results"]:
+            page_results = response["results"]
+            if not page_results:
                 return results
-            results.extend(response["results"])
+            results.extend(page_results)
             if max_results is not None and len(results) >= max_results:
                 return results[:max_results]
+            if len(results) >= response.get("number_of_total_results", 0):
+                return results
             page += 1
 
     def _get_item(self, resource: Resource[SingularT, PluralT], id_: int) -> SingularT:
