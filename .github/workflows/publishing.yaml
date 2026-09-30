@@ -1,5 +1,17 @@
 name: Publishing
-on: push
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - docs/**
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - docs/**
+    tags:
+      - '*'
 
 concurrency:
   cancel-in-progress: true
